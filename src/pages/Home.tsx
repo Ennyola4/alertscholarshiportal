@@ -64,7 +64,7 @@ const Home = () => {
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentImage((prev) => (prev + 1) % carouselImages.length);
-        }, 15000);
+        }, 10000);
         return () => clearInterval(interval);
     }, []);
 
@@ -122,7 +122,7 @@ const Home = () => {
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 1.1 }}
                         transition={{ duration: 1 }}
-                        className="absolute inset-0 bg-cover bg-center bg-fixed"
+                        className="absolute inset-0 bg-cover bg-center"
                         style={{
                             backgroundImage: `url(${carouselImages[currentImage]})`,
                             transform: `translateY(${scrollY * 0.15}px) scale(1.1)`,
@@ -156,9 +156,9 @@ const Home = () => {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.5 }}
-                        className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6"
+                        className="text-xl sm:text-4xl lg:text-5xl font-bold mb-6"
                     >
-                        Welcome to <span className="bg-linear-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">AlertMFB Scholarship</span> Portal
+                        Welcome to <span className="bg-linear-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">AlertGroup Scholarship</span> Portal
                     </motion.h1>
 
                     <motion.p
