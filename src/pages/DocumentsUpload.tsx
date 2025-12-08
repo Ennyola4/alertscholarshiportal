@@ -23,7 +23,6 @@ const DocumentsUpload = () => {
         recommendationCommunity: null as File | null,
     });
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
     const [uploadStatus, setUploadStatus] = useState<Record<string, boolean>>({});
 
@@ -37,7 +36,7 @@ const DocumentsUpload = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSubmitting(true);
+        
 
         // Validate that all required files are uploaded
         const requiredFiles = [
@@ -50,14 +49,14 @@ const DocumentsUpload = () => {
 
         if (!allRequiredUploaded) {
             alert("Please upload all required documents before continuing.");
-            setIsSubmitting(false);
+            
             return;
         }
 
         // Simulate API call
         setTimeout(() => {
             console.log("Documents submitted:", formData);
-            setIsSubmitting(false);
+           
             setShowSuccess(true);
 
             // Hide success message after 3 seconds

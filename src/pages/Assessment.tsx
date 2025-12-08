@@ -18,7 +18,6 @@ const Assessment = () => {
         financialNeed: null as File | null,
     });
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
     const [uploadStatus, setUploadStatus] = useState<Record<string, boolean>>({});
 
@@ -32,20 +31,20 @@ const Assessment = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSubmitting(true);
+       
 
         // Validate that all files are uploaded
         const allUploaded = Object.values(formData).every(file => file !== null);
         if (!allUploaded) {
             alert("Please upload all required documents before continuing.");
-            setIsSubmitting(false);
+            
             return;
         }
 
         // Simulate API call
         setTimeout(() => {
             console.log("Files submitted:", formData);
-            setIsSubmitting(false);
+           
             setShowSuccess(true);
 
             // Hide success message after 3 seconds

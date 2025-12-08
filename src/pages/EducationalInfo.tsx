@@ -21,7 +21,7 @@ const EducationalInfo = () => {
         cgpa: "",
     });
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    
     const [showSuccess, setShowSuccess] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -30,12 +30,12 @@ const EducationalInfo = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSubmitting(true);
+       
 
         // Simulate API call
         setTimeout(() => {
             console.log("Form submitted:", formData);
-            setIsSubmitting(false);
+            
             setShowSuccess(true);
 
             // Hide success message after 3 seconds

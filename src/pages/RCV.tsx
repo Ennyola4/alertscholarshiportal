@@ -24,7 +24,7 @@ const RCV = () => {
         referee2Relationship: "",
     });
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    
     const [showSuccess, setShowSuccess] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -33,7 +33,7 @@ const RCV = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSubmitting(true);
+       
 
         // Validate required fields
         const requiredFields = [
@@ -47,14 +47,14 @@ const RCV = () => {
         
         if (!allFieldsFilled) {
             alert("Please fill in all referee information before continuing.");
-            setIsSubmitting(false);
+            
             return;
         }
 
         // Simulate API call
         setTimeout(() => {
             console.log("Referee data submitted:", formData);
-            setIsSubmitting(false);
+           
             setShowSuccess(true);
 
             // Hide success message after 3 seconds

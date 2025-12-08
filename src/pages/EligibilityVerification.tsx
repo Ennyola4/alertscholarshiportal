@@ -22,7 +22,7 @@ const EligibilityVerification = () => {
         agreeToTerms: false,
     });
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    
     const [showSuccess, setShowSuccess] = useState(false);
 
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,21 +32,21 @@ const EligibilityVerification = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSubmitting(true);
+       
 
         // Validate all checkboxes are checked
         const allChecked = Object.values(eligibilityChecks).every(check => check);
 
         if (!allChecked) {
             alert("You must agree to all eligibility criteria to continue.");
-            setIsSubmitting(false);
+             
             return;
         }
 
         // Simulate API call
         setTimeout(() => {
             console.log("Eligibility checks submitted:", eligibilityChecks);
-            setIsSubmitting(false);
+            
             setShowSuccess(true);
 
             // Hide success message after 3 seconds

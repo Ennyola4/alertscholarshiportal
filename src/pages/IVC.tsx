@@ -17,8 +17,7 @@ const IVC = () => {
         institutionPhone: "",
     });
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [showSuccess, setShowSuccess] = useState(false);
+     const [showSuccess, setShowSuccess] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -26,21 +25,20 @@ const IVC = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSubmitting(true);
-
+       
         // Validate required fields
         const allFieldsFilled = Object.values(formData).every(value => value.trim() !== '');
         
         if (!allFieldsFilled) {
             alert("Please fill in all institutional verification information before continuing.");
-            setIsSubmitting(false);
+            
             return;
         }
 
         // Simulate API call
         setTimeout(() => {
             console.log("Institutional verification data submitted:", formData);
-            setIsSubmitting(false);
+           
             setShowSuccess(true);
 
             // Hide success message after 3 seconds

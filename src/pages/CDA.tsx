@@ -26,7 +26,7 @@ const CDA = () => {
         refundIfNoCommitment: false,
     });
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const [showSuccess, setShowSuccess] = useState(false);
     const [showWarning, setShowWarning] = useState(false);
 
@@ -37,21 +37,21 @@ const CDA = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSubmitting(true);
+        
 
         // Check if all declarations are accepted
         const allAccepted = Object.values(consents).every(Boolean);
 
         if (!allAccepted) {
             setShowWarning(true);
-            setIsSubmitting(false);
+           
             return;
         }
 
         // Simulate API call
         setTimeout(() => {
             console.log("Consents submitted:", consents);
-            setIsSubmitting(false);
+            
             setShowSuccess(true);
 
             // Hide success message after 3 seconds
