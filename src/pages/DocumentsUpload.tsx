@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FileCheck, FileText, Upload, ChevronRight, Sparkles, AlertCircle, CheckCircle, Shield } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import AlertLogo from "../assets/images/AlertLogo.jpg";
+import AlertLogo from "../assets/images/AlertLogo.png";
 
 const DocumentsUpload = () => {
     const location = useLocation();
@@ -389,7 +389,7 @@ const DocumentsUpload = () => {
                                     <img
                                         src={AlertLogo}
                                         alt="AlertMFB Logo"
-                                        className="w-16 h-16 rounded-xl bg-white/20 p-2"
+                                        className="w-20 h-20 rounded-xl bg-white/20 p-2"
                                     />
                                     <div>
                                         <h3 className="text-2xl font-bold">Document Guidelines</h3>

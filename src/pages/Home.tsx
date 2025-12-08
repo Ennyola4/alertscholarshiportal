@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Clock2, Notebook, Search, Award, GraduationCap, Users, Target, ChevronRight, Sparkles, Star, CheckCircle, ArrowRight, BookOpen } from "lucide-react";
-import AlertLogo from "../assets/images/AlertLogo.jpg";
+import AlertLogo from "../assets/images/AlertLogo.png";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 
@@ -109,8 +109,7 @@ const Home = () => {
                 >
                     <img
                         src={AlertLogo}
-                        alt="AlertMFB Logo"
-                        className="h-16 w-auto drop-shadow-2xl"
+                        className="h-30 w-auto drop-shadow-2xl"
                     />
                 </motion.div>
 

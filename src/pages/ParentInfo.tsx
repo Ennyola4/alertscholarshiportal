@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Users, Briefcase, Phone, DollarSign, ChevronRight, Shield, UserCheck, Sparkles } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import AlertLogo from "../assets/images/AlertLogo.jpg";
+import AlertLogo from "../assets/images/AlertLogo.png";
 
 const ParentInfo = () => {
     const location = useLocation();
@@ -339,7 +339,7 @@ const ParentInfo = () => {
                                     <img
                                         src={AlertLogo}
                                         alt="AlertMFB Logo"
-                                        className="w-16 h-16 rounded-xl bg-white/20 p-2"
+                                        className="w-20 h-20 rounded-xl bg-white/20 p-2"
                                     />
                                     <div>
                                         <h3 className="text-2xl font-bold">Why We Need This</h3>

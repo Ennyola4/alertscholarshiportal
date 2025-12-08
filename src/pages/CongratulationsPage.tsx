@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, Award, Mail, Calendar, Download, Share2, Home, ChevronRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import AlertLogo from "../assets/images/AlertLogo.jpg";
+import AlertLogo from "../assets/images/AlertLogo.png";
 
 const CongratulationsPage = () => {
     const navigate = useNavigate();
