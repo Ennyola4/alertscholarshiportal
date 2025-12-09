@@ -1,15 +1,16 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, Award, Mail, Calendar, Download, Share2, Home, ChevronRight } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
-import AlertLogo from "../assets/images/AlertLogo.png";
+import { useNavigate } from "react-router-dom";
+import { useApplication } from "../context/ApplicationContext";
 
 const CongratulationsPage = () => {
     const navigate = useNavigate();
+    const { clearApplication } = useApplication();
+
     useEffect(() => {
         window.scrollTo(0, 0);
-    }, [location.pathname]);
-
+    }, []);
 
     useEffect(() => {
         // Prevent direct access - only accessible after submission
@@ -17,9 +18,6 @@ const CongratulationsPage = () => {
         if (!hasSubmitted) {
             navigate('/');
         }
-
-        // Mark as visited to prevent back button issues
-        localStorage.setItem('scholarship_submitted', 'true');
 
         // Scroll to top on mount
         window.scrollTo(0, 0);
@@ -55,6 +53,14 @@ const CongratulationsPage = () => {
             navigator.clipboard.writeText('I just submitted my scholarship application to AlertMFB!');
             alert('Link copied to clipboard!');
         }
+    };
+
+    const handleReturnHome = () => {
+        // Clear application data from context and localStorage
+        clearApplication();
+
+        // Navigate to home
+        navigate('/');
     };
 
     return (
@@ -137,14 +143,9 @@ const CongratulationsPage = () => {
                             {/* Card Header */}
                             <div className="p-8 border-b border-emerald-100 bg-linear-to-r from-emerald-50 to-green-50">
                                 <div className="flex items-center gap-3">
-                                    <img
-                                        src={AlertLogo}
-                                        alt="AlertMFB Logo"
-                                        className="w-16 h-16 rounded-xl bg-white/50 p-2 border border-emerald-200"
-                                    />
                                     <div>
                                         <h2 className="text-2xl font-bold text-gray-900">Application Submitted Successfully</h2>
-                                        <p className="text-emerald-600">Thank you for choosing AlertMFB Scholarship</p>
+                                        <p className="text-emerald-600">Thank you for choosing AlertGroup Scholarship</p>
                                     </div>
                                 </div>
                             </div>
@@ -269,7 +270,7 @@ const CongratulationsPage = () => {
                                 <h4 className="font-bold text-gray-900">Share Your Achievement</h4>
                             </div>
                             <p className="text-sm text-gray-600 mb-4">
-                                Share that you've applied for the AlertMFB Scholarship with your network.
+                                Share that you've applied for the AlertGroup Scholarship with your network.
                             </p>
                             <button
                                 onClick={handleShare}
@@ -297,14 +298,14 @@ const CongratulationsPage = () => {
                                 </li>
                             </ul>
                             <div className="text-xs text-gray-500">
-                                Need help? Contact scholarship@alertmfb.com
+                                Need help? Contact scholarship@alertgroup.com
                             </div>
                         </div>
 
-                        {/* Return Home Button */}
-                        <Link
-                            to="/"
-                            className="block group"
+                        {/* Return Home Button - Updated to use handler */}
+                        <button
+                            onClick={handleReturnHome}
+                            className="block group w-full cursor-pointer text-left"
                         >
                             <div className="bg-linear-to-r from-gray-50 to-white rounded-3xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
                                 <div className="flex items-center justify-between">
@@ -314,13 +315,13 @@ const CongratulationsPage = () => {
                                         </div>
                                         <div>
                                             <h4 className="font-bold text-gray-900">Return to Home</h4>
-                                            <p className="text-sm text-gray-600">Go back to main page</p>
+                                            <p className="text-sm text-gray-600">Start new application or explore</p>
                                         </div>
                                     </div>
                                     <ChevronRight className="w-5 h-5 text-gray-400 transition-transform group-hover:translate-x-2" />
                                 </div>
                             </div>
-                        </Link>
+                        </button>
                     </motion.div>
                 </div>
 
@@ -332,11 +333,19 @@ const CongratulationsPage = () => {
                     className="text-center relative z-10"
                 >
                     <p className="text-gray-500 mb-2">
-                        Thank you for applying to the AlertMFB Scholarship Program
+                        Thank you for applying to the AlertGroup Scholarship Program
                     </p>
-                    <p className="text-sm text-gray-400">
-                        We wish you the best in your academic journey! 🎓
-                    </p>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <p className="text-sm text-gray-400">
+                            Application data has been saved and submitted successfully
+                        </p>
+                        <button
+                            onClick={handleReturnHome}
+                            className="px-4 py-2 bg-linear-to-r from-emerald-500 to-green-500 text-white text-sm font-semibold rounded-lg hover:shadow-lg transition-all"
+                        >
+                            Start New Application
+                        </button>
+                    </div>
                 </motion.div>
 
                 {/* Floating Celebration Elements */}

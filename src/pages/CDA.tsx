@@ -1,66 +1,121 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FileSignature, CheckCircle, AlertCircle, ChevronRight, Sparkles, Shield, FileText, Target  } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { 
+    FileSignature, 
+    CheckCircle, 
+    AlertCircle, 
+    ChevronRight, 
+    Sparkles, 
+    Shield, 
+    FileText, 
+    Target  
+} from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import AlertLogo from "../assets/images/AlertLogo.png";
+import { useApplication } from "../context/ApplicationContext";
+
+interface FormData {
+    consentDataProcessing: boolean;
+    consentDataAggregated: boolean;
+    dataRetention: boolean;
+    publicityRights: boolean;
+    verifyInformation: boolean;
+    understandFalsification: boolean;
+    infoTruthful: boolean;
+    infoFalsePenalty: boolean;
+    maintainCGPA: boolean;
+    tuitionOnly: boolean;
+    workCommitment: boolean;
+    refundIfNoCommitment: boolean;
+}
+
+interface Step {
+    number: number;
+    label: string;
+    status: "completed" | "current" | "upcoming";
+}
+
+interface ConsentSection {
+    id: string;
+    title: string;
+    consents: {
+        id: keyof FormData;
+        label: string;
+        required: boolean;
+    }[];
+}
 
 const CDA = () => {
     const location = useLocation();
+    const navigate = useNavigate();
+    const { applicationData, updateConsentDeclaration } = useApplication();
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [location.pathname]);
 
-    const [consents, setConsents] = useState({
-        consentDataProcessing: false,
-        consentDataAggregated: false,
-        dataRetention: false,
-        publicityRights: false,
-        verifyInformation: false,
-        understandFalsification: false,
-        infoTruthful: false,
-        infoFalsePenalty: false,
-        maintainCGPA: false,
-        tuitionOnly: false,
-        workCommitment: false,
-        refundIfNoCommitment: false,
-    });
-
-
+    const [formData, setFormData] = useState<FormData>(applicationData.consentDeclaration);
     const [showSuccess, setShowSuccess] = useState(false);
     const [showWarning, setShowWarning] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
     const handleConsentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, checked } = e.target;
-        setConsents(prev => ({ ...prev, [name]: checked }));
+        setFormData(prev => ({ ...prev, [name]: checked }));
+        
+        // Clear validation errors when user checks a box
+        if (validationErrors.length > 0) {
+            setValidationErrors([]);
+        }
+        setShowWarning(false);
+    };
+
+    const validateForm = (): boolean => {
+        const errors: string[] = [];
+        
+        // Check if all consents are accepted
+        const allAccepted = Object.values(formData).every(Boolean);
+        if (!allAccepted) {
+            errors.push("You must agree to all declarations and consents to continue.");
+        }
+
+        setValidationErrors(errors);
+        return errors.length === 0;
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        
+        setIsSubmitting(true);
 
-        // Check if all declarations are accepted
-        const allAccepted = Object.values(consents).every(Boolean);
-
-        if (!allAccepted) {
+        if (!validateForm()) {
+            setIsSubmitting(false);
             setShowWarning(true);
-           
             return;
         }
 
+        // Update context
+        updateConsentDeclaration(formData);
+
         // Simulate API call
         setTimeout(() => {
-            console.log("Consents submitted:", consents);
-            
+            console.log("Consents submitted:", formData);
+            setIsSubmitting(false);
             setShowSuccess(true);
 
             // Hide success message after 3 seconds
             setTimeout(() => setShowSuccess(false), 3000);
+
+            // Navigate to next page
+            navigate('/applicant-signature');
         }, 1500);
     };
 
-    // Consistent steps array
-    const steps = [
+    const handleSaveAndContinue = (e: React.FormEvent) => {
+        handleSubmit(e);
+    };
+
+    const steps: Step[] = [
         { number: 1, label: "Personal Info", status: "completed" },
         { number: 2, label: "Parent Info", status: "completed" },
         { number: 3, label: "Educational", status: "completed" },
@@ -73,18 +128,20 @@ const CDA = () => {
         { number: 10, label: "Applicant Signature", status: "upcoming" },
     ];
 
-    const consentSections = [
+    const consentSections: ConsentSection[] = [
         {
             id: "A",
             title: "Data Protection & Consent",
             consents: [
                 {
                     id: "consentDataProcessing",
-                    label: "I consent to the collection, processing, and storage of my personal data for administering the Alert Group Scholarship Programme."
+                    label: "I consent to the collection, processing, and storage of my personal data for administering the Alert Group Scholarship Programme.",
+                    required: true
                 },
                 {
                     id: "consentDataAggregated",
-                    label: "I understand that my data may be used in aggregated, non-identifiable form for CSR reporting."
+                    label: "I understand that my data may be used in aggregated, non-identifiable form for CSR reporting.",
+                    required: true
                 }
             ]
         },
@@ -94,7 +151,8 @@ const CDA = () => {
             consents: [
                 {
                     id: "dataRetention",
-                    label: "I understand that my data will be retained for five (5) years for audit, verification, and CSR reporting purposes."
+                    label: "I understand that my data will be retained for five (5) years for audit, verification, and CSR reporting purposes.",
+                    required: true
                 }
             ]
         },
@@ -104,7 +162,8 @@ const CDA = () => {
             consents: [
                 {
                     id: "publicityRights",
-                    label: "If selected, I grant Alert Group the right to use my name, image, academic info, and biography for CSR publicity."
+                    label: "If selected, I grant Alert Group the right to use my name, image, academic info, and biography for CSR publicity.",
+                    required: true
                 }
             ]
         },
@@ -114,11 +173,13 @@ const CDA = () => {
             consents: [
                 {
                     id: "verifyInformation",
-                    label: "I authorize Alert Group to verify all information provided."
+                    label: "I authorize Alert Group to verify all information provided.",
+                    required: true
                 },
                 {
                     id: "understandFalsification",
-                    label: "I understand that falsified information will lead to disqualification."
+                    label: "I understand that falsified information will lead to disqualification.",
+                    required: true
                 }
             ]
         },
@@ -128,11 +189,13 @@ const CDA = () => {
             consents: [
                 {
                     id: "infoTruthful",
-                    label: "I certify that all information provided is accurate."
+                    label: "I certify that all information provided is accurate.",
+                    required: true
                 },
                 {
                     id: "infoFalsePenalty",
-                    label: "I understand that false information will lead to disqualification."
+                    label: "I understand that false information will lead to disqualification.",
+                    required: true
                 }
             ]
         },
@@ -142,11 +205,13 @@ const CDA = () => {
             consents: [
                 {
                     id: "maintainCGPA",
-                    label: "I understand that I must maintain a CGPA of at least 4.0."
+                    label: "I understand that I must maintain a CGPA of at least 4.0.",
+                    required: true
                 },
                 {
                     id: "tuitionOnly",
-                    label: "The scholarship covers tuition fees only."
+                    label: "The scholarship covers tuition fees only.",
+                    required: true
                 }
             ]
         },
@@ -156,17 +221,33 @@ const CDA = () => {
             consents: [
                 {
                     id: "workCommitment",
-                    label: "I agree to the one-year post-graduation work commitment if a role is available."
+                    label: "I agree to the one-year post-graduation work commitment if a role is available.",
+                    required: true
                 },
                 {
                     id: "refundIfNoCommitment",
-                    label: "Failure to complete this commitment will require refunding scholarship funds."
+                    label: "Failure to complete this commitment will require refunding scholarship funds.",
+                    required: true
                 }
             ]
         }
     ];
 
-    const allConsentsAccepted = Object.values(consents).every(Boolean);
+    const getAcceptedCount = () => {
+        return Object.values(formData).filter(value => value).length;
+    };
+
+    const getTotalCount = () => {
+        return Object.keys(formData).length;
+    };
+
+    const getCompletionPercentage = () => {
+        return Math.round((getAcceptedCount() / getTotalCount()) * 100);
+    };
+
+    const isAllAccepted = () => {
+        return getAcceptedCount() === getTotalCount();
+    };
 
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-cyan-50 font-sans">
@@ -304,10 +385,28 @@ const CDA = () => {
 
                             {/* Form Fields */}
                             <div className="p-8">
+                                {/* Progress Overview */}
+                                <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                                        <div className="text-sm text-blue-600 font-medium">Completion</div>
+                                        <div className="text-2xl font-bold text-gray-900">{getCompletionPercentage()}%</div>
+                                    </div>
+                                    <div className="bg-amber-50 rounded-xl p-4 border border-amber-100">
+                                        <div className="text-sm text-amber-600 font-medium">Total Declarations</div>
+                                        <div className="text-2xl font-bold text-gray-900">{getTotalCount()}</div>
+                                    </div>
+                                    <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
+                                        <div className="text-sm text-emerald-600 font-medium">Accepted</div>
+                                        <div className="text-2xl font-bold text-gray-900">
+                                            {getAcceptedCount()} of {getTotalCount()}
+                                        </div>
+                                    </div>
+                                </div>
+
                                 {/* Important Legal Notice */}
                                 <div className="mb-8 bg-linear-to-r from-amber-50 to-orange-50 rounded-2xl p-6 border border-amber-200">
                                     <div className="flex items-start gap-4">
-                                        <AlertCircle className="w-6 h-6 text-amber-600 hrink-0" />
+                                        <AlertCircle className="w-6 h-6 text-amber-600 shrink-0" />
                                         <div>
                                             <h3 className="font-bold text-gray-900 mb-2">Important Legal Notice</h3>
                                             <p className="text-sm text-gray-600 mb-3">
@@ -322,21 +421,36 @@ const CDA = () => {
                                     </div>
                                 </div>
 
+                                {/* Validation Errors */}
+                                {validationErrors.length > 0 && (
+                                    <div className="mb-6 bg-linear-to-r from-red-50 to-pink-50 rounded-2xl p-4 border border-red-200">
+                                        <div className="flex items-center gap-3">
+                                            <AlertCircle className="w-5 h-5 text-red-600" />
+                                            <div>
+                                                <h3 className="font-bold text-gray-900">Action Required</h3>
+                                                {validationErrors.map((error, index) => (
+                                                    <p key={index} className="text-sm text-gray-600">{error}</p>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
                                 {/* Progress Indicator */}
                                 <div className="mb-8">
                                     <div className="flex items-center justify-between mb-2">
                                         <span className="text-sm font-medium text-gray-700">
-                                            Declaration Progress
+                                            Declaration Progress: {getCompletionPercentage()}%
                                         </span>
-                                        <span className="text-sm font-bold text-blue-600">
-                                            {Object.values(consents).filter(Boolean).length} of {Object.keys(consents).length} accepted
+                                        <span className="text-sm font-medium text-gray-700">
+                                            {getAcceptedCount()} of {getTotalCount()} declarations
                                         </span>
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-2">
                                         <motion.div
                                             className="bg-linear-to-r from-blue-500 to-cyan-400 h-2 rounded-full"
                                             initial={{ width: 0 }}
-                                            animate={{ width: `${(Object.values(consents).filter(Boolean).length / Object.keys(consents).length) * 100}%` }}
+                                            animate={{ width: `${getCompletionPercentage()}%` }}
                                             transition={{ duration: 0.5 }}
                                         />
                                     </div>
@@ -350,10 +464,16 @@ const CDA = () => {
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: sectionIndex * 0.1 }}
-                                            className="bg-linear-to-r from-gray-50 to-white rounded-2xl p-6 border border-gray-200 hover:border-blue-200 transition-all duration-300"
+                                            className={`bg-linear-to-r ${section.consents.every(consent => formData[consent.id]) 
+                                                ? 'from-emerald-50 to-green-50 border-emerald-200' 
+                                                : 'from-gray-50 to-white border-gray-200'
+                                            } rounded-2xl p-6 border hover:border-blue-200 transition-all duration-300`}
                                         >
                                             <div className="flex items-center gap-3 mb-6">
-                                                <div className="w-8 h-8 bg-linear-to-r from-blue-500 to-cyan-400 rounded-lg flex items-center justify-center">
+                                                <div className={`w-8 h-8 ${section.consents.every(consent => formData[consent.id]) 
+                                                    ? 'bg-linear-to-r from-emerald-500 to-green-400' 
+                                                    : 'bg-linear-to-r from-blue-500 to-cyan-400'
+                                                } rounded-lg flex items-center justify-center`}>
                                                     <span className="text-white font-bold">{section.id}</span>
                                                 </div>
                                                 <h3 className="text-xl font-bold text-gray-900">{section.title}</h3>
@@ -366,16 +486,20 @@ const CDA = () => {
                                                         initial={{ opacity: 0, x: -20 }}
                                                         animate={{ opacity: 1, x: 0 }}
                                                         transition={{ delay: (sectionIndex * 0.1) + (consentIndex * 0.05) }}
-                                                        className="flex items-start gap-4 p-4 bg-white rounded-xl border border-gray-100 hover:border-blue-100 transition-all"
+                                                        className={`flex items-start gap-4 p-4 ${formData[consent.id] 
+                                                            ? 'bg-emerald-50 border-emerald-200' 
+                                                            : 'bg-white border-gray-100'
+                                                        } rounded-xl border hover:border-blue-100 transition-all`}
                                                     >
                                                         <div className="mt-1">
                                                             <input
                                                                 type="checkbox"
                                                                 id={consent.id}
                                                                 name={consent.id}
-                                                                checked={consents[consent.id as keyof typeof consents]}
+                                                                checked={formData[consent.id]}
                                                                 onChange={handleConsentChange}
                                                                 className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                                                required={consent.required}
                                                             />
                                                         </div>
                                                         <div className="flex-1">
@@ -386,7 +510,7 @@ const CDA = () => {
                                                                 >
                                                                     {consent.label}
                                                                 </label>
-                                                                {consents[consent.id as keyof typeof consents] && (
+                                                                {formData[consent.id] && (
                                                                     <div className="p-1 bg-emerald-50 rounded-full ml-2">
                                                                         <CheckCircle className="w-5 h-5 text-emerald-500" />
                                                                     </div>
@@ -401,7 +525,7 @@ const CDA = () => {
                                 </div>
 
                                 {/* All Accepted Indicator */}
-                                {allConsentsAccepted && (
+                                {isAllAccepted() && (
                                     <motion.div
                                         initial={{ opacity: 0, scale: 0.9 }}
                                         animate={{ opacity: 1, scale: 1 }}
@@ -426,25 +550,27 @@ const CDA = () => {
                                     whileHover={{ scale: 1.02 }}
                                     className="mt-12"
                                 >
-                                    <Link
-                                        to="/applicant-signature"
-                                        className={`group w-full flex items-center justify-center gap-3 px-8 py-4 font-bold rounded-xl shadow-lg transition-all duration-300 ${
-                                            allConsentsAccepted
-                                                ? "bg-linear-to-r from-blue-600 to-cyan-500 text-white shadow-blue-200 hover:shadow-xl hover:shadow-blue-300"
-                                                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                                        }`}
-                                        onClick={(e) => {
-                                            if (!allConsentsAccepted) {
-                                                e.preventDefault();
-                                                setShowWarning(true);
-                                            }
-                                        }}
+                                    <button
+                                        type="submit"
+                                        disabled={isSubmitting || !isAllAccepted()}
+                                        onClick={handleSaveAndContinue}
+                                        className="group w-full cursor-pointer flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                                     >
-                                        <span>{allConsentsAccepted ? "Continue to Applicant Signature" : "Accept All Declarations to Continue"}</span>
-                                        {allConsentsAccepted && (
-                                            <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
+                                        {isSubmitting ? (
+                                            <>
+                                                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                                <span>Saving Declarations...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span>Save & Continue to Applicant Signature</span>
+                                                <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
+                                            </>
                                         )}
-                                    </Link>
+                                    </button>
                                 </motion.div>
 
                                 {/* Form Navigation */}
@@ -456,7 +582,7 @@ const CDA = () => {
                                         ← Back to Eligibility Verification
                                     </Link>
                                     <div className="text-sm text-gray-500">
-                                        Step 9 of 10 • Consent & Declaration
+                                        Step 9 of 10 • {getAcceptedCount()} of {getTotalCount()} declarations accepted
                                     </div>
                                 </div>
                             </div>
@@ -549,7 +675,10 @@ const CDA = () => {
                                 <p className="text-sm text-gray-600 mb-4">
                                     If you have questions about any declarations or need legal clarification, please contact our support team.
                                 </p>
-                                <button className="w-full px-4 py-2 bg-emerald-500 text-white text-sm font-semibold rounded-lg hover:bg-emerald-600 transition-colors">
+                                <button 
+                                    type="button"
+                                    className="w-full px-4 py-2 bg-emerald-500 text-white text-sm font-semibold rounded-lg hover:bg-emerald-600 transition-colors"
+                                >
                                     Contact Support
                                 </button>
                             </div>
@@ -561,4 +690,4 @@ const CDA = () => {
     );
 };
 
-export default CDA
+export default CDA;

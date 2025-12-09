@@ -1,69 +1,147 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { UserCheck, Phone, Mail, Briefcase, Users, ChevronRight, Sparkles, AlertCircle, Shield, FileText } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import {
+    UserCheck,
+    Phone,
+    Mail,
+    Briefcase,
+    Users,
+    ChevronRight,
+    Sparkles,
+    AlertCircle,
+    Shield,
+    FileText
+} from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import AlertLogo from "../assets/images/AlertLogo.jpg";
+import { useApplication } from "../context/ApplicationContext";
+
+interface FormData {
+    referee1Name: string;
+    referee1Phone: string;
+    referee1Email: string;
+    referee1Title: string;
+    referee1Relationship: string;
+    referee2Name: string;
+    referee2Phone: string;
+    referee2Email: string;
+    referee2Title: string;
+    referee2Relationship: string;
+}
+
+interface Step {
+    number: number;
+    label: string;
+    status: "completed" | "current" | "upcoming";
+}
+
+interface RefereeInfo {
+    label: string;
+    name: keyof FormData;
+    icon: React.ReactNode;
+    type?: 'text' | 'email' | 'tel' | 'select';
+    options?: string[];
+}
 
 const RCV = () => {
     const location = useLocation();
+    const navigate = useNavigate();
+    const { applicationData, updateRefereeContact } = useApplication();
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [location.pathname]);
 
-    const [formData, setFormData] = useState({
-        referee1Name: "",
-        referee1Phone: "",
-        referee1Email: "",
-        referee1Title: "",
-        referee1Relationship: "",
-        referee2Name: "",
-        referee2Phone: "",
-        referee2Email: "",
-        referee2Title: "",
-        referee2Relationship: "",
-    });
-
-    
+    const [formData, setFormData] = useState<FormData>(applicationData.refereeContact);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+
+        // Clear validation error for this field
+        if (validationErrors[name]) {
+            setValidationErrors(prev => {
+                const newErrors = { ...prev };
+                delete newErrors[name];
+                return newErrors;
+            });
+        }
+    };
+
+    const validateForm = (): boolean => {
+        const errors: Record<string, string> = {};
+
+        // Validate Referee 1
+        if (!formData.referee1Name.trim()) errors.referee1Name = "Referee name is required";
+        if (!formData.referee1Phone.trim()) errors.referee1Phone = "Phone number is required";
+        if (!formData.referee1Email.trim()) errors.referee1Email = "Email address is required";
+        if (!formData.referee1Title.trim()) errors.referee1Title = "Position/title is required";
+        if (!formData.referee1Relationship.trim()) errors.referee1Relationship = "Relationship is required";
+
+        // Validate Referee 2
+        if (!formData.referee2Name.trim()) errors.referee2Name = "Referee name is required";
+        if (!formData.referee2Phone.trim()) errors.referee2Phone = "Phone number is required";
+        if (!formData.referee2Email.trim()) errors.referee2Email = "Email address is required";
+        if (!formData.referee2Title.trim()) errors.referee2Title = "Position/title is required";
+        if (!formData.referee2Relationship.trim()) errors.referee2Relationship = "Relationship is required";
+
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (formData.referee1Email && !emailRegex.test(formData.referee1Email)) {
+            errors.referee1Email = "Invalid email format";
+        }
+        if (formData.referee2Email && !emailRegex.test(formData.referee2Email)) {
+            errors.referee2Email = "Invalid email format";
+        }
+
+        // Phone validation (basic Nigerian format)
+        const phoneRegex = /^\+?234[789]\d{9}$|^0[789]\d{9}$/;
+        if (formData.referee1Phone && !phoneRegex.test(formData.referee1Phone.replace(/\s/g, ''))) {
+            errors.referee1Phone = "Invalid phone number format. Use format: +2348012345678 or 08012345678";
+        }
+        if (formData.referee2Phone && !phoneRegex.test(formData.referee2Phone.replace(/\s/g, ''))) {
+            errors.referee2Phone = "Invalid phone number format. Use format: +2348012345678 or 08012345678";
+        }
+
+        setValidationErrors(errors);
+        return Object.keys(errors).length === 0;
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-       
+        setIsSubmitting(true);
 
-        // Validate required fields
-        const requiredFields = [
-            'referee1Name', 'referee1Phone', 'referee1Email', 'referee1Title', 'referee1Relationship',
-            'referee2Name', 'referee2Phone', 'referee2Email', 'referee2Title', 'referee2Relationship'
-        ];
-        
-        const allFieldsFilled = requiredFields.every(field => 
-            formData[field as keyof typeof formData].trim() !== ''
-        );
-        
-        if (!allFieldsFilled) {
-            alert("Please fill in all referee information before continuing.");
-            
+        if (!validateForm()) {
+            setIsSubmitting(false);
+            alert("Please fix the validation errors before continuing.");
             return;
         }
+
+        // Update context
+        updateRefereeContact(formData);
 
         // Simulate API call
         setTimeout(() => {
             console.log("Referee data submitted:", formData);
-           
+            setIsSubmitting(false);
             setShowSuccess(true);
 
             // Hide success message after 3 seconds
             setTimeout(() => setShowSuccess(false), 3000);
+
+            // Navigate to next page
+            navigate('/institutional-verification');
         }, 1500);
     };
 
-    // Consistent steps array
-    const steps = [
+    const handleSaveAndContinue = (e: React.FormEvent) => {
+        handleSubmit(e);
+    };
+
+    const steps: Step[] = [
         { number: 1, label: "Personal Info", status: "completed" },
         { number: 2, label: "Parent Info", status: "completed" },
         { number: 3, label: "Educational", status: "completed" },
@@ -106,6 +184,96 @@ const RCV = () => {
         "Community Leader",
         "Other"
     ];
+
+    const refereeFields: RefereeInfo[] = [
+        {
+            label: "Full Name",
+            name: "referee1Name",
+            icon: <UserCheck className="w-4 h-4" />,
+            type: 'text'
+        },
+        {
+            label: "Phone Number",
+            name: "referee1Phone",
+            icon: <Phone className="w-4 h-4" />,
+            type: 'tel'
+        },
+        {
+            label: "Email Address",
+            name: "referee1Email",
+            icon: <Mail className="w-4 h-4" />,
+            type: 'email'
+        },
+        {
+            label: "Position/Title",
+            name: "referee1Title",
+            icon: <Briefcase className="w-4 h-4" />,
+            type: 'select',
+            options: positions
+        },
+        {
+            label: "Relationship to Applicant",
+            name: "referee1Relationship",
+            icon: <Users className="w-4 h-4" />,
+            type: 'select',
+            options: relationships
+        },
+    ];
+
+    const getCompletionPercentage = () => {
+        const totalFields = Object.keys(formData).length;
+        const filledFields = Object.values(formData).filter(value => value.trim() !== '').length;
+        return Math.round((filledFields / totalFields) * 100);
+    };
+
+    const renderField = (field: RefereeInfo, isReferee2: boolean = false) => {
+        const fieldName = isReferee2 ? field.name.replace('1', '2') : field.name;
+        const value = formData[fieldName as keyof FormData];
+        const error = validationErrors[fieldName];
+
+        return (
+            <div className="space-y-2" key={fieldName}>
+                <label className="flex items-center gap-2 text-gray-700 font-medium">
+                    {field.icon}
+                    {field.label}
+                </label>
+                {field.type === 'select' ? (
+                    <>
+                        <select
+                            name={fieldName}
+                            value={value}
+                            onChange={handleChange}
+                            className={`w-full px-4 py-3 bg-gray-50 border ${error ? 'border-red-300' : 'border-gray-200'} rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                            required
+                        >
+                            <option value="">Select {field.label}</option>
+                            {field.options?.map(option => (
+                                <option key={option} value={option}>{option}</option>
+                            ))}
+                        </select>
+                        {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+                    </>
+                ) : (
+                    <>
+                        <input
+                            type={field.type || 'text'}
+                            name={fieldName}
+                            value={value}
+                            onChange={handleChange}
+                            placeholder={
+                                field.type === 'email' ? "referee@example.com" :
+                                    field.type === 'tel' ? "+2348012345678 or 08012345678" :
+                                        `Enter ${field.label.toLowerCase()}`
+                            }
+                            className={`w-full px-4 py-3 bg-gray-50 border ${error ? 'border-red-300' : 'border-gray-200'} rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+                            required
+                        />
+                        {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+                    </>
+                )}
+            </div>
+        );
+    };
 
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-cyan-50 font-sans">
@@ -166,13 +334,12 @@ const RCV = () => {
                             {steps.map((step, index) => (
                                 <div key={step.number} className="flex items-center">
                                     <div className="flex flex-col items-center">
-                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${
-                                            step.status === "current"
+                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${step.status === "current"
                                                 ? "bg-linear-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-200"
                                                 : step.number < 6
-                                                ? "bg-linear-to-r from-emerald-500 to-green-400 text-white shadow-lg shadow-emerald-200"
-                                                : "bg-gray-100 text-gray-400"
-                                        }`}>
+                                                    ? "bg-linear-to-r from-emerald-500 to-green-400 text-white shadow-lg shadow-emerald-200"
+                                                    : "bg-gray-100 text-gray-400"
+                                            }`}>
                                             {step.number < 6 ? (
                                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -220,6 +387,24 @@ const RCV = () => {
 
                             {/* Form Fields */}
                             <div className="p-8">
+                                {/* Progress Overview */}
+                                <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                                        <div className="text-sm text-blue-600 font-medium">Form Completion</div>
+                                        <div className="text-2xl font-bold text-gray-900">{getCompletionPercentage()}%</div>
+                                    </div>
+                                    <div className="bg-amber-50 rounded-xl p-4 border border-amber-100">
+                                        <div className="text-sm text-amber-600 font-medium">Required Fields</div>
+                                        <div className="text-2xl font-bold text-gray-900">10</div>
+                                    </div>
+                                    <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
+                                        <div className="text-sm text-emerald-600 font-medium">Filled Fields</div>
+                                        <div className="text-2xl font-bold text-gray-900">
+                                            {Object.values(formData).filter(value => value.trim() !== '').length} of 10
+                                        </div>
+                                    </div>
+                                </div>
+
                                 {/* Important Note */}
                                 <div className="mb-8 bg-linear-to-r from-purple-50 to-indigo-50 rounded-2xl p-4 border border-purple-200">
                                     <div className="flex items-center gap-3">
@@ -247,91 +432,11 @@ const RCV = () => {
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div className="space-y-2">
-                                            <label className="flex items-center gap-2 text-gray-700 font-medium">
-                                                <UserCheck className="w-4 h-4" />
-                                                Full Name
-                                            </label>
-                                            <input
-                                                type="text"
-                                                name="referee1Name"
-                                                value={formData.referee1Name}
-                                                onChange={handleChange}
-                                                placeholder="Enter referee's full name"
-                                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                                required
-                                            />
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label className="flex items-center gap-2 text-gray-700 font-medium">
-                                                <Phone className="w-4 h-4" />
-                                                Phone Number
-                                            </label>
-                                            <input
-                                                type="tel"
-                                                name="referee1Phone"
-                                                value={formData.referee1Phone}
-                                                onChange={handleChange}
-                                                placeholder="+234 801 234 5678"
-                                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                                required
-                                            />
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label className="flex items-center gap-2 text-gray-700 font-medium">
-                                                <Mail className="w-4 h-4" />
-                                                Email Address
-                                            </label>
-                                            <input
-                                                type="email"
-                                                name="referee1Email"
-                                                value={formData.referee1Email}
-                                                onChange={handleChange}
-                                                placeholder="referee@example.com"
-                                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                                required
-                                            />
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label className="flex items-center gap-2 text-gray-700 font-medium">
-                                                <Briefcase className="w-4 h-4" />
-                                                Position/Title
-                                            </label>
-                                            <select
-                                                name="referee1Title"
-                                                value={formData.referee1Title}
-                                                onChange={handleChange}
-                                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                required
-                                            >
-                                                <option value="">Select Position</option>
-                                                {positions.map(position => (
-                                                    <option key={position} value={position}>{position}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-
-                                        <div className="md:col-span-2 space-y-2">
-                                            <label className="flex items-center gap-2 text-gray-700 font-medium">
-                                                <Users className="w-4 h-4" />
-                                                Relationship to Applicant
-                                            </label>
-                                            <select
-                                                name="referee1Relationship"
-                                                value={formData.referee1Relationship}
-                                                onChange={handleChange}
-                                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                required
-                                            >
-                                                <option value="">Select Relationship</option>
-                                                {relationships.map(relationship => (
-                                                    <option key={relationship} value={relationship}>{relationship}</option>
-                                                ))}
-                                            </select>
-                                        </div>
+                                        {refereeFields.map((field, index) => (
+                                            <div key={field.name} className={index >= 3 ? 'md:col-span-2' : ''}>
+                                                {renderField(field)}
+                                            </div>
+                                        ))}
                                     </div>
                                 </motion.div>
 
@@ -350,106 +455,58 @@ const RCV = () => {
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div className="space-y-2">
-                                            <label className="flex items-center gap-2 text-gray-700 font-medium">
-                                                <UserCheck className="w-4 h-4" />
-                                                Full Name
-                                            </label>
-                                            <input
-                                                type="text"
-                                                name="referee2Name"
-                                                value={formData.referee2Name}
-                                                onChange={handleChange}
-                                                placeholder="Enter referee's full name"
-                                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                                required
-                                            />
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label className="flex items-center gap-2 text-gray-700 font-medium">
-                                                <Phone className="w-4 h-4" />
-                                                Phone Number
-                                            </label>
-                                            <input
-                                                type="tel"
-                                                name="referee2Phone"
-                                                value={formData.referee2Phone}
-                                                onChange={handleChange}
-                                                placeholder="+234 801 234 5678"
-                                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                                required
-                                            />
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label className="flex items-center gap-2 text-gray-700 font-medium">
-                                                <Mail className="w-4 h-4" />
-                                                Email Address
-                                            </label>
-                                            <input
-                                                type="email"
-                                                name="referee2Email"
-                                                value={formData.referee2Email}
-                                                onChange={handleChange}
-                                                placeholder="referee@example.com"
-                                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                                required
-                                            />
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label className="flex items-center gap-2 text-gray-700 font-medium">
-                                                <Briefcase className="w-4 h-4" />
-                                                Position/Title
-                                            </label>
-                                            <select
-                                                name="referee2Title"
-                                                value={formData.referee2Title}
-                                                onChange={handleChange}
-                                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                required
-                                            >
-                                                <option value="">Select Position</option>
-                                                {positions.map(position => (
-                                                    <option key={position} value={position}>{position}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-
-                                        <div className="md:col-span-2 space-y-2">
-                                            <label className="flex items-center gap-2 text-gray-700 font-medium">
-                                                <Users className="w-4 h-4" />
-                                                Relationship to Applicant
-                                            </label>
-                                            <select
-                                                name="referee2Relationship"
-                                                value={formData.referee2Relationship}
-                                                onChange={handleChange}
-                                                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                required
-                                            >
-                                                <option value="">Select Relationship</option>
-                                                {relationships.map(relationship => (
-                                                    <option key={relationship} value={relationship}>{relationship}</option>
-                                                ))}
-                                            </select>
-                                        </div>
+                                        {refereeFields.map((field, index) => (
+                                            <div key={`${field.name}-2`} className={index >= 3 ? 'md:col-span-2' : ''}>
+                                                {renderField(field, true)}
+                                            </div>
+                                        ))}
                                     </div>
                                 </motion.div>
+
+                                {/* Progress Bar */}
+                                <div className="mt-8">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-sm font-medium text-gray-700">
+                                            Form Completion: {getCompletionPercentage()}%
+                                        </span>
+                                        <span className="text-sm font-medium text-gray-700">
+                                            {Object.values(formData).filter(value => value.trim() !== '').length} of 10 fields
+                                        </span>
+                                    </div>
+                                    <div className="w-full bg-gray-200 rounded-full h-2">
+                                        <div
+                                            className="bg-linear-to-r from-blue-500 to-cyan-400 h-2 rounded-full transition-all duration-500"
+                                            style={{ width: `${getCompletionPercentage()}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
 
                                 {/* Continue Button */}
                                 <motion.div
                                     whileHover={{ scale: 1.02 }}
                                     className="mt-12"
                                 >
-                                    <Link
-                                        to="/institutional-verification"
-                                        className="group w-full flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all duration-300"
+                                    <button
+                                        type="submit"
+                                        disabled={isSubmitting || getCompletionPercentage() < 100}
+                                        onClick={handleSaveAndContinue}
+                                        className="group w-full cursor-pointer flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                                     >
-                                        <span>Continue to Institutional Verification</span>
-                                        <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
-                                    </Link>
+                                        {isSubmitting ? (
+                                            <>
+                                                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                                <span>Saving...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span>Save & Continue to Institutional Verification</span>
+                                                <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
+                                            </>
+                                        )}
+                                    </button>
                                 </motion.div>
 
                                 {/* Form Navigation */}
@@ -461,7 +518,7 @@ const RCV = () => {
                                         ← Back to Documents Upload
                                     </Link>
                                     <div className="text-sm text-gray-500">
-                                        Step 6 of 10 • Referee Contact Verification
+                                        Step 6 of 10 • {getCompletionPercentage()}% Complete
                                     </div>
                                 </div>
                             </div>
@@ -554,7 +611,10 @@ const RCV = () => {
                                 <p className="text-sm text-gray-600 mb-4">
                                     If you have questions about selecting referees or providing their information, contact our support team.
                                 </p>
-                                <button className="w-full px-4 py-2 bg-emerald-500 text-white text-sm font-semibold rounded-lg hover:bg-emerald-600 transition-colors">
+                                <button
+                                    type="button"
+                                    className="w-full px-4 py-2 bg-emerald-500 text-white text-sm font-semibold rounded-lg hover:bg-emerald-600 transition-colors"
+                                >
                                     Contact Support
                                 </button>
                             </div>

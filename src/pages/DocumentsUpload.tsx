@@ -1,71 +1,152 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FileCheck, FileText, Upload, ChevronRight, Sparkles, AlertCircle, CheckCircle, Shield } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { 
+    FileCheck, 
+    FileText, 
+    Upload, 
+    ChevronRight, 
+    Sparkles, 
+    AlertCircle, 
+    CheckCircle, 
+    Shield,
+    X
+} from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import AlertLogo from "../assets/images/AlertLogo.png";
+import { useApplication } from "../context/ApplicationContext";
+
+interface FormData {
+    birthCertificate: File | null;
+    nationalId: File | null;
+    studentId: File | null;
+    passportPhoto: File | null;
+    admissionLetter: File | null;
+    transcript: File | null;
+    incomeDeclaration: File | null;
+    recommendationFaculty: File | null;
+    recommendationCommunity: File | null;
+}
+
+interface DocumentRequirement {
+    name: keyof FormData;
+    title: string;
+    description: string;
+    format: string;
+    required: boolean;
+    accept: string;
+}
+
+interface Step {
+    number: number;
+    label: string;
+    status: "completed" | "current" | "upcoming";
+}
 
 const DocumentsUpload = () => {
     const location = useLocation();
+    const navigate = useNavigate();
+    const { applicationData, updateDocuments } = useApplication();
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [location.pathname]);
 
-    const [formData, setFormData] = useState({
-        birthCertificate: null as File | null,
-        nationalId: null as File | null,
-        studentId: null as File | null,
-        passportPhoto: null as File | null,
-        admissionLetter: null as File | null,
-        transcript: null as File | null,
-        incomeDeclaration: null as File | null,
-        recommendationFaculty: null as File | null,
-        recommendationCommunity: null as File | null,
+    const [formData, setFormData] = useState<FormData>(applicationData.documents);
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [uploadStatus, setUploadStatus] = useState<Record<keyof FormData, boolean>>({
+        birthCertificate: !!applicationData.documents.birthCertificate,
+        nationalId: !!applicationData.documents.nationalId,
+        studentId: !!applicationData.documents.studentId,
+        passportPhoto: !!applicationData.documents.passportPhoto,
+        admissionLetter: !!applicationData.documents.admissionLetter,
+        transcript: !!applicationData.documents.transcript,
+        incomeDeclaration: !!applicationData.documents.incomeDeclaration,
+        recommendationFaculty: !!applicationData.documents.recommendationFaculty,
+        recommendationCommunity: !!applicationData.documents.recommendationCommunity,
     });
 
-    const [showSuccess, setShowSuccess] = useState(false);
-    const [uploadStatus, setUploadStatus] = useState<Record<string, boolean>>({});
+    useEffect(() => {
+        // Update upload status when formData changes
+        setUploadStatus({
+            birthCertificate: !!formData.birthCertificate,
+            nationalId: !!formData.nationalId,
+            studentId: !!formData.studentId,
+            passportPhoto: !!formData.passportPhoto,
+            admissionLetter: !!formData.admissionLetter,
+            transcript: !!formData.transcript,
+            incomeDeclaration: !!formData.incomeDeclaration,
+            recommendationFaculty: !!formData.recommendationFaculty,
+            recommendationCommunity: !!formData.recommendationCommunity,
+        });
+    }, [formData]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, files } = e.target;
         if (files && files[0]) {
-            setFormData(prev => ({ ...prev, [name]: files[0] }));
-            setUploadStatus(prev => ({ ...prev, [name]: true }));
+            const file = files[0];
+            const documentType = name as keyof FormData;
+            
+            // Validate file size (5MB max)
+            if (file.size > 5 * 1024 * 1024) {
+                alert(`File size must be less than 5MB for ${documentRequirements.find(doc => doc.name === name)?.title}`);
+                return;
+            }
+
+            const updatedFormData = { ...formData, [name]: file };
+            setFormData(updatedFormData);
+            
+            // Update context
+            updateDocuments({ [name]: file });
         }
+    };
+
+    const handleRemoveFile = (name: keyof FormData) => {
+        const updatedFormData = { ...formData, [name]: null };
+        setFormData(updatedFormData);
+        
+        // Update context
+        updateDocuments({ [name]: null });
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        
+        setIsSubmitting(true);
 
         // Validate that all required files are uploaded
-        const requiredFiles = [
-            'birthCertificate', 'nationalId', 'studentId', 'passportPhoto',
-            'admissionLetter', 'transcript', 'incomeDeclaration'
-        ];
+        const requiredFiles = documentRequirements
+            .filter(doc => doc.required)
+            .map(doc => doc.name);
+        
         const allRequiredUploaded = requiredFiles.every(fileName =>
-            formData[fileName as keyof typeof formData] !== null
+            formData[fileName as keyof FormData] !== null
         );
 
         if (!allRequiredUploaded) {
             alert("Please upload all required documents before continuing.");
-            
+            setIsSubmitting(false);
             return;
         }
 
         // Simulate API call
         setTimeout(() => {
             console.log("Documents submitted:", formData);
-           
+            setIsSubmitting(false);
             setShowSuccess(true);
 
             // Hide success message after 3 seconds
             setTimeout(() => setShowSuccess(false), 3000);
+
+            // Navigate to next page
+            navigate('/referre-contact-verification');
         }, 1500);
     };
 
-    // Consistent steps array
-    const steps = [
+    const handleSaveAndContinue = (e: React.FormEvent) => {
+        handleSubmit(e);
+    };
+
+    const steps: Step[] = [
         { number: 1, label: "Personal Info", status: "completed" },
         { number: 2, label: "Parent Info", status: "completed" },
         { number: 3, label: "Educational", status: "completed" },
@@ -78,71 +159,103 @@ const DocumentsUpload = () => {
         { number: 10, label: "Applicant Signature", status: "upcoming" },
     ];
 
-    const documentRequirements = [
+    const documentRequirements: DocumentRequirement[] = [
         {
             name: "birthCertificate",
             title: "Birth Certificate or Affidavit",
             description: "Official birth certificate or sworn affidavit of age declaration",
             format: "PDF, JPG, or PNG",
-            required: true
+            required: true,
+            accept: ".pdf,.jpg,.jpeg,.png"
         },
         {
             name: "nationalId",
             title: "Valid National ID",
             description: "NIN Slip, Voter Card, International Passport, or Driver's License",
             format: "PDF, JPG, or PNG",
-            required: true
+            required: true,
+            accept: ".pdf,.jpg,.jpeg,.png"
         },
         {
             name: "studentId",
             title: "Student ID Card",
             description: "Current academic session student identification card",
             format: "PDF, JPG, or PNG",
-            required: true
+            required: true,
+            accept: ".pdf,.jpg,.jpeg,.png"
         },
         {
             name: "passportPhoto",
             title: "Passport Photograph",
             description: "Recent passport photograph on white background",
             format: "JPG or PNG",
-            required: true
+            required: true,
+            accept: ".jpg,.jpeg,.png"
         },
         {
             name: "admissionLetter",
             title: "Official Admission Letter",
             description: "Letter of admission from your institution",
             format: "PDF, JPG, or PNG",
-            required: true
+            required: true,
+            accept: ".pdf,.jpg,.jpeg,.png"
         },
         {
             name: "transcript",
             title: "Most Recent Academic Transcript",
             description: "Official transcript showing CGPA and academic performance",
             format: "PDF, JPG, or PNG",
-            required: true
+            required: true,
+            accept: ".pdf,.jpg,.jpeg,.png"
         },
         {
             name: "incomeDeclaration",
             title: "Parent/Guardian Income Declaration",
             description: "Proof of income or affidavit of financial status",
             format: "PDF, JPG, or PNG",
-            required: true
+            required: true,
+            accept: ".pdf,.jpg,.jpeg,.png"
         },
         {
             name: "recommendationFaculty",
             title: "Recommendation Letter – Faculty Member",
             description: "Letter from a lecturer or academic advisor",
             format: "PDF, JPG, or PNG",
-            required: false
+            required: false,
+            accept: ".pdf,.jpg,.jpeg,.png"
         },
         {
             name: "recommendationCommunity",
             title: "Recommendation Letter – Community Leader/Mentor",
             description: "Letter from community leader, religious leader, or mentor",
             format: "PDF, JPG, or PNG",
-            required: false
+            required: false,
+            accept: ".pdf,.jpg,.jpeg,.png"
         },
     ];
+
+    const formatFileSize = (bytes: number): string => {
+        if (bytes < 1024) return bytes + ' bytes';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+        return (bytes / 1024 / 1024).toFixed(2) + ' MB';
+    };
+
+    const getRequiredCount = () => {
+        return documentRequirements.filter(doc => doc.required).length;
+    };
+
+    const getUploadedCount = () => {
+        return Object.values(uploadStatus).filter(status => status).length;
+    };
+
+    const getRequiredUploadedCount = () => {
+        const requiredDocs = documentRequirements.filter(doc => doc.required).map(doc => doc.name);
+        return requiredDocs.filter(docName => uploadStatus[docName as keyof typeof uploadStatus]).length;
+    };
+
+    const isAllRequiredUploaded = () => {
+        return getRequiredUploadedCount() === getRequiredCount();
+    };
 
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-cyan-50 font-sans">
@@ -269,6 +382,24 @@ const DocumentsUpload = () => {
                                     </div>
                                 </div>
 
+                                {/* Progress Overview */}
+                                <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                                        <div className="text-sm text-blue-600 font-medium">Total Documents</div>
+                                        <div className="text-2xl font-bold text-gray-900">{documentRequirements.length}</div>
+                                    </div>
+                                    <div className="bg-amber-50 rounded-xl p-4 border border-amber-100">
+                                        <div className="text-sm text-amber-600 font-medium">Required Documents</div>
+                                        <div className="text-2xl font-bold text-gray-900">{getRequiredCount()}</div>
+                                    </div>
+                                    <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
+                                        <div className="text-sm text-emerald-600 font-medium">Uploaded Required</div>
+                                        <div className="text-2xl font-bold text-gray-900">
+                                            {getRequiredUploadedCount()} of {getRequiredCount()}
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div className="space-y-6">
                                     {documentRequirements.map((doc, index) => (
                                         <motion.div
@@ -280,7 +411,7 @@ const DocumentsUpload = () => {
                                         >
                                             <div className="flex items-start justify-between mb-4">
                                                 <div className="flex-1">
-                                                    <div className="flex items-center gap-2 mb-2">
+                                                    <div className="flex justify-between items-center gap-2 mb-2">
                                                         <h3 className="text-lg font-bold text-gray-900">
                                                             {doc.title}
                                                             {doc.required && <span className="text-red-500 ml-1">*</span>}
@@ -292,15 +423,19 @@ const DocumentsUpload = () => {
                                                         )}
                                                     </div>
                                                     <p className="text-gray-600 mb-2">{doc.description}</p>
-                                                    <div className="flex items-center gap-4 text-sm text-gray-500">
-                                                        <span className="flex items-center gap-1">
+                                                    <div className="flex flex-wrap items-center gap-4 text-sm">
+                                                        <span className="flex items-center gap-1 text-gray-500">
                                                             <FileText className="w-3 h-3" />
                                                             {doc.format}
                                                         </span>
-                                                        {doc.required && (
+                                                        {doc.required ? (
                                                             <span className="flex items-center gap-1 bg-blue-50 text-blue-600 px-2 py-1 rounded-full">
                                                                 <Shield className="w-3 h-3" />
                                                                 Required
+                                                            </span>
+                                                        ) : (
+                                                            <span className="flex items-center gap-1 bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                                                                Optional
                                                             </span>
                                                         )}
                                                     </div>
@@ -311,32 +446,49 @@ const DocumentsUpload = () => {
                                                 <label className="block text-gray-700 font-medium mb-2">
                                                     Upload Document:
                                                 </label>
-                                                <div className="flex items-center gap-4">
-                                                    <label className="flex-1 cursor-pointer">
-                                                        <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 hover:border-blue-400 transition-colors text-center">
-                                                            <input
-                                                                type="file"
-                                                                name={doc.name}
-                                                                accept={doc.name === "passportPhoto" ? ".jpg,.jpeg,.png" : ".pdf,.jpg,.jpeg,.png"}
-                                                                onChange={handleFileChange}
-                                                                className="hidden"
-                                                                required={doc.required}
-                                                            />
-                                                            <div className="flex flex-col items-center gap-2">
-                                                                <Upload className="w-8 h-8 text-gray-400" />
-                                                                <div>
-                                                                    <p className="text-gray-700 font-medium">Click to upload</p>
-                                                                    <p className="text-sm text-gray-500">Max 5MB • {doc.format}</p>
+                                                <div className="flex flex-col items-center gap-4">
+                                                    {!formData[doc.name] ? (
+                                                        <label className="flex-1 w-full cursor-pointer">
+                                                            <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 hover:border-blue-400 transition-colors text-center">
+                                                                <input
+                                                                    type="file"
+                                                                    name={doc.name}
+                                                                    accept={doc.accept}
+                                                                    onChange={handleFileChange}
+                                                                    className="hidden"
+                                                                    required={doc.required}
+                                                                />
+                                                                <div className="flex flex-col items-center gap-2">
+                                                                    <Upload className="w-8 h-8 text-gray-400" />
+                                                                    <div>
+                                                                        <p className="text-gray-700 font-medium">Click to upload</p>
+                                                                        <p className="text-sm text-gray-500">Max 5MB • {doc.format}</p>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    </label>
-                                                    {formData[doc.name as keyof typeof formData] && (
-                                                        <div className="text-sm text-gray-600">
-                                                            <p className="font-medium">Selected:</p>
-                                                            <p className="truncate max-w-[200px]">
-                                                                {(formData[doc.name as keyof typeof formData] as File)?.name}
-                                                            </p>
+                                                        </label>
+                                                    ) : (
+                                                        <div className="w-full">
+                                                            <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                                                                <div className="flex items-center gap-3">
+                                                                    <FileText className="w-5 h-5 text-emerald-600" />
+                                                                    <div>
+                                                                        <p className="font-medium text-gray-900 truncate max-w-[200px]">
+                                                                            {formData[doc.name]?.name}
+                                                                        </p>
+                                                                        <p className="text-sm text-gray-500">
+                                                                            {formatFileSize(formData[doc.name]!.size)}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => handleRemoveFile(doc.name)}
+                                                                    className="p-1 hover:bg-emerald-100 rounded-full transition-colors"
+                                                                >
+                                                                    <X className="w-4 h-4 text-emerald-600" />
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     )}
                                                 </div>
@@ -345,18 +497,55 @@ const DocumentsUpload = () => {
                                     ))}
                                 </div>
 
+                                {/* Progress Bar */}
+                                <div className="mt-8">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-sm font-medium text-gray-700">
+                                            Required Documents: {getRequiredUploadedCount()} of {getRequiredCount()}
+                                        </span>
+                                        <span className="text-sm font-medium text-gray-700">
+                                            {getRequiredCount() > 0 ? 
+                                                Math.round((getRequiredUploadedCount() / getRequiredCount()) * 100) : 0
+                                            }%
+                                        </span>
+                                    </div>
+                                    <div className="w-full bg-gray-200 rounded-full h-2">
+                                        <div 
+                                            className="bg-linear-to-r from-blue-500 to-cyan-400 h-2 rounded-full transition-all duration-500"
+                                            style={{ 
+                                                width: getRequiredCount() > 0 ? 
+                                                    `${(getRequiredUploadedCount() / getRequiredCount()) * 100}%` : '0%'
+                                            }}
+                                        ></div>
+                                    </div>
+                                </div>
+
                                 {/* Continue Button */}
                                 <motion.div
                                     whileHover={{ scale: 1.02 }}
                                     className="mt-12"
                                 >
-                                    <Link
-                                        to="/referre-contact-verification"
-                                        className="group w-full flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all duration-300"
+                                    <button
+                                        type="submit"
+                                        disabled={isSubmitting || !isAllRequiredUploaded()}
+                                        onClick={handleSaveAndContinue}
+                                        className="group w-full cursor-pointer flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                                     >
-                                        <span>Continue to Referee Contact Verification</span>
-                                        <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
-                                    </Link>
+                                        {isSubmitting ? (
+                                            <>
+                                                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                                <span>Uploading...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span>Save & Continue to Referee Contact</span>
+                                                <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
+                                            </>
+                                        )}
+                                    </button>
                                 </motion.div>
 
                                 {/* Form Navigation */}
@@ -368,7 +557,7 @@ const DocumentsUpload = () => {
                                         ← Back to Assessment
                                     </Link>
                                     <div className="text-sm text-gray-500">
-                                        Step 5 of 10 • Documents Upload
+                                        Step 5 of 10 • {getRequiredUploadedCount()} of {getRequiredCount()} required documents uploaded
                                     </div>
                                 </div>
                             </div>
@@ -461,7 +650,10 @@ const DocumentsUpload = () => {
                                 <p className="text-sm text-gray-600 mb-4">
                                     If you're having trouble with document uploads or need clarification, contact our support team.
                                 </p>
-                                <button className="w-full px-4 py-2 bg-emerald-500 text-white text-sm font-semibold rounded-lg hover:bg-emerald-600 transition-colors">
+                                <button 
+                                    type="button"
+                                    className="w-full px-4 py-2 bg-emerald-500 text-white text-sm font-semibold rounded-lg hover:bg-emerald-600 transition-colors"
+                                >
                                     Contact Support
                                 </button>
                             </div>

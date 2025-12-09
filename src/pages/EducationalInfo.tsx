@@ -1,46 +1,79 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GraduationCap, BookOpen, School, Calendar, Award, ChevronRight, Sparkles, Target, Users } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import AlertLogo from "../assets/images/AlertLogo.png";
+import { useApplication } from "../context/ApplicationContext";
 
 const EducationalInfo = () => {
     const location = useLocation();
+    const navigate = useNavigate();
+    const { applicationData, updateEducationalInfo } = useApplication();
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [location.pathname]);
 
-    const [formData, setFormData] = useState({
-        institutionType: "",
-        institutionName: "",
-        course: "",
-        admissionYear: "",
-        currentLevel: "",
-        matricNo: "",
-        cgpa: "",
-    });
-
-    
+    const [formData, setFormData] = useState(applicationData.educationalInfo);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        const updatedData = { ...formData, [name]: value };
+        setFormData(updatedData);
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-       
+        setIsSaving(true);
+
+        // Validate required fields
+        const requiredFields = ['institutionType', 'institutionName', 'course', 'admissionYear', 'currentLevel', 'matricNo', 'cgpa'];
+        const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
+        
+        if (missingFields.length > 0) {
+            alert(`Please fill in all required fields: ${missingFields.join(', ')}`);
+            setIsSaving(false);
+            return;
+        }
+
+        // Validate CGPA is within range
+        const cgpa = parseFloat(formData.cgpa);
+        if (isNaN(cgpa) || cgpa < 0 || cgpa > 5) {
+            alert("Please enter a valid CGPA between 0 and 5.0");
+            setIsSaving(false);
+            return;
+        }
+
+        // Validate admission year
+        const currentYear = new Date().getFullYear();
+        const admissionYear = parseInt(formData.admissionYear);
+        if (admissionYear < 1990 || admissionYear > currentYear) {
+            alert(`Please enter a valid admission year between 1990 and ${currentYear}`);
+            setIsSaving(false);
+            return;
+        }
+
+        // Save to global state
+        updateEducationalInfo(formData);
 
         // Simulate API call
         setTimeout(() => {
-            console.log("Form submitted:", formData);
-            
+            console.log("Educational info saved:", formData);
+            setIsSaving(false);
             setShowSuccess(true);
 
             // Hide success message after 3 seconds
             setTimeout(() => setShowSuccess(false), 3000);
-        }, 1500);
+
+            // Navigate to next page
+            navigate('/assessment');
+        }, 1000);
+    };
+
+    const handleSaveAndContinue = (e: React.FormEvent) => {
+        handleSubmit(e);
     };
 
     // Consistent steps array
@@ -80,6 +113,8 @@ const EducationalInfo = () => {
         { value: "HND I", label: "HND I" },
         { value: "HND II", label: "HND II" },
     ];
+
+    const currentYear = new Date().getFullYear()
 
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-cyan-50 font-sans">
@@ -140,7 +175,8 @@ const EducationalInfo = () => {
                             {steps.map((step, index) => (
                                 <div key={step.number} className="flex items-center">
                                     <div className="flex flex-col items-center">
-                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${step.status === "current"
+                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${
+                                            step.status === "current"
                                                 ? "bg-linear-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-200"
                                                 : step.number < 3
                                                     ? "bg-linear-to-r from-emerald-500 to-green-400 text-white shadow-lg shadow-emerald-200"
@@ -261,7 +297,7 @@ const EducationalInfo = () => {
                                             onChange={handleChange}
                                             placeholder="e.g. 2021"
                                             min="1990"
-                                            max={new Date().getFullYear()}
+                                            max={currentYear}
                                             className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                                             required
                                         />
@@ -333,13 +369,27 @@ const EducationalInfo = () => {
                                     whileHover={{ scale: 1.02 }}
                                     className="mt-12"
                                 >
-                                    <Link
-                                        to="/assessment"
-                                        className="group w-full flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all duration-300"
+                                    <button
+                                        type="submit"
+                                        disabled={isSaving}
+                                        onClick={handleSaveAndContinue}
+                                        className="group w-full cursor-pointer flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                                     >
-                                        <span>Continue to Assessment</span>
-                                        <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
-                                    </Link>
+                                        {isSaving ? (
+                                            <>
+                                                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                                <span>Saving...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span>Save & Continue to Assessment</span>
+                                                <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
+                                            </>
+                                        )}
+                                    </button>
                                 </motion.div>
 
                                 {/* Form Navigation */}
@@ -436,7 +486,7 @@ const EducationalInfo = () => {
                             </div>
 
                             {/* Help Card */}
-                            <div className="bg-linear from-emerald-50 to-teal-50 rounded-3xl p-6 border border-emerald-100">
+                            <div className="bg-linear-to-r from-emerald-50 to-teal-50 rounded-3xl p-6 border border-emerald-100">
                                 <h4 className="font-bold text-gray-900 mb-2">Need Assistance?</h4>
                                 <p className="text-sm text-gray-600 mb-4">
                                     Having trouble with your academic information? Our support team is here to help.

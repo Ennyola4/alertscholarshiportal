@@ -1,55 +1,66 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BookOpen, User, Phone, Mail, Calendar, MapPin, Home, ChevronRight, Sparkles, GraduationCap, Target } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import AlertLogo from "../assets/images/AlertLogo.png";
+import { useApplication } from "../context/ApplicationContext"; // Add this import
 
 const PersonalInfo = () => {
     const location = useLocation();
+    const navigate = useNavigate();
+    const { applicationData, updatePersonalInfo } = useApplication(); // Use the context
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [location.pathname]);
 
-    const [formData, setFormData] = useState({
-        fullName: "",
-        phone: "",
-        email: "",
-        dob: "",
-        gender: "",
-        state: "",
-        lga: "",
-        address: "",
-        parentName: "",
-        relationship: "",
-        fatherOccupation: "",
-        motherOccupation: "",
-        parentPhone: "",
-        income: "",
-    });
-
+    // Initialize form data from global state
+    const [formData, setFormData] = useState(applicationData.personalInfo);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        const updatedData = { ...formData, [name]: value };
+        setFormData(updatedData);
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        
+        setIsSaving(true);
+
+        // Validate required fields
+        const requiredFields = ['fullName', 'phone', 'email', 'dob', 'gender', 'state', 'lga', 'address'];
+        const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
+
+        if (missingFields.length > 0) {
+            alert(`Please fill in all required fields: ${missingFields.join(', ')}`);
+            setIsSaving(false);
+            return;
+        }
+
+        // Save to global state
+        updatePersonalInfo(formData);
 
         // Simulate API call
         setTimeout(() => {
-            console.log("Form submitted:", formData);
-            
+            console.log("Personal info saved:", formData);
+            setIsSaving(false);
             setShowSuccess(true);
 
             // Hide success message after 3 seconds
-            setTimeout(() => setShowSuccess(false), 3000);
-        }, 1500);
+            setTimeout(() => setShowSuccess(false), 5000);
+
+            // Navigate to next page
+            navigate('/parent-info');
+        }, 5000);
     };
 
-    // Corrected 11 steps array
+    const handleSaveAndContinue = (e: React.FormEvent) => {
+        handleSubmit(e);
+    };
+
+    //  steps array
     const steps = [
         { number: 1, label: "Personal Info", status: "current" },
         { number: 2, label: "Parent Info", status: "upcoming" },
@@ -130,13 +141,12 @@ const PersonalInfo = () => {
                             {steps.map((step, index) => (
                                 <div key={step.number} className="flex items-center">
                                     <div className="flex flex-col items-center">
-                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${
-                                            step.status === "current"
+                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${step.status === "current"
                                                 ? "bg-linear-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-200"
                                                 : step.number < 1
-                                                ? "bg-linear-to-r from-emerald-500 to-green-400 text-white shadow-lg shadow-emerald-200"
-                                                : "bg-gray-100 text-gray-400"
-                                        }`}>
+                                                    ? "bg-linear-to-r from-emerald-500 to-green-400 text-white shadow-lg shadow-emerald-200"
+                                                    : "bg-gray-100 text-gray-400"
+                                            }`}>
                                             {step.number < 1 ? (
                                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -177,7 +187,7 @@ const PersonalInfo = () => {
                                     </div>
                                     <div>
                                         <h2 className="text-2xl font-bold text-gray-900">Personal Details</h2>
-                                        <p className="text-gray-600">Step 1 of 11 - Fill in your basic information</p>
+                                        <p className="text-gray-600">Step 1 of 10 - Fill in your basic information</p>
                                     </div>
                                 </div>
                             </div>
@@ -331,19 +341,33 @@ const PersonalInfo = () => {
                                     whileHover={{ scale: 1.02 }}
                                     className="mt-12"
                                 >
-                                    <Link
-                                        to="/parent-info"
-                                        className="group w-full flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all duration-300"
+                                    <button
+                                        type="submit"
+                                        disabled={isSaving}
+                                        onClick={handleSaveAndContinue}
+                                        className="group w-full flex items-center cursor-pointer justify-center gap-3 px-8 py-4 bg-linear-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                                     >
-                                        <span>Continue to Parent Information</span>
-                                        <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
-                                    </Link>
+                                        {isSaving ? (
+                                            <>
+                                                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                                <span>Saving...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span>Save & Continue to Parent Information</span>
+                                                <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
+                                            </>
+                                        )}
+                                    </button>
                                 </motion.div>
 
                                 {/* Form Navigation */}
                                 <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-100">
                                     <div className="text-sm text-gray-500">
-                                        Step 1 of 11 • Personal Information
+                                        Step 1 of 10 • Personal Information
                                     </div>
                                     <div className="text-sm text-gray-500">
                                         All fields are required
@@ -417,15 +441,15 @@ const PersonalInfo = () => {
                                 <ul className="space-y-3">
                                     <li className="flex items-start gap-2">
                                         <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                                        <span className="text-sm text-gray-600">Ensure all information matches your official documents</span>
+                                        <span className="text-sm text-gray-600">All data is saved as you progress</span>
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                                        <span className="text-sm text-gray-600">Use a valid email you check regularly</span>
+                                        <span className="text-sm text-gray-600">You can return to any page to edit</span>
                                     </li>
                                     <li className="flex items-start gap-2">
                                         <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                                        <span className="text-sm text-gray-600">Save your progress regularly</span>
+                                        <span className="text-sm text-gray-600">Final submission on the last page</span>
                                     </li>
                                 </ul>
                             </div>

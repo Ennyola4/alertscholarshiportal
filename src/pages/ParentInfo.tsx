@@ -1,44 +1,62 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Users, Briefcase, Phone, DollarSign, ChevronRight, Shield, UserCheck, Sparkles } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import AlertLogo from "../assets/images/AlertLogo.png";
+import { useApplication } from "../context/ApplicationContext";
 
 const ParentInfo = () => {
     const location = useLocation();
+    const navigate = useNavigate();
+    const { applicationData, updateParentInfo } = useApplication();
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [location.pathname]);
 
-    const [formData, setFormData] = useState({
-        relationship: "",
-        fatherOccupation: "",
-        motherOccupation: "",
-        guardianName: "",
-        guardianPhone: "",
-        incomeBracket: "",
-    });
-
+    const [formData, setFormData] = useState(applicationData.parentInfo);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        const updatedData = { ...formData, [name]: value };
+        setFormData(updatedData);
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        setIsSaving(true);
+
+        // Validate required fields
+        const requiredFields = ['guardianName', 'relationship', 'guardianPhone', 'incomeBracket'];
+        const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
         
+        if (missingFields.length > 0) {
+            alert(`Please fill in all required fields: ${missingFields.join(', ')}`);
+            setIsSaving(false);
+            return;
+        }
+
+        // Save to global state
+        updateParentInfo(formData);
 
         // Simulate API call
         setTimeout(() => {
-            console.log("Form submitted:", formData);
-           
+            console.log("Parent info saved:", formData);
+            setIsSaving(false);
             setShowSuccess(true);
 
             // Hide success message after 3 seconds
             setTimeout(() => setShowSuccess(false), 3000);
-        }, 1500);
+
+            // Navigate to next page
+            navigate('/educational-info');
+        }, 1000);
+    };
+
+    const handleSaveAndContinue = (e: React.FormEvent) => {
+        handleSubmit(e);
     };
 
     // Corrected steps array (consistent with PersonalInfo)
@@ -131,7 +149,8 @@ const ParentInfo = () => {
                             {steps.map((step, index) => (
                                 <div key={step.number} className="flex items-center">
                                     <div className="flex flex-col items-center">
-                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${step.status === "current"
+                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${
+                                            step.status === "current"
                                                 ? "bg-linear-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-200"
                                                 : step.number < 2
                                                     ? "bg-linear-to-r from-emerald-500 to-green-400 text-white shadow-lg shadow-emerald-200"
@@ -300,13 +319,27 @@ const ParentInfo = () => {
                                     whileHover={{ scale: 1.02 }}
                                     className="mt-12"
                                 >
-                                    <Link
-                                        to="/educational-info"
-                                        className="group w-full flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all duration-300"
+                                    <button
+                                        type="submit"
+                                        disabled={isSaving}
+                                        onClick={handleSaveAndContinue}
+                                        className="group w-full flex cursor-pointer items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                                     >
-                                        <span>Continue to Educational Information</span>
-                                        <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
-                                    </Link>
+                                        {isSaving ? (
+                                            <>
+                                                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                                <span>Saving...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span>Save & Continue to Educational Information</span>
+                                                <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
+                                            </>
+                                        )}
+                                    </button>
                                 </motion.div>
 
                                 {/* Form Navigation */}

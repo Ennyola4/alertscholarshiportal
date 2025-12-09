@@ -1,8 +1,21 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FileCheck, FileSignature, User, Calendar, ChevronRight, Sparkles, AlertCircle, Shield, Target, CheckCircle } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { 
+    FileCheck, 
+    FileSignature, 
+    User, 
+    Calendar, 
+    ChevronRight, 
+    Sparkles, 
+    AlertCircle, 
+    Shield, 
+    Target, 
+    CheckCircle,
+    X
+} from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import AlertLogo from "../assets/images/AlertLogo.png";
+import { useApplication } from "../context/ApplicationContext";
 
 interface FormData {
     fullName: string;
@@ -10,63 +23,150 @@ interface FormData {
     date: string;
 }
 
+interface Step {
+    number: number;
+    label: string;
+    status: "completed" | "current" | "upcoming";
+}
+
 const ApplicantSignature = () => {
     const location = useLocation();
+    const navigate = useNavigate();
+    const { applicationData, updateSignature, submitApplication, getApplicationSummary } = useApplication();
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [location.pathname]);
 
-    const [formData, setFormData] = useState<FormData>({
-        fullName: "",
-        digitalSignature: null,
-        date: "",
-    });
-
+    // Initialize from global state
+    const [formData, setFormData] = useState<FormData>(applicationData.signature);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
     const [showFinalWarning, setShowFinalWarning] = useState(false);
+    const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+        
+        // Clear validation error for this field
+        if (validationErrors[name]) {
+            setValidationErrors(prev => {
+                const newErrors = { ...prev };
+                delete newErrors[name];
+                return newErrors;
+            });
+        }
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const fileList = e.target.files;
         if (fileList && fileList.length > 0) {
-            setFormData(prev => ({ ...prev, digitalSignature: fileList[0] }));
+            const file = fileList[0];
+            
+            // Validate file type
+            const validTypes = ['.png', '.jpg', '.jpeg', '.pdf'];
+            const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+            if (!validTypes.includes(fileExtension)) {
+                setValidationErrors(prev => ({
+                    ...prev,
+                    digitalSignature: "Please upload a PNG, JPG, JPEG, or PDF file"
+                }));
+                return;
+            }
+
+            // Validate file size (2MB max for signature)
+            if (file.size > 2 * 1024 * 1024) {
+                setValidationErrors(prev => ({
+                    ...prev,
+                    digitalSignature: "File size must be less than 2MB"
+                }));
+                return;
+            }
+
+            setFormData(prev => ({ ...prev, digitalSignature: file }));
+            
+            // Clear any file validation errors
+            if (validationErrors.digitalSignature) {
+                setValidationErrors(prev => {
+                    const newErrors = { ...prev };
+                    delete newErrors.digitalSignature;
+                    return newErrors;
+                });
+            }
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleRemoveFile = () => {
+        setFormData(prev => ({ ...prev, digitalSignature: null }));
+    };
+
+    const validateForm = (): boolean => {
+        const errors: Record<string, string> = {};
+        
+        if (!formData.fullName.trim()) {
+            errors.fullName = "Full name is required";
+        }
+        
+        if (!formData.digitalSignature) {
+            errors.digitalSignature = "Digital signature is required";
+        }
+        
+        if (!formData.date) {
+            errors.date = "Date is required";
+        }
+
+        setValidationErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
+        setShowFinalWarning(false);
 
-        // Validate all fields are filled
-        const allFieldsFilled = formData.fullName.trim() !== '' &&
-            formData.digitalSignature !== null &&
-            formData.date !== '';
-
-        if (!allFieldsFilled) {
-            setShowFinalWarning(true);
+        if (!validateForm()) {
             setIsSubmitting(false);
+            setShowFinalWarning(true);
             return;
         }
 
-        // Simulate API call for final submission
-        setTimeout(() => {
-            console.log("Application submitted:", formData);
-            setIsSubmitting(false);
-            setShowSuccess(true);
+        // Save signature to global state
+        updateSignature(formData);
 
-            // In a real application, you would redirect to a success page
-            // or show a completion modal
-        }, 2000);
+        try {
+            // Get final application summary
+            const summary = getApplicationSummary();
+            console.log("Final Application Summary:", summary);
+
+            // Submit entire application
+            const result = await submitApplication();
+            
+            if (result.success) {
+                setShowSuccess(true);
+                // Navigate to congratulations page after a brief delay
+                setTimeout(() => {
+                    navigate('/congratulation');
+                }, 2000);
+            } else {
+                alert(`Submission failed: ${result.message}`);
+                setIsSubmitting(false);
+            }
+        } catch (error) {
+            console.error('Submission error:', error);
+            alert('Failed to submit application. Please try again.');
+            setIsSubmitting(false);
+        }
+    };
+
+    const formatFileSize = (bytes: number): string => {
+        if (bytes < 1024) return bytes + ' bytes';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+        return (bytes / 1024 / 1024).toFixed(2) + ' MB';
     };
 
     // Consistent steps array
-    const steps = [
+    const steps: Step[] = [
         { number: 1, label: "Personal Info", status: "completed" },
         { number: 2, label: "Parent Info", status: "completed" },
         { number: 3, label: "Educational", status: "completed" },
@@ -80,6 +180,23 @@ const ApplicantSignature = () => {
     ];
 
     const today = new Date().toISOString().split('T')[0];
+
+    const getCompletionStatus = () => {
+        const totalFields = 3; // fullName, digitalSignature, date
+        const filledFields = [
+            formData.fullName.trim(),
+            formData.digitalSignature,
+            formData.date
+        ].filter(Boolean).length;
+        
+        return {
+            percentage: Math.round((filledFields / totalFields) * 100),
+            filled: filledFields,
+            total: totalFields
+        };
+    };
+
+    const completion = getCompletionStatus();
 
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-cyan-50 font-sans">
@@ -163,10 +280,11 @@ const ApplicantSignature = () => {
                             {steps.map((step, index) => (
                                 <div key={step.number} className="flex items-center">
                                     <div className="flex flex-col items-center">
-                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${step.status === "current"
-                                                ? "bg-linear-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-200"
+                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${
+                                            step.status === "current"
+                                                ? "bg-linear-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-200" // Fixed typo here
                                                 : "bg-linear-to-r from-emerald-500 to-green-400 text-white shadow-lg shadow-emerald-200"
-                                            }`}>
+                                        }`}>
                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                             </svg>
@@ -210,6 +328,24 @@ const ApplicantSignature = () => {
 
                             {/* Form Fields */}
                             <div className="p-8">
+                                {/* Progress Overview */}
+                                <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                                        <div className="text-sm text-blue-600 font-medium">Completion</div>
+                                        <div className="text-2xl font-bold text-gray-900">{completion.percentage}%</div>
+                                    </div>
+                                    <div className="bg-amber-50 rounded-xl p-4 border border-amber-100">
+                                        <div className="text-sm text-amber-600 font-medium">Required Fields</div>
+                                        <div className="text-2xl font-bold text-gray-900">{completion.total}</div>
+                                    </div>
+                                    <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
+                                        <div className="text-sm text-emerald-600 font-medium">Filled Fields</div>
+                                        <div className="text-2xl font-bold text-gray-900">
+                                            {completion.filled} of {completion.total}
+                                        </div>
+                                    </div>
+                                </div>
+
                                 {/* Final Warning */}
                                 <div className="mb-8 bg-linear-to-r from-purple-50 to-indigo-50 rounded-2xl p-6 border border-purple-200">
                                     <div className="flex items-start gap-4">
@@ -217,12 +353,27 @@ const ApplicantSignature = () => {
                                         <div>
                                             <h3 className="font-bold text-gray-900 mb-2">Final Submission Notice</h3>
                                             <p className="text-sm text-gray-600">
-                                                By signing and submitting this application, you certify that all information provided is true and accurate.
+                                                By signing and submitting this application, you certify that all information provided is true and accurate. 
                                                 This signature constitutes your final approval and consent to all previous declarations.
                                             </p>
                                         </div>
                                     </div>
                                 </div>
+
+                                {/* Validation Errors */}
+                                {Object.keys(validationErrors).length > 0 && (
+                                    <div className="mb-6 bg-linear-to-r from-red-50 to-pink-50 rounded-2xl p-4 border border-red-200">
+                                        <div className="flex items-center gap-3">
+                                            <AlertCircle className="w-5 h-5 text-red-600" />
+                                            <div>
+                                                <h3 className="font-bold text-gray-900">Validation Required</h3>
+                                                {Object.entries(validationErrors).map(([field, error]) => (
+                                                    <p key={field} className="text-sm text-gray-600">{error}</p>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* Form Fields Grid */}
                                 <div className="space-y-8">
@@ -245,9 +396,12 @@ const ApplicantSignature = () => {
                                             value={formData.fullName}
                                             onChange={handleChange}
                                             placeholder="Enter your full legal name"
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                            className={`w-full px-4 py-3 bg-gray-50 border ${validationErrors.fullName ? 'border-red-300' : 'border-gray-200'} rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
                                             required
                                         />
+                                        {validationErrors.fullName && (
+                                            <p className="text-red-500 text-sm mt-2">{validationErrors.fullName}</p>
+                                        )}
                                     </div>
 
                                     {/* Digital Signature Upload */}
@@ -260,34 +414,56 @@ const ApplicantSignature = () => {
                                                 <label className="block text-lg font-bold text-gray-900 mb-1">
                                                     Digital Signature Upload
                                                 </label>
-                                                <p className="text-sm text-gray-500">Upload your signature as a PNG, JPG, JPEG, or PDF file</p>
+                                                <p className="text-sm text-gray-500">Upload your signature as a PNG, JPG, JPEG, or PDF file (max 2MB)</p>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-4">
-                                            <label className="flex-1 cursor-pointer">
-                                                <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 hover:border-blue-400 transition-colors text-center">
-                                                    <input
-                                                        type="file"
-                                                        name="digitalSignature"
-                                                        accept=".png,.jpg,.jpeg,.pdf"
-                                                        onChange={handleFileChange}
-                                                        className="hidden"
-                                                        required
-                                                    />
-                                                    <div className="flex flex-col items-center gap-3">
-                                                        <FileSignature className="w-10 h-10 text-gray-400" />
-                                                        <div>
-                                                            <p className="text-gray-700 font-medium">Click to upload signature</p>
-                                                            <p className="text-sm text-gray-500">PNG, JPG, JPEG, or PDF</p>
+                                        <div className="flex flex-col items-center gap-4">
+                                            {!formData.digitalSignature ? (
+                                                <label className="flex-1 w-full cursor-pointer">
+                                                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 hover:border-blue-400 transition-colors text-center">
+                                                        <input
+                                                            type="file"
+                                                            name="digitalSignature"
+                                                            accept=".png,.jpg,.jpeg,.pdf"
+                                                            onChange={handleFileChange}
+                                                            className="hidden"
+                                                            required
+                                                        />
+                                                        <div className="flex flex-col items-center gap-3">
+                                                            <FileSignature className="w-10 h-10 text-gray-400" />
+                                                            <div>
+                                                                <p className="text-gray-700 font-medium">Click to upload signature</p>
+                                                                <p className="text-sm text-gray-500">PNG, JPG, JPEG, or PDF (max 2MB)</p>
+                                                            </div>
                                                         </div>
                                                     </div>
+                                                </label>
+                                            ) : (
+                                                <div className="w-full">
+                                                    <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                                                        <div className="flex items-center gap-3">
+                                                            <FileSignature className="w-5 h-5 text-emerald-600" />
+                                                            <div>
+                                                                <p className="font-medium text-gray-900 truncate max-w-[200px]">
+                                                                    {formData.digitalSignature.name}
+                                                                </p>
+                                                                <p className="text-sm text-gray-500">
+                                                                    {formatFileSize(formData.digitalSignature.size)}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <button
+                                                            type="button"
+                                                            onClick={handleRemoveFile}
+                                                            className="p-1 hover:bg-emerald-100 rounded-full transition-colors"
+                                                        >
+                                                            <X className="w-4 h-4 text-emerald-600" />
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                            </label>
-                                            {formData.digitalSignature && (
-                                                <div className="text-sm text-gray-600">
-                                                    <p className="font-medium">Selected:</p>
-                                                    <p className="truncate max-w-[200px]">{formData.digitalSignature.name}</p>
-                                                </div>
+                                            )}
+                                            {validationErrors.digitalSignature && (
+                                                <p className="text-red-500 text-sm w-full">{validationErrors.digitalSignature}</p>
                                             )}
                                         </div>
                                     </div>
@@ -311,9 +487,30 @@ const ApplicantSignature = () => {
                                             value={formData.date}
                                             max={today}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                            className={`w-full px-4 py-3 bg-gray-50 border ${validationErrors.date ? 'border-red-300' : 'border-gray-200'} rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
                                             required
                                         />
+                                        {validationErrors.date && (
+                                            <p className="text-red-500 text-sm mt-2">{validationErrors.date}</p>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Progress Bar */}
+                                <div className="mt-8">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-sm font-medium text-gray-700">
+                                            Form Completion: {completion.percentage}%
+                                        </span>
+                                        <span className="text-sm font-medium text-gray-700">
+                                            {completion.filled} of {completion.total} fields
+                                        </span>
+                                    </div>
+                                    <div className="w-full bg-gray-200 rounded-full h-2">
+                                        <div 
+                                            className="bg-linear-to-r from-blue-500 to-cyan-400 h-2 rounded-full transition-all duration-500"
+                                            style={{ width: `${completion.percentage}%` }}
+                                        ></div>
                                     </div>
                                 </div>
 
@@ -324,9 +521,9 @@ const ApplicantSignature = () => {
                                         <h3 className="font-bold text-gray-900">Final Declaration</h3>
                                     </div>
                                     <p className="text-sm text-gray-600">
-                                        I, <span className="font-bold text-gray-900">{formData.fullName || "[Your Name]"}</span>,
-                                        hereby declare that all information provided in this scholarship application is true, complete,
-                                        and accurate to the best of my knowledge. I understand that any false information may result
+                                        I, <span className="font-bold text-gray-900">{formData.fullName || "[Your Name]"}</span>, 
+                                        hereby declare that all information provided in this scholarship application is true, complete, 
+                                        and accurate to the best of my knowledge. I understand that any false information may result 
                                         in disqualification and legal consequences.
                                     </p>
                                 </div>
@@ -336,11 +533,15 @@ const ApplicantSignature = () => {
                                     type="submit"
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
-                                    disabled={isSubmitting}
-                                    className={`group w-full mt-12 flex items-center justify-center gap-3 px-8 py-4 font-bold rounded-xl shadow-lg transition-all duration-300 ${isSubmitting
-                                            ? 'bg-gray-400 text-gray-300 cursor-not-allowed'
-                                            : 'bg-linear-to-r from-emerald-500 to-green-500 text-white shadow-emerald-200 hover:shadow-xl hover:shadow-emerald-300'
-                                        }`}
+                                    disabled={isSubmitting || completion.percentage < 100}
+                                    className={`group w-full cursor-pointer mt-12 flex items-center justify-center gap-3 px-8 py-4 font-bold rounded-xl shadow-lg transition-all duration-300 ${
+                                        isSubmitting || completion.percentage < 100
+                                            ? 'opacity-70 cursor-not-allowed'
+                                            : ''
+                                    } ${isSubmitting
+                                        ? 'bg-gray-400 text-gray-300'
+                                        : 'bg-linear-to-r from-emerald-500 to-green-500 text-white shadow-emerald-200 hover:shadow-xl hover:shadow-emerald-300'
+                                    }`}
                                 >
                                     {isSubmitting ? (
                                         <>
@@ -361,13 +562,13 @@ const ApplicantSignature = () => {
                                 {/* Form Navigation */}
                                 <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-100">
                                     <Link
-                                        to="/cda"
+                                        to="/consent-declaration"
                                         className="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center gap-1"
                                     >
                                         ← Back to Consent Declaration
                                     </Link>
                                     <div className="text-sm text-gray-500">
-                                        Step 10 of 10 • Final Submission
+                                        Step 10 of 10 • {completion.percentage}% Complete
                                     </div>
                                 </div>
                             </div>
@@ -388,7 +589,7 @@ const ApplicantSignature = () => {
                                     <img
                                         src={AlertLogo}
                                         alt="AlertMFB Logo"
-                                        className="w-20 h-20 rounded-xl bg-white/20 p-2"
+                                        className="w-16 h-16 rounded-xl bg-white/20 p-2"
                                     />
                                     <div>
                                         <h3 className="text-2xl font-bold">Final Step Complete!</h3>
@@ -460,7 +661,10 @@ const ApplicantSignature = () => {
                                 <p className="text-sm text-gray-600 mb-4">
                                     If you have questions about the submission process or need technical support, contact us.
                                 </p>
-                                <button className="w-full px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded-lg hover:bg-blue-600 transition-colors">
+                                <button 
+                                    type="button"
+                                    className="w-full px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded-lg hover:bg-blue-600 transition-colors"
+                                >
                                     Contact Support
                                 </button>
                             </div>

@@ -1,59 +1,137 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FileText, Target, BookOpen, Award, ChevronRight, Sparkles, Upload, AlertCircle, CheckCircle } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { 
+    FileText, 
+    Target, 
+    BookOpen, 
+    Award, 
+    ChevronRight, 
+    Sparkles, 
+    Upload, 
+    AlertCircle, 
+    CheckCircle,
+    X
+} from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import AlertLogo from "../assets/images/AlertLogo.png";
+import { useApplication } from "../context/ApplicationContext";
+
+interface FormData {
+    personalStatement: File | null;
+    educationalGoals: File | null;
+    challenges: File | null;
+    financialNeed: File | null;
+}
+
+interface EssayRequirement {
+    name: keyof FormData;
+    title: string;
+    description: string;
+    words: string;
+    format: string;
+}
+
+interface Step {
+    number: number;
+    label: string;
+    status: "completed" | "current" | "upcoming";
+}
 
 const Assessment = () => {
     const location = useLocation();
+    const navigate = useNavigate();
+    const { applicationData, updateAssessment } = useApplication();
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [location.pathname]);
 
-    const [formData, setFormData] = useState({
-        personalStatement: null as File | null,
-        educationalGoals: null as File | null,
-        challenges: null as File | null,
-        financialNeed: null as File | null,
+    const [formData, setFormData] = useState<FormData>(applicationData.assessment);
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [uploadStatus, setUploadStatus] = useState<Record<keyof FormData, boolean>>({
+        personalStatement: !!applicationData.assessment.personalStatement,
+        educationalGoals: !!applicationData.assessment.educationalGoals,
+        challenges: !!applicationData.assessment.challenges,
+        financialNeed: !!applicationData.assessment.financialNeed,
     });
 
-    const [showSuccess, setShowSuccess] = useState(false);
-    const [uploadStatus, setUploadStatus] = useState<Record<string, boolean>>({});
+    useEffect(() => {
+        // Update upload status when formData changes
+        setUploadStatus({
+            personalStatement: !!formData.personalStatement,
+            educationalGoals: !!formData.educationalGoals,
+            challenges: !!formData.challenges,
+            financialNeed: !!formData.financialNeed,
+        });
+    }, [formData]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, files } = e.target;
         if (files && files[0]) {
-            setFormData({ ...formData, [name]: files[0] });
-            setUploadStatus({ ...uploadStatus, [name]: true });
+            const file = files[0];
+            
+            // Validate file type
+            const validTypes = ['.pdf', '.doc', '.docx'];
+            const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+            if (!validTypes.includes(fileExtension)) {
+                alert(`Please upload a valid file type: PDF or Word document`);
+                return;
+            }
+
+            // Validate file size (5MB max)
+            if (file.size > 5 * 1024 * 1024) {
+                alert(`File size must be less than 5MB`);
+                return;
+            }
+
+            const updatedFormData = { ...formData, [name]: file };
+            setFormData(updatedFormData);
+            
+            // Update context
+            updateAssessment({ [name]: file });
         }
+    };
+
+    const handleRemoveFile = (name: keyof FormData) => {
+        const updatedFormData = { ...formData, [name]: null };
+        setFormData(updatedFormData);
+        
+        // Update context
+        updateAssessment({ [name]: null });
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-       
+        setIsSubmitting(true);
 
         // Validate that all files are uploaded
         const allUploaded = Object.values(formData).every(file => file !== null);
         if (!allUploaded) {
-            alert("Please upload all required documents before continuing.");
-            
+            alert("Please upload all required assessment essays before continuing.");
+            setIsSubmitting(false);
             return;
         }
 
         // Simulate API call
         setTimeout(() => {
-            console.log("Files submitted:", formData);
-           
+            console.log("Assessment essays submitted:", formData);
+            setIsSubmitting(false);
             setShowSuccess(true);
 
             // Hide success message after 3 seconds
             setTimeout(() => setShowSuccess(false), 3000);
+
+            // Navigate to next page
+            navigate('/documents-upload');
         }, 1500);
     };
 
-    // Consistent steps array
-    const steps = [
+    const handleSaveAndContinue = (e: React.FormEvent) => {
+        handleSubmit(e);
+    };
+
+    const steps: Step[] = [
         { number: 1, label: "Personal Info", status: "completed" },
         { number: 2, label: "Parent Info", status: "completed" },
         { number: 3, label: "Educational", status: "completed" },
@@ -66,7 +144,7 @@ const Assessment = () => {
         { number: 10, label: "Applicant Signature", status: "upcoming" },
     ];
 
-    const essayRequirements = [
+    const essayRequirements: EssayRequirement[] = [
         {
             name: "personalStatement",
             title: "Personal Statement",
@@ -96,6 +174,12 @@ const Assessment = () => {
             format: "PDF or Word document"
         }
     ];
+
+    const formatFileSize = (bytes: number): string => {
+        if (bytes < 1024) return bytes + ' bytes';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+        return (bytes / 1024 / 1024).toFixed(2) + ' MB';
+    };
 
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-cyan-50 font-sans">
@@ -249,32 +333,49 @@ const Assessment = () => {
                                                 <label className="block text-gray-700 font-medium mb-2">
                                                     Upload {essay.title}:
                                                 </label>
-                                                <div className="flex items-center gap-4">
-                                                    <label className="flex-1 cursor-pointer">
-                                                        <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 hover:border-blue-400 transition-colors text-center">
-                                                            <input
-                                                                type="file"
-                                                                name={essay.name}
-                                                                accept=".pdf,.doc,.docx"
-                                                                onChange={handleFileChange}
-                                                                className="hidden"
-                                                                required
-                                                            />
-                                                            <div className="flex flex-col items-center gap-2">
-                                                                <Upload className="w-8 h-8 text-gray-400" />
-                                                                <div>
-                                                                    <p className="text-gray-700 font-medium">Click to upload</p>
-                                                                    <p className="text-sm text-gray-500">PDF or Word document</p>
+                                                <div className="flex flex-col items-center gap-4">
+                                                    {!formData[essay.name] ? (
+                                                        <label className="flex-1 w-full cursor-pointer">
+                                                            <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 hover:border-blue-400 transition-colors text-center">
+                                                                <input
+                                                                    type="file"
+                                                                    name={essay.name}
+                                                                    accept=".pdf,.doc,.docx"
+                                                                    onChange={handleFileChange}
+                                                                    className="hidden"
+                                                                    required
+                                                                />
+                                                                <div className="flex flex-col items-center gap-2">
+                                                                    <Upload className="w-8 h-8 text-gray-400" />
+                                                                    <div>
+                                                                        <p className="text-gray-700 font-medium">Click to upload</p>
+                                                                        <p className="text-sm text-gray-500">{essay.format} (Max 5MB)</p>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    </label>
-                                                    {formData[essay.name as keyof typeof formData] && (
-                                                        <div className="text-sm text-gray-600">
-                                                            <p className="font-medium">Selected:</p>
-                                                            <p className="truncate max-w-[200px]">
-                                                                {(formData[essay.name as keyof typeof formData] as File)?.name}
-                                                            </p>
+                                                        </label>
+                                                    ) : (
+                                                        <div className="w-full">
+                                                            <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                                                                <div className="flex items-center gap-3">
+                                                                    <FileText className="w-5 h-5 text-emerald-600" />
+                                                                    <div>
+                                                                        <p className="font-medium text-gray-900 truncate max-w-[200px]">
+                                                                            {formData[essay.name]?.name}
+                                                                        </p>
+                                                                        <p className="text-sm text-gray-500">
+                                                                            {formatFileSize(formData[essay.name]!.size)}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => handleRemoveFile(essay.name)}
+                                                                    className="p-1 hover:bg-emerald-100 rounded-full transition-colors"
+                                                                >
+                                                                    <X className="w-4 h-4 text-emerald-600" />
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     )}
                                                 </div>
@@ -283,18 +384,52 @@ const Assessment = () => {
                                     ))}
                                 </div>
 
+                                {/* Progress Indicator */}
+                                <div className="mt-8">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-sm font-medium text-gray-700">
+                                            Upload Progress: {Object.values(uploadStatus).filter(status => status).length} of 4
+                                        </span>
+                                        <span className="text-sm font-medium text-gray-700">
+                                            {Math.round((Object.values(uploadStatus).filter(status => status).length / 4) * 100)}%
+                                        </span>
+                                    </div>
+                                    <div className="w-full bg-gray-200 rounded-full h-2">
+                                        <div 
+                                            className="bg-linear-to-r from-blue-500 to-cyan-400 h-2 rounded-full transition-all duration-500"
+                                            style={{ 
+                                                width: `${(Object.values(uploadStatus).filter(status => status).length / 4) * 100}%` 
+                                            }}
+                                        ></div>
+                                    </div>
+                                </div>
+
                                 {/* Continue Button */}
                                 <motion.div
                                     whileHover={{ scale: 1.02 }}
                                     className="mt-12"
                                 >
-                                    <Link
-                                        to="/documents-upload"
-                                        className="group w-full flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all duration-300"
+                                    <button
+                                        type="submit"
+                                        disabled={isSubmitting || Object.values(uploadStatus).filter(status => status).length < 4}
+                                        onClick={handleSaveAndContinue}
+                                        className="group w-full cursor-pointer flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                                     >
-                                        <span>Continue to Documents Upload</span>
-                                        <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
-                                    </Link>
+                                        {isSubmitting ? (
+                                            <>
+                                                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                                <span>Uploading...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span>Save & Continue to Documents Upload</span>
+                                                <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
+                                            </>
+                                        )}
+                                    </button>
                                 </motion.div>
 
                                 {/* Form Navigation */}
@@ -306,7 +441,7 @@ const Assessment = () => {
                                         ← Back to Educational Information
                                     </Link>
                                     <div className="text-sm text-gray-500">
-                                        Step 4 of 10 • Assessment Essays
+                                        Step 4 of 10 • {Object.values(uploadStatus).filter(status => status).length} of 4 essays uploaded
                                     </div>
                                 </div>
                             </div>
@@ -399,7 +534,10 @@ const Assessment = () => {
                                 <p className="text-sm text-gray-600 mb-4">
                                     Access our essay writing guide and sample essays for reference.
                                 </p>
-                                <button className="w-full px-4 py-2 bg-emerald-500 text-white text-sm font-semibold rounded-lg hover:bg-emerald-600 transition-colors">
+                                <button 
+                                    type="button"
+                                    className="w-full px-4 py-2 bg-emerald-500 text-white text-sm font-semibold rounded-lg hover:bg-emerald-600 transition-colors"
+                                >
                                     View Writing Guide
                                 </button>
                             </div>

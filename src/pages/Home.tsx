@@ -363,7 +363,7 @@ const Home = () => {
                             </span>
                         </div>
                         <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-                            The <span className="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">AlertMFB</span> Advantage
+                            The <span className="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">AlertGroup</span> Advantage
                         </h2>
                         <p className="text-gray-600 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed">
                             Our scholarship program is designed to provide comprehensive support and create lasting impact
@@ -548,7 +548,7 @@ const Home = () => {
                             <img
                                 src={AlertLogo}
                                 alt="AlertMFB Logo"
-                                className="h-20 w-auto"
+                                className="h-30 w-auto"
                             />
                             <div>
                                 <h4 className="text-lg font-bold text-gray-900">AlertMFB Scholarship Program</h4>
