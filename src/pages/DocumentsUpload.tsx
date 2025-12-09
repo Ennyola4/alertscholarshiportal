@@ -85,7 +85,6 @@ const DocumentsUpload = () => {
         const { name, files } = e.target;
         if (files && files[0]) {
             const file = files[0];
-            const documentType = name as keyof FormData;
             
             // Validate file size (5MB max)
             if (file.size > 5 * 1024 * 1024) {
@@ -242,10 +241,6 @@ const DocumentsUpload = () => {
 
     const getRequiredCount = () => {
         return documentRequirements.filter(doc => doc.required).length;
-    };
-
-    const getUploadedCount = () => {
-        return Object.values(uploadStatus).filter(status => status).length;
     };
 
     const getRequiredUploadedCount = () => {
