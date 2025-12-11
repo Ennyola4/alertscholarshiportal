@@ -1,12 +1,31 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle, Award, Mail, Calendar, Download, Share2, Home, ChevronRight } from "lucide-react";
+import { 
+  CheckCircle, 
+  Award, 
+
+  Download, 
+  Share2, 
+  Home, 
+  ChevronRight,
+  FileText,
+  Receipt,
+  User,
+  School,
+ 
+  Clock,
+ 
+  GraduationCap,
+  Users,
+  
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useApplication } from "../context/ApplicationContext";
 
 const CongratulationsPage = () => {
     const navigate = useNavigate();
-    const { clearApplication } = useApplication();
+    const { applicationData, clearApplication } = useApplication();
+    // const receiptRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -18,12 +37,10 @@ const CongratulationsPage = () => {
         if (!hasSubmitted) {
             navigate('/');
         }
-
-        // Scroll to top on mount
         window.scrollTo(0, 0);
     }, [navigate]);
 
-    // Generate a fake application reference number
+    // Generate application reference number
     const applicationRef = `ALERT-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
     const submissionDate = new Date().toLocaleDateString('en-US', {
         weekday: 'long',
@@ -31,10 +48,333 @@ const CongratulationsPage = () => {
         month: 'long',
         day: 'numeric'
     });
+    const submissionTime = new Date().toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    // Format date of birth
+    const formatDateOfBirth = (dateString: string) => {
+        if (!dateString) return "Not provided";
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    };
+
+    // Format academic level
+    const formatAcademicLevel = (level: string) => {
+        const levels: Record<string, string> = {
+            '100 Level': '100 Level (First Year)',
+            '200 Level': '200 Level (Second Year)',
+            '300 Level': '300 Level (Third Year)',
+            '400 Level': '400 Level (Fourth Year)',
+            '500 Level': '500 Level (Fifth Year)',
+            'Postgraduate': 'Postgraduate'
+        };
+        return levels[level] || level;
+    };
+
+    // Calculate age from date of birth
+    const calculateAge = (dateString: string) => {
+        if (!dateString) return null;
+        const today = new Date();
+        const birthDate = new Date(dateString);
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    };
+
+    // Format income bracket
+    const formatIncomeBracket = (bracket: string) => {
+        if (!bracket) return "Not specified";
+        return bracket;
+    };
+
+    // Get document count
+    const getDocumentCount = () => {
+        if (!applicationData?.documents) return 0;
+        const docs = Object.values(applicationData.documents);
+        return docs.filter(doc => doc !== null).length;
+    };
 
     const handleDownloadReceipt = () => {
-        // In a real app, this would generate/trigger a PDF download
-        alert("Application receipt downloaded!");
+        // Create receipt content as HTML with real data
+        const receiptHTML = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>AlertGroup Scholarship Receipt - ${applicationData?.personalInfo?.fullName || 'Applicant'}</title>
+                <style>
+                    body { 
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+                        margin: 40px; 
+                        color: #333;
+                        line-height: 1.6;
+                    }
+                    .receipt-container {
+                        max-width: 700px;
+                        margin: 0 auto;
+                        border: 2px solid #10b981;
+                        border-radius: 12px;
+                        padding: 40px;
+                        background: white;
+                        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                    }
+                    .header {
+                        text-align: center;
+                        border-bottom: 2px solid #10b981;
+                        padding-bottom: 25px;
+                        margin-bottom: 30px;
+                    }
+                    .logo {
+                        font-size: 28px;
+                        font-weight: bold;
+                        color: #059669;
+                        margin-bottom: 10px;
+                    }
+                    .title {
+                        font-size: 24px;
+                        font-weight: bold;
+                        margin: 15px 0;
+                        color: #1f2937;
+                    }
+                    .reference {
+                        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+                        padding: 20px;
+                        border-radius: 10px;
+                        margin: 25px 0;
+                        border-left: 5px solid #10b981;
+                    }
+                    .info-section {
+                        margin: 25px 0;
+                        padding: 20px;
+                        background: #f9fafb;
+                        border-radius: 10px;
+                        border: 1px solid #e5e7eb;
+                    }
+                    .info-row {
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 10px 0;
+                        border-bottom: 1px solid #e5e7eb;
+                    }
+                    .info-row:last-child {
+                        border-bottom: none;
+                    }
+                    .status-badge {
+                        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+                        color: #065f46;
+                        padding: 8px 16px;
+                        border-radius: 25px;
+                        font-size: 14px;
+                        font-weight: bold;
+                        display: inline-block;
+                    }
+                    .section-title {
+                        font-size: 18px;
+                        font-weight: bold;
+                        color: #374151;
+                        margin-bottom: 15px;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    }
+                    .footer {
+                        margin-top: 40px;
+                        padding-top: 25px;
+                        border-top: 2px solid #e5e7eb;
+                        text-align: center;
+                        font-size: 13px;
+                        color: #6b7280;
+                    }
+                    .highlight {
+                        color: #059669;
+                        font-weight: bold;
+                    }
+                    .note {
+                        background: #fef3c7;
+                        padding: 15px;
+                        border-radius: 8px;
+                        margin: 20px 0;
+                        border-left: 4px solid #f59e0b;
+                        font-size: 14px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="receipt-container">
+                    <div class="header">
+                        <div class="logo">🎓 AlertGroup Scholarship Program</div>
+                        <div class="title">APPLICATION CONFIRMATION RECEIPT</div>
+                        <div style="color: #6b7280; margin-top: 5px;">Official Confirmation of Submission</div>
+                    </div>
+                    
+                    <div class="reference">
+                        <div style="font-size: 20px; font-weight: bold; color: #059669; margin-bottom: 5px;">
+                            Reference Number: ${applicationRef}
+                        </div>
+                        <div style="font-size: 14px; color: #4b5563;">
+                            Submitted on: <span class="highlight">${submissionDate}</span> at <span class="highlight">${submissionTime}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Applicant Information -->
+                    <div class="info-section">
+                        <div class="section-title">👤 Applicant Information</div>
+                        ${applicationData?.personalInfo ? `
+                            <div class="info-row">
+                                <span>Full Name:</span>
+                                <span><strong class="highlight">${applicationData.personalInfo.fullName}</strong></span>
+                            </div>
+                            <div class="info-row">
+                                <span>Date of Birth:</span>
+                                <span>${formatDateOfBirth(applicationData.personalInfo.dob)} (Age: ${calculateAge(applicationData.personalInfo.dob) || 'N/A'})</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Gender:</span>
+                                <span>${applicationData.personalInfo.gender}</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Email:</span>
+                                <span>${applicationData.personalInfo.email}</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Phone:</span>
+                                <span>${applicationData.personalInfo.phone}</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Address:</span>
+                                <span>${applicationData.personalInfo.address || 'Not provided'}</span>
+                            </div>
+                            <div class="info-row">
+                                <span>State/LGA:</span>
+                                <span>${applicationData.personalInfo.state || 'N/A'} / ${applicationData.personalInfo.lga || 'N/A'}</span>
+                            </div>
+                        ` : '<p>No personal information available</p>'}
+                    </div>
+                    
+                    <!-- Educational Information -->
+                    <div class="info-section">
+                        <div class="section-title">🎓 Educational Information</div>
+                        ${applicationData?.educationalInfo ? `
+                            <div class="info-row">
+                                <span>Institution Type:</span>
+                                <span>${applicationData.educationalInfo.institutionType}</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Institution Name:</span>
+                                <span><strong>${applicationData.educationalInfo.institutionName}</strong></span>
+                            </div>
+                            <div class="info-row">
+                                <span>Course/Program:</span>
+                                <span>${applicationData.educationalInfo.course}</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Matriculation No:</span>
+                                <span>${applicationData.educationalInfo.matricNo || 'Not provided'}</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Current Level:</span>
+                                <span>${formatAcademicLevel(applicationData.educationalInfo.currentLevel)}</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Admission Year:</span>
+                                <span>${applicationData.educationalInfo.admissionYear}</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Current CGPA:</span>
+                                <span><strong>${applicationData.educationalInfo.cgpa}</strong></span>
+                            </div>
+                        ` : '<p>No educational information available</p>'}
+                    </div>
+                    
+                    <!-- Parent/Guardian Information -->
+                    <div class="info-section">
+                        <div class="section-title">👨‍👩‍👧‍👦 Parent/Guardian Information</div>
+                        ${applicationData?.parentInfo ? `
+                            <div class="info-row">
+                                <span>Relationship:</span>
+                                <span>${applicationData.parentInfo.relationship}</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Guardian Name:</span>
+                                <span><strong>${applicationData.parentInfo.guardianName}</strong></span>
+                            </div>
+                            <div class="info-row">
+                                <span>Guardian Phone:</span>
+                                <span>${applicationData.parentInfo.guardianPhone}</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Income Bracket:</span>
+                                <span>${formatIncomeBracket(applicationData.parentInfo.incomeBracket)}</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Father's Occupation:</span>
+                                <span>${applicationData.parentInfo.fatherOccupation || 'Not provided'}</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Mother's Occupation:</span>
+                                <span>${applicationData.parentInfo.motherOccupation || 'Not provided'}</span>
+                            </div>
+                        ` : '<p>No parent/guardian information available</p>'}
+                    </div>
+                    
+                    <!-- Application Status -->
+                    <div class="info-section">
+                        <div class="section-title">📋 Application Status</div>
+                        <div class="info-row">
+                            <span>Current Status:</span>
+                            <span class="status-badge">Submitted for Review</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Estimated Review Time:</span>
+                            <span>4-6 weeks</span>
+                        </div>
+                        <div class="info-row">
+                            <span>Documents Submitted:</span>
+                            <span><strong>${getDocumentCount()} files</strong></span>
+                        </div>
+                        <div class="info-row">
+                            <span>Application Type:</span>
+                            <span>Merit-Based Scholarship</span>
+                        </div>
+                    </div>
+                    
+                    <div class="note">
+                        <strong>Important Note:</strong> Your application is now in the review process. You will be contacted via email for any updates or additional information required.
+                    </div>
+                    
+                    <div class="footer">
+                        <p>This is an official receipt for your scholarship application submission.</p>
+                        <p>Please keep this receipt for your records and future reference.</p>
+                        <p>For inquiries or additional information, please contact: <strong>scholarship@alertgroup.com</strong></p>
+                        <p style="margin-top: 15px; font-size: 11px; color: #9ca3af;">
+                            Receipt Generated: ${new Date().toLocaleString()} | System ID: ALERT-${Date.now().toString(36).toUpperCase()}
+                        </p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        `;
+
+        // Create blob and download
+        const blob = new Blob([receiptHTML], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `AlertScholarship-Receipt-${applicationRef}.html`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        alert("Receipt downloaded successfully!");
     };
 
     const handleShare = async () => {
@@ -42,31 +382,27 @@ const CongratulationsPage = () => {
             try {
                 await navigator.share({
                     title: 'AlertMFB Scholarship Application',
-                    text: 'I just submitted my scholarship application to AlertMFB!',
+                    text: `I just submitted my scholarship application to AlertMFB! Reference: ${applicationRef}`,
                     url: window.location.href,
                 });
             } catch (error) {
                 console.log('Error sharing:', error);
             }
         } else {
-            // Fallback: copy to clipboard
-            navigator.clipboard.writeText('I just submitted my scholarship application to AlertMFB!');
+            navigator.clipboard.writeText(`I just submitted my scholarship application to AlertMFB! Reference: ${applicationRef}`);
             alert('Link copied to clipboard!');
         }
     };
 
     const handleReturnHome = () => {
-        // Clear application data from context and localStorage
         clearApplication();
-
-        // Navigate to home
         navigate('/');
     };
 
     return (
         <div className="min-h-screen bg-linear-to-br from-emerald-50 via-white to-cyan-50 font-sans">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                {/* Confetti Animation Container */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                {/* Confetti Animation */}
                 <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
                     {[...Array(50)].map((_, i) => (
                         <motion.div
@@ -98,7 +434,6 @@ const CongratulationsPage = () => {
                     transition={{ duration: 0.8 }}
                     className="text-center mb-16 relative z-10"
                 >
-                    {/* Success Badge */}
                     <motion.div
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
@@ -116,7 +451,6 @@ const CongratulationsPage = () => {
                         Your scholarship application has been successfully submitted
                     </p>
 
-                    {/* Application Reference */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -125,14 +459,14 @@ const CongratulationsPage = () => {
                     >
                         <Award className="w-5 h-5 text-emerald-600" />
                         <span className="font-mono font-bold text-emerald-700">
-                            Application Reference: {applicationRef}
+                            Reference: {applicationRef}
                         </span>
                     </motion.div>
                 </motion.div>
 
                 {/* Main Content */}
                 <div className="flex flex-col lg:flex-row gap-8 mb-16">
-                    {/* Left Content - Success Details */}
+                    {/* Left Content - Application Details */}
                     <motion.div
                         initial={{ opacity: 0, x: -30 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -143,93 +477,174 @@ const CongratulationsPage = () => {
                             {/* Card Header */}
                             <div className="p-8 border-b border-emerald-100 bg-linear-to-r from-emerald-50 to-green-50">
                                 <div className="flex items-center gap-3">
+                                    <Receipt className="w-8 h-8 text-emerald-600" />
                                     <div>
-                                        <h2 className="text-2xl font-bold text-gray-900">Application Submitted Successfully</h2>
-                                        <p className="text-emerald-600">Thank you for choosing AlertGroup Scholarship</p>
+                                        <h2 className="text-2xl font-bold text-gray-900">Application Details</h2>
+                                        <p className="text-emerald-600">Complete summary of your submission</p>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Card Content */}
                             <div className="p-8">
-                                {/* Timeline */}
-                                <div className="space-y-8 mb-10">
-                                    <div className="flex items-start gap-4">
-                                        <div className="shrink-0 w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
-                                            <Mail className="w-6 h-6 text-emerald-600" />
+                                {/* Quick Stats */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                                    <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <User className="w-4 h-4 text-blue-600" />
+                                            <span className="text-sm text-blue-600">Applicant</span>
                                         </div>
-                                        <div>
-                                            <h3 className="text-lg font-bold text-gray-900 mb-2">Confirmation Email Sent</h3>
-                                            <p className="text-gray-600">
-                                                We've sent a confirmation email with your application details and reference number.
-                                                Please check your inbox (and spam folder).
-                                            </p>
-                                        </div>
+                                        <p className="font-bold text-gray-900 truncate">
+                                            {applicationData?.personalInfo?.fullName || 'Not provided'}
+                                        </p>
                                     </div>
-
-                                    <div className="flex items-start gap-4">
-                                        <div className="shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                                            <Calendar className="w-6 h-6 text-blue-600" />
+                                    <div className="bg-purple-50 p-4 rounded-xl border border-purple-100">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <School className="w-4 h-4 text-purple-600" />
+                                            <span className="text-sm text-purple-600">Institution</span>
                                         </div>
-                                        <div>
-                                            <h3 className="text-lg font-bold text-gray-900 mb-2">Review Timeline</h3>
-                                            <p className="text-gray-600 mb-3">
-                                                Your application will now go through our review process. Here's what to expect:
-                                            </p>
-                                            <ul className="space-y-2">
-                                                <li className="flex items-center gap-2">
-                                                    <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                                                    <span className="text-sm text-gray-600">Initial screening: 1-2 weeks</span>
-                                                </li>
-                                                <li className="flex items-center gap-2">
-                                                    <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                                                    <span className="text-sm text-gray-600">Document verification: 2-3 weeks</span>
-                                                </li>
-                                                <li className="flex items-center gap-2">
-                                                    <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                                                    <span className="text-sm text-gray-600">Final decision: 4-6 weeks from submission</span>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        <p className="font-bold text-gray-900 truncate">
+                                            {applicationData?.educationalInfo?.institutionName || 'Not provided'}
+                                        </p>
                                     </div>
-
-                                    <div className="flex items-start gap-4">
-                                        <div className="shrink-0 w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
-                                            <Award className="w-6 h-6 text-amber-600" />
+                                    <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <GraduationCap className="w-4 h-4 text-emerald-600" />
+                                            <span className="text-sm text-emerald-600">Course</span>
                                         </div>
-                                        <div>
-                                            <h3 className="text-lg font-bold text-gray-900 mb-2">Next Steps</h3>
-                                            <p className="text-gray-600">
-                                                Shortlisted candidates will be contacted for further verification and interviews.
-                                                Keep an eye on your email for updates.
-                                            </p>
+                                        <p className="font-bold text-gray-900 truncate">
+                                            {applicationData?.educationalInfo?.course || 'Not provided'}
+                                        </p>
+                                    </div>
+                                    <div className="bg-amber-50 p-4 rounded-xl border border-amber-100">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <Clock className="w-4 h-4 text-amber-600" />
+                                            <span className="text-sm text-amber-600">Level</span>
                                         </div>
+                                        <p className="font-bold text-gray-900">
+                                            {applicationData?.educationalInfo?.currentLevel || 'Not provided'}
+                                        </p>
                                     </div>
                                 </div>
 
-                                {/* Submission Details */}
-                                <div className="bg-linear-to-r from-gray-50 to-white rounded-2xl p-6 border border-gray-200">
-                                    <h3 className="text-lg font-bold text-gray-900 mb-4">Submission Details</h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <p className="text-sm text-gray-500">Application Reference</p>
-                                            <p className="font-bold text-gray-900">{applicationRef}</p>
+                                {/* Detailed Information */}
+                                <div className="space-y-8">
+                                    {/* Personal Information */}
+                                    <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <User className="w-5 h-5 text-blue-600" />
+                                            <h3 className="text-lg font-bold text-gray-900">Personal Information</h3>
                                         </div>
-                                        <div>
-                                            <p className="text-sm text-gray-500">Submission Date</p>
-                                            <p className="font-bold text-gray-900">{submissionDate}</p>
+                                        {applicationData?.personalInfo ? (
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <p className="text-sm text-gray-500">Full Name</p>
+                                                    <p className="font-bold text-gray-900">{applicationData.personalInfo.fullName}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-gray-500">Date of Birth</p>
+                                                    <p className="font-medium text-gray-900">
+                                                        {formatDateOfBirth(applicationData.personalInfo.dob)}
+                                                        {calculateAge(applicationData.personalInfo.dob) && (
+                                                            <span className="text-sm text-gray-500 ml-2">
+                                                                (Age: {calculateAge(applicationData.personalInfo.dob)})
+                                                            </span>
+                                                        )}
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-gray-500">Gender</p>
+                                                    <p className="font-medium text-gray-900">{applicationData.personalInfo.gender}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-gray-500">Email</p>
+                                                    <p className="font-medium text-gray-900">{applicationData.personalInfo.email}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-gray-500">Phone</p>
+                                                    <p className="font-medium text-gray-900">{applicationData.personalInfo.phone}</p>
+                                                </div>
+                                                {applicationData.personalInfo.address && (
+                                                    <div>
+                                                        <p className="text-sm text-gray-500">Address</p>
+                                                        <p className="font-medium text-gray-900">{applicationData.personalInfo.address}</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <p className="text-gray-500">No personal information available</p>
+                                        )}
+                                    </div>
+
+                                    {/* Educational Information */}
+                                    <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <School className="w-5 h-5 text-purple-600" />
+                                            <h3 className="text-lg font-bold text-gray-900">Educational Information</h3>
                                         </div>
-                                        <div>
-                                            <p className="text-sm text-gray-500">Status</p>
-                                            <span className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium">
-                                                <CheckCircle className="w-3 h-3" />
-                                                Submitted for Review
-                                            </span>
+                                        {applicationData?.educationalInfo ? (
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <p className="text-sm text-gray-500">Institution Type</p>
+                                                    <p className="font-medium text-gray-900">{applicationData.educationalInfo.institutionType}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-gray-500">Institution Name</p>
+                                                    <p className="font-bold text-gray-900">{applicationData.educationalInfo.institutionName}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-gray-500">Course/Program</p>
+                                                    <p className="font-bold text-gray-900">{applicationData.educationalInfo.course}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-gray-500">Current CGPA</p>
+                                                    <p className="font-bold text-emerald-700 text-lg">{applicationData.educationalInfo.cgpa}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-gray-500">Academic Level</p>
+                                                    <p className="font-medium text-gray-900">
+                                                        {formatAcademicLevel(applicationData.educationalInfo.currentLevel)}
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-gray-500">Admission Year</p>
+                                                    <p className="font-medium text-gray-900">{applicationData.educationalInfo.admissionYear}</p>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <p className="text-gray-500">No educational information available</p>
+                                        )}
+                                    </div>
+
+                                    {/* Parent/Guardian Information */}
+                                    <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <Users className="w-5 h-5 text-green-600" />
+                                            <h3 className="text-lg font-bold text-gray-900">Parent/Guardian Information</h3>
                                         </div>
-                                        <div>
-                                            <p className="text-sm text-gray-500">Estimated Response</p>
-                                            <p className="font-bold text-gray-900">4-6 weeks</p>
-                                        </div>
+                                        {applicationData?.parentInfo ? (
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <p className="text-sm text-gray-500">Relationship</p>
+                                                    <p className="font-medium text-gray-900">{applicationData.parentInfo.relationship}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-gray-500">Guardian Name</p>
+                                                    <p className="font-bold text-gray-900">{applicationData.parentInfo.guardianName}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-gray-500">Guardian Phone</p>
+                                                    <p className="font-medium text-gray-900">{applicationData.parentInfo.guardianPhone}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-gray-500">Income Bracket</p>
+                                                    <p className="font-medium text-gray-900">
+                                                        {formatIncomeBracket(applicationData.parentInfo.incomeBracket)}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <p className="text-gray-500">No parent/guardian information available</p>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -251,58 +666,94 @@ const CongratulationsPage = () => {
                                 </div>
                                 <div>
                                     <h3 className="text-xl font-bold">Download Receipt</h3>
-                                    <p className="text-blue-100">Save your application confirmation</p>
+                                    <p className="text-blue-100">Save your official application receipt</p>
                                 </div>
                             </div>
                             <button
                                 onClick={handleDownloadReceipt}
-                                className="w-full px-4 py-3 bg-white text-blue-600 font-bold rounded-xl hover:bg-blue-50 transition-colors flex items-center justify-center gap-2"
+                                className="w-full px-4 py-3 bg-white text-blue-600 font-bold rounded-xl hover:bg-blue-50 transition-colors flex items-center justify-center gap-2 group"
                             >
-                                <Download className="w-5 h-5" />
-                                Download PDF Receipt
+                                <Download className="w-5 h-5 group-hover:animate-bounce" />
+                                Download Receipt
                             </button>
+                            <p className="text-sm text-blue-100 mt-3 text-center">
+                                Includes all application details and reference number
+                            </p>
+                        </div>
+
+                        {/* Application Summary */}
+                        <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-lg">
+                            <div className="flex items-center gap-2 mb-4">
+                                <FileText className="w-5 h-5 text-emerald-600" />
+                                <h4 className="font-bold text-gray-900">Application Summary</h4>
+                            </div>
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-gray-600">Reference Number</span>
+                                    <span className="font-mono font-bold text-emerald-700">{applicationRef}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-gray-600">Submission Date</span>
+                                    <span className="font-medium">{submissionDate}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-gray-600">Submission Time</span>
+                                    <span className="font-medium">{submissionTime}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-gray-600">Documents Submitted</span>
+                                    <span className="font-bold text-emerald-700">{getDocumentCount()} files</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-gray-600">Application Status</span>
+                                    <span className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm">
+                                        Submitted for Review
+                                    </span>
+                                </div>
+                            </div>
                         </div>
 
                         {/* Share Card */}
-                        <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-lg">
+                        <div className="bg-linear-to-r from-purple-500 to-pink-500 rounded-3xl p-6 text-white">
                             <div className="flex items-center gap-2 mb-4">
-                                <Share2 className="w-5 h-5 text-purple-600" />
-                                <h4 className="font-bold text-gray-900">Share Your Achievement</h4>
+                                <Share2 className="w-5 h-5" />
+                                <h4 className="font-bold">Share Your Achievement</h4>
                             </div>
-                            <p className="text-sm text-gray-600 mb-4">
-                                Share that you've applied for the AlertGroup Scholarship with your network.
+                            <p className="text-purple-100 mb-4 text-sm">
+                                Let your network know about your scholarship application
                             </p>
                             <button
                                 onClick={handleShare}
-                                className="w-full px-4 py-2 bg-linear-to-r from-purple-500 to-pink-500 text-white text-sm font-semibold rounded-lg hover:shadow-lg transition-all"
+                                className="w-full px-4 py-2 bg-white text-purple-600 text-sm font-semibold rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2"
                             >
+                                <Share2 className="w-4 h-4" />
                                 Share Application
                             </button>
                         </div>
 
                         {/* Next Steps Card */}
                         <div className="bg-linear-to-r from-emerald-50 to-teal-50 rounded-3xl p-6 border border-emerald-100">
-                            <h4 className="font-bold text-gray-900 mb-2">What's Next?</h4>
+                            <h4 className="font-bold text-gray-900 mb-2">Important Next Steps</h4>
                             <ul className="space-y-3 mb-6">
                                 <li className="flex items-start gap-2">
                                     <div className="w-2 h-2 bg-emerald-500 rounded-full mt-2"></div>
-                                    <span className="text-sm text-gray-600">Check your email regularly for updates</span>
+                                    <span className="text-sm text-gray-600">Save your receipt for future reference</span>
                                 </li>
                                 <li className="flex items-start gap-2">
                                     <div className="w-2 h-2 bg-emerald-500 rounded-full mt-2"></div>
-                                    <span className="text-sm text-gray-600">Prepare your documents for verification</span>
+                                    <span className="text-sm text-gray-600">Check email regularly for updates</span>
                                 </li>
                                 <li className="flex items-start gap-2">
                                     <div className="w-2 h-2 bg-emerald-500 rounded-full mt-2"></div>
-                                    <span className="text-sm text-gray-600">Be ready for potential interviews</span>
+                                    <span className="text-sm text-gray-600">Prepare for potential interviews</span>
                                 </li>
                             </ul>
                             <div className="text-xs text-gray-500">
-                                Need help? Contact scholarship@alertgroup.com
+                                Questions? Email scholarship@alertgroup.com
                             </div>
                         </div>
 
-                        {/* Return Home Button - Updated to use handler */}
+                        {/* Return Home Button */}
                         <button
                             onClick={handleReturnHome}
                             className="block group w-full cursor-pointer text-left"
@@ -337,7 +788,7 @@ const CongratulationsPage = () => {
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                         <p className="text-sm text-gray-400">
-                            Application data has been saved and submitted successfully
+                            Your application has been saved and submitted successfully
                         </p>
                         <button
                             onClick={handleReturnHome}

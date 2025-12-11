@@ -530,9 +530,10 @@ const ApplicantSignature = () => {
 
                                 {/* Submit Button */}
                                 <motion.button
-                                    type="submit"
+                                    type="button"
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
+                                    onClick={handleSubmit}
                                     disabled={isSubmitting || completion.percentage < 100}
                                     className={`group w-full cursor-pointer mt-12 flex items-center justify-center gap-3 px-8 py-4 font-bold rounded-xl shadow-lg transition-all duration-300 ${
                                         isSubmitting || completion.percentage < 100

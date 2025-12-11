@@ -97,7 +97,7 @@ const Home = () => {
     };
 
     return (
-        <div className="min-h-screen bg-linear-to-b from-blue-50 via-white to-cyan-50">
+        <div className="min-h-screen bg-linear-to-b from-blue-50 via-white to-cyan-50 font-serif">
             {/* Hero Section */}
             <div className="relative h-screen min-h-[800px] text-white overflow-hidden">
                 {/* Logo in Top-Left */}
