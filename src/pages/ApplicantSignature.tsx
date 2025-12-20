@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-    FileCheck, 
-    FileSignature, 
-    User, 
-    Calendar, 
-    ChevronRight, 
-    Sparkles, 
-    AlertCircle, 
-    Shield, 
-    Target, 
+import {
+    FileCheck,
+    FileSignature,
+    User,
+    Calendar,
+    ChevronRight,
+    Sparkles,
+    AlertCircle,
+    Shield,
+    Target,
     CheckCircle,
     X
 } from "lucide-react";
@@ -48,7 +48,7 @@ const ApplicantSignature = () => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
-        
+
         // Clear validation error for this field
         if (validationErrors[name]) {
             setValidationErrors(prev => {
@@ -59,11 +59,24 @@ const ApplicantSignature = () => {
         }
     };
 
+
+    // Auto-save to context whenever form data changes (with debounce)
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (formData.fullName || formData.date || formData.digitalSignature) {
+                updateSignature(formData);
+                console.log("Auto-saved signature data");
+            }
+        }, 1000); // Debounce for 1 second
+
+        return () => clearTimeout(timer);
+    }, [formData, updateSignature]);
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const fileList = e.target.files;
         if (fileList && fileList.length > 0) {
             const file = fileList[0];
-            
+
             // Validate file type
             const validTypes = ['.png', '.jpg', '.jpeg', '.pdf'];
             const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
@@ -85,7 +98,7 @@ const ApplicantSignature = () => {
             }
 
             setFormData(prev => ({ ...prev, digitalSignature: file }));
-            
+
             // Clear any file validation errors
             if (validationErrors.digitalSignature) {
                 setValidationErrors(prev => {
@@ -103,15 +116,15 @@ const ApplicantSignature = () => {
 
     const validateForm = (): boolean => {
         const errors: Record<string, string> = {};
-        
+
         if (!formData.fullName.trim()) {
             errors.fullName = "Full name is required";
         }
-        
+
         if (!formData.digitalSignature) {
             errors.digitalSignature = "Digital signature is required";
         }
-        
+
         if (!formData.date) {
             errors.date = "Date is required";
         }
@@ -122,29 +135,36 @@ const ApplicantSignature = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSubmitting(true);
-        setShowFinalWarning(false);
 
-        if (!validateForm()) {
-            setIsSubmitting(false);
+        // Prevent multiple submissions
+        if (isSubmitting) return;
+
+        // Validate form first
+        const isValid = validateForm();
+        if (!isValid) {
             setShowFinalWarning(true);
             return;
         }
 
-        // Save signature to global state
-        updateSignature(formData);
+        setIsSubmitting(true);
+        setShowFinalWarning(false);
 
         try {
-            // Get final application summary
-            const summary = getApplicationSummary();
-            console.log("Final Application Summary:", summary);
+            // FIRST: Store the signature data in context
+            updateSignature(formData);
 
-            // Submit entire application
+            // You might want to verify the data was saved
+            console.log("Signature saved to context:", formData);
+
+            // SECOND: Get the complete application data
+            const summary = getApplicationSummary();
+            console.log("Complete Application Data:", summary);
+
+            // THIRD: Submit the application
             const result = await submitApplication();
-            
+
             if (result.success) {
                 setShowSuccess(true);
-                // Navigate to congratulations page after a brief delay
                 setTimeout(() => {
                     navigate('/congratulation');
                 }, 2000);
@@ -188,7 +208,7 @@ const ApplicantSignature = () => {
             formData.digitalSignature,
             formData.date
         ].filter(Boolean).length;
-        
+
         return {
             percentage: Math.round((filledFields / totalFields) * 100),
             filled: filledFields,
@@ -280,11 +300,10 @@ const ApplicantSignature = () => {
                             {steps.map((step, index) => (
                                 <div key={step.number} className="flex items-center">
                                     <div className="flex flex-col items-center">
-                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${
-                                            step.status === "current"
-                                                ? "bg-linear-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-200" // Fixed typo here
-                                                : "bg-linear-to-r from-emerald-500 to-green-400 text-white shadow-lg shadow-emerald-200"
-                                        }`}>
+                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${step.status === "current"
+                                            ? "bg-linear-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-200" // Fixed typo here
+                                            : "bg-linear-to-r from-emerald-500 to-green-400 text-white shadow-lg shadow-emerald-200"
+                                            }`}>
                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                             </svg>
@@ -353,7 +372,7 @@ const ApplicantSignature = () => {
                                         <div>
                                             <h3 className="font-bold text-gray-900 mb-2">Final Submission Notice</h3>
                                             <p className="text-sm text-gray-600">
-                                                By signing and submitting this application, you certify that all information provided is true and accurate. 
+                                                By signing and submitting this application, you certify that all information provided is true and accurate.
                                                 This signature constitutes your final approval and consent to all previous declarations.
                                             </p>
                                         </div>
@@ -507,7 +526,7 @@ const ApplicantSignature = () => {
                                         </span>
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-2">
-                                        <div 
+                                        <div
                                             className="bg-linear-to-r from-blue-500 to-cyan-400 h-2 rounded-full transition-all duration-500"
                                             style={{ width: `${completion.percentage}%` }}
                                         ></div>
@@ -521,9 +540,9 @@ const ApplicantSignature = () => {
                                         <h3 className="font-bold text-gray-900">Final Declaration</h3>
                                     </div>
                                     <p className="text-sm text-gray-600">
-                                        I, <span className="font-bold text-gray-900">{formData.fullName || "[Your Name]"}</span>, 
-                                        hereby declare that all information provided in this scholarship application is true, complete, 
-                                        and accurate to the best of my knowledge. I understand that any false information may result 
+                                        I, <span className="font-bold text-gray-900">{formData.fullName || "[Your Name]"}</span>,
+                                        hereby declare that all information provided in this scholarship application is true, complete,
+                                        and accurate to the best of my knowledge. I understand that any false information may result
                                         in disqualification and legal consequences.
                                     </p>
                                 </div>
@@ -535,14 +554,13 @@ const ApplicantSignature = () => {
                                     whileTap={{ scale: 0.98 }}
                                     onClick={handleSubmit}
                                     disabled={isSubmitting || completion.percentage < 100}
-                                    className={`group w-full cursor-pointer mt-12 flex items-center justify-center gap-3 px-8 py-4 font-bold rounded-xl shadow-lg transition-all duration-300 ${
-                                        isSubmitting || completion.percentage < 100
-                                            ? 'opacity-70 cursor-not-allowed'
-                                            : ''
-                                    } ${isSubmitting
-                                        ? 'bg-gray-400 text-gray-300'
-                                        : 'bg-linear-to-r from-emerald-500 to-green-500 text-white shadow-emerald-200 hover:shadow-xl hover:shadow-emerald-300'
-                                    }`}
+                                    className={`group w-full cursor-pointer mt-12 flex items-center justify-center gap-3 px-8 py-4 font-bold rounded-xl shadow-lg transition-all duration-300 ${isSubmitting || completion.percentage < 100
+                                        ? 'opacity-70 cursor-not-allowed'
+                                        : ''
+                                        } ${isSubmitting
+                                            ? 'bg-gray-400 text-gray-300'
+                                            : 'bg-linear-to-r from-emerald-500 to-green-500 text-white shadow-emerald-200 hover:shadow-xl hover:shadow-emerald-300'
+                                        }`}
                                 >
                                     {isSubmitting ? (
                                         <>
@@ -662,7 +680,7 @@ const ApplicantSignature = () => {
                                 <p className="text-sm text-gray-600 mb-4">
                                     If you have questions about the submission process or need technical support, contact us.
                                 </p>
-                                <button 
+                                <button
                                     type="button"
                                     className="w-full px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded-lg hover:bg-blue-600 transition-colors"
                                 >
