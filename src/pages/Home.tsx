@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Clock2, Notebook, Search, Award, GraduationCap, Users, Target, ChevronRight, Sparkles, Star, CheckCircle, ArrowRight, BookOpen } from "lucide-react";
 import AlertLogo from "../assets/images/AlertLogo.png";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const scholarships = [
     {
@@ -47,20 +47,26 @@ const carouselImages = [
 ];
 
 const Home = () => {
+    const location = useLocation();
     const [searchTerm, setSearchTerm] = useState("");
     const [currentImage, setCurrentImage] = useState(0);
     const [scrollY, setScrollY] = useState(0);
     const [isSearchFocused, setIsSearchFocused] = useState(false);
+    const [displayedText, setDisplayedText] = useState("");
+    const [isTypingComplete, setIsTypingComplete] = useState(false);
+    const fullText = "Welcome to Alert Group Scholarship Portal";
+    const typingSpeed = 50; // milliseconds per character
+    const cursorRef = useRef<HTMLSpanElement>(null);
 
     const filteredScholarships = scholarships.filter((scholarship) =>
         scholarship.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
-      useEffect(() => {
+
+    useEffect(() => {
         window.scrollTo(0, 0);
     }, [location.pathname]);
 
-
-    // Auto-slide every 5 seconds
+    // Auto-slide every 10 seconds
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentImage((prev) => (prev + 1) % carouselImages.length);
@@ -73,6 +79,62 @@ const Home = () => {
         const handleScroll = () => setScrollY(window.scrollY);
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    // Typing animation for welcome text
+    useEffect(() => {
+        let currentIndex = 0;
+        let timeoutId: ReturnType<typeof setTimeout>;
+        const typeNextCharacter = () => {
+            if (currentIndex < fullText.length) {
+                setDisplayedText(fullText.substring(0, currentIndex + 1));
+                currentIndex++;
+                timeoutId = setTimeout(typeNextCharacter, typingSpeed);
+            } else {
+                setIsTypingComplete(true);
+
+                // Add blinking cursor effect after typing is complete
+                if (cursorRef.current) {
+                    cursorRef.current.style.animation = 'blink 1s infinite';
+                }
+            }
+        };
+
+        // Start typing after a brief delay
+        const startDelay = setTimeout(() => {
+            typeNextCharacter();
+        }, 500);
+
+        // Cleanup
+        return () => {
+            clearTimeout(startDelay);
+            clearTimeout(timeoutId);
+        };
+    }, []);
+
+    // Add CSS for blinking cursor
+    useEffect(() => {
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes blink {
+                0%, 50% { opacity: 1; }
+                51%, 100% { opacity: 0; }
+            }
+            .typing-cursor {
+                display: inline-block;
+                width: 2px;
+                background-color: #B8860B;
+                margin-left: 2px;
+                height: 1.2em;
+                vertical-align: middle;
+                animation: blink 1s infinite;
+            }
+        `;
+        document.head.appendChild(style);
+
+        return () => {
+            document.head.removeChild(style);
+        };
     }, []);
 
     // Animation variants
@@ -110,6 +172,7 @@ const Home = () => {
                     <img
                         src={AlertLogo}
                         className="h-30 w-auto drop-shadow-2xl"
+                        alt="Alert Group Logo"
                     />
                 </motion.div>
 
@@ -151,19 +214,39 @@ const Home = () => {
                         </span>
                     </motion.div>
 
-                    <motion.h1
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
                         transition={{ delay: 0.5 }}
-                        className="text-xl sm:text-4xl lg:text-5xl font-bold mb-6"
+                        className="min-h-[120px] flex items-center justify-center mb-6"
                     >
-                        Welcome to <span className="bg-linear-to-r from-[#B8860B] to-[#B8860B]/70 bg-clip-text text-transparent">AlertGroup Scholarship</span> Portal
-                    </motion.h1>
+                        <h1 className="text-xl sm:text-4xl lg:text-5xl font-bold inline-block text-center">
+                            <span className="inline-block">
+                                {displayedText}
+                                {!isTypingComplete && (
+                                    <span
+                                        ref={cursorRef}
+                                        className="typing-cursor"
+                                    />
+                                )}
+                            </span>
+                            {isTypingComplete && (
+                                <motion.span
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="bg-linear-to-r from-[#B8860B] to-[#B8860B]/70 bg-clip-text text-transparent ml-2"
+                                >
+                                    <span className="typing-cursor" />
+                                </motion.span>
+                            )}
+                        </h1>
+                    </motion.div>
 
                     <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        transition={{ delay: 0.7 }}
+                        transition={{ delay: isTypingComplete ? 0.3 : 1.2 }}
                         className="mt-4 text-xl text-gray-200 max-w-3xl mx-auto leading-relaxed"
                     >
                         Your gateway to life-changing scholarship opportunities. Discover, apply, and unlock your academic potential.
@@ -173,7 +256,7 @@ const Home = () => {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.9 }}
+                        transition={{ delay: isTypingComplete ? 0.5 : 1.4 }}
                         className="mt-12 flex justify-center"
                     >
                         <div className={`relative w-full max-w-2xl transition-all duration-300 ${isSearchFocused ? 'scale-105' : ''}`}>
@@ -218,7 +301,7 @@ const Home = () => {
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        transition={{ delay: 1.1 }}
+                        transition={{ delay: isTypingComplete ? 0.7 : 1.6 }}
                         className="mt-12"
                     >
                         <div className="inline-flex items-center gap-6 text-gray-200">
@@ -276,7 +359,7 @@ const Home = () => {
                                     className="group"
                                 >
                                     <div className="relative h-full bg-white rounded-3xl overflow-hidden shadow-lg shadow-gray-200/50 border border-gray-100">
-                                       
+
 
                                         <div className="p-6">
                                             {/* Icon & Title */}
