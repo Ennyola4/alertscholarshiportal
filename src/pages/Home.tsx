@@ -551,7 +551,7 @@ const Home = () => {
                                 className="h-30 w-auto"
                             />
                             <div>
-                                <h4 className="text-lg font-bold text-gray-900">AlertMFB Scholarship Program</h4>
+                                <h4 className="text-lg font-bold text-gray-900">Alert Group Scholarship Program</h4>
                                 <p className="text-sm text-gray-600">Empowering futures through education</p>
                             </div>
                         </div>
