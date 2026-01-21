@@ -8,11 +8,11 @@ const scholarships = [
     {
         title: "Undergraduate Scholarship",
         provider: "National Education Fund",
-        deadline: "Feb 28, 2026",
-        textColor: "text-red-400",
+        deadline: "Sep 30, 2026",
+        textColor: "text-red-500",
         category: "Education",
         description: "Full tuition coverage for undergraduate students",
-        slots: "50 available",
+        slots: "500 available",
         icon: GraduationCap
     },
     {
@@ -97,7 +97,7 @@ const Home = () => {
     };
 
     return (
-        <div className="min-h-screen bg-linear-to-b from-blue-50 via-white to-cyan-50 font-serif">
+        <div className="min-h-screen bg-linear-to-b from-gray-50 via-white to-gray-50 font-serif">
             {/* Hero Section */}
             <div className="relative h-screen min-h-[800px] text-white overflow-hidden">
                 {/* Logo in Top-Left */}
@@ -134,8 +134,8 @@ const Home = () => {
                 <div className="absolute inset-0 bg-linear-to-r from-black-900/40 via-transparent to-black/40 z-20" />
 
                 {/* Floating Elements */}
-                <div className="absolute top-20 left-20 w-64 h-64 bg-linear-to-r from-blue-500/10 to-cyan-500/10 rounded-full blur-3xl z-10" />
-                <div className="absolute bottom-20 right-20 w-96 h-96 bg-linear-to-l from-teal-500/10 to-blue-500/10 rounded-full blur-3xl z-10" />
+                <div className="absolute top-20 left-20 w-64 h-64 bg-[#B8860B]/10 rounded-full blur-3xl z-10" />
+                <div className="absolute bottom-20 right-20 w-96 h-96 bg-red-500/10 rounded-full blur-3xl z-10" />
 
                 {/* Content */}
                 <div className="relative py-20 px-4 mt-20 md:px-0 text-center justify-center z-30">
@@ -145,8 +145,8 @@ const Home = () => {
                         transition={{ delay: 0.3 }}
                         className="inline-flex items-center gap-2 mt-10 mb-6 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20"
                     >
-                        <Award className="w-4 h-4 text-blue-300" />
-                        <span className="text-sm font-semibold text-blue-300 uppercase tracking-wider">
+                        <Award className="w-4 h-4 text-red-500" />
+                        <span className="text-sm font-semibold text-white uppercase tracking-wider">
                             Empowering Futures
                         </span>
                     </motion.div>
@@ -157,14 +157,14 @@ const Home = () => {
                         transition={{ delay: 0.5 }}
                         className="text-xl sm:text-4xl lg:text-5xl font-bold mb-6"
                     >
-                        Welcome to <span className="bg-linear-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">AlertGroup Scholarship</span> Portal
+                        Welcome to <span className="bg-linear-to-r from-[#B8860B] to-[#B8860B]/70 bg-clip-text text-transparent">AlertGroup Scholarship</span> Portal
                     </motion.h1>
 
                     <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.7 }}
-                        className="mt-4 text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed"
+                        className="mt-4 text-xl text-gray-200 max-w-3xl mx-auto leading-relaxed"
                     >
                         Your gateway to life-changing scholarship opportunities. Discover, apply, and unlock your academic potential.
                     </motion.p>
@@ -185,9 +185,9 @@ const Home = () => {
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     onFocus={() => setIsSearchFocused(true)}
                                     onBlur={() => setIsSearchFocused(false)}
-                                    className="w-full px-6 py-4 pl-14 text-gray-900 focus:outline-none focus:ring-4 focus:ring-blue-500/30 shadow-2xl rounded-2xl bg-white/95 backdrop-blur-sm border border-white/30"
+                                    className="w-full px-6 py-4 pl-14 text-gray-900 focus:outline-none focus:ring-4 focus:ring-[#B8860B]/30 shadow-2xl rounded-2xl bg-white/95 backdrop-blur-sm border border-white/30"
                                 />
-                                <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-blue-600 w-6 h-6" />
+                                <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-red-600 w-6 h-6" />
                             </div>
 
                             {/* Search Tips */}
@@ -203,7 +203,7 @@ const Home = () => {
                                             Found {filteredScholarships.length} scholarships
                                         </div>
                                         {filteredScholarships.map((scholarship, index) => (
-                                            <div key={index} className="p-3 hover:bg-blue-50 rounded-lg cursor-pointer">
+                                            <div key={index} className="p-3 hover:bg-[#B8860B]/5 rounded-lg cursor-pointer">
                                                 <div className="font-medium text-gray-900">{scholarship.title}</div>
                                                 <div className="text-sm text-gray-500">{scholarship.provider}</div>
                                             </div>
@@ -221,17 +221,17 @@ const Home = () => {
                         transition={{ delay: 1.1 }}
                         className="mt-12"
                     >
-                        <div className="inline-flex items-center gap-6 text-blue-100">
+                        <div className="inline-flex items-center gap-6 text-gray-200">
                             <div className="flex items-center gap-2">
                                 <Users className="w-5 h-5" />
                                 <span>500+ Scholarships Awarded</span>
                             </div>
-                            <div className="w-1 h-1 bg-blue-300 rounded-full" />
+                            <div className="w-1 h-1 bg-[#B8860B] rounded-full" />
                             <div className="flex items-center gap-2">
                                 <Star className="w-5 h-5" />
                                 <span>98% Success Rate</span>
                             </div>
-                            <div className="w-1 h-1 bg-blue-300 rounded-full" />
+                            <div className="w-1 h-1 bg-[#B8860B] rounded-full" />
                             <div className="flex items-center gap-2">
                                 <CheckCircle className="w-5 h-5" />
                                 <span>24/7 Support</span>
@@ -252,7 +252,7 @@ const Home = () => {
                         className="text-center mb-16"
                     >
                         <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-                            Featured <span className="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Scholarships</span>
+                            Featured <span className="bg-linear-to-r from-[#B8860B] to-[#B8860B]/70 bg-clip-text text-transparent">Scholarships</span>
                         </h2>
                         <p className="text-gray-600 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed">
                             Discover opportunities that match your academic goals and career aspirations
@@ -281,8 +281,8 @@ const Home = () => {
                                         <div className="p-6">
                                             {/* Icon & Title */}
                                             <div className="flex items-start gap-4 mb-6">
-                                                <div className="p-3 bg-linear-to-r from-blue-50 to-cyan-50 rounded-xl">
-                                                    <Icon className="w-8 h-8 text-blue-600" />
+                                                <div className="p-3 bg-linear-to-r from-[#B8860B]/10 to-[#B8860B]/5 rounded-xl">
+                                                    <Icon className="w-8 h-8 text-[#B8860B]" />
                                                 </div>
                                                 <div>
                                                     <h3 className="text-xl font-bold text-gray-900 mb-2">
@@ -302,14 +302,14 @@ const Home = () => {
                                             {/* Details */}
                                             <div className="grid grid-cols-2 gap-4 mb-6">
                                                 <div className="text-center p-3 bg-linear-to-br from-gray-50 to-gray-100 rounded-xl">
-                                                    <Clock2 className="w-5 h-5 text-blue-500 mx-auto mb-2" />
+                                                    <Clock2 className="w-5 h-5 text-[#B8860B] mx-auto mb-2" />
                                                     <div className="text-sm text-gray-500">Deadline</div>
                                                     <div className={`font-bold ${scholarship.textColor}`}>
                                                         {scholarship.deadline}
                                                     </div>
                                                 </div>
                                                 <div className="text-center p-3 bg-linear-to-br from-gray-50 to-gray-100 rounded-xl">
-                                                    <Users className="w-5 h-5 text-cyan-500 mx-auto mb-2" />
+                                                    <Users className="w-5 h-5 text-[#B8860B] mx-auto mb-2" />
                                                     <div className="text-sm text-gray-500">Available Slots</div>
                                                     <div className="font-bold text-gray-900">
                                                         {scholarship.slots}
@@ -321,7 +321,7 @@ const Home = () => {
                                             {scholarship.title === "Undergraduate Scholarship" ? (
                                                 <Link
                                                     to="/personal-info"
-                                                    className="group w-full flex items-center justify-center gap-2 px-6 py-3 bg-linear-to-r from-blue-600 to-cyan-500 text-white font-semibold rounded-full shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/35 transition-all duration-300"
+                                                    className="group w-full flex items-center justify-center gap-2 px-6 py-3 bg-linear-to-r from-red-600 to-red-500 text-white font-semibold rounded-full shadow-lg shadow-[#B8860B]/25 hover:shadow-xl hover:shadow-[#B8860B]/35 transition-all duration-300"
                                                 >
                                                     <span>Apply Now</span>
                                                     <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -337,7 +337,7 @@ const Home = () => {
                                         </div>
 
                                         {/* Hover Overlay */}
-                                        <div className="absolute inset-0 bg-linear-to-br from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-3xl" />
+                                        <div className="absolute inset-0 bg-linear-to-br from-[#B8860B]/5 to-red-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-3xl" />
                                     </div>
                                 </motion.div>
                             );
@@ -347,7 +347,7 @@ const Home = () => {
             </section>
 
             {/* Why Choose Us Section */}
-            <section className="relative py-20 bg-linear-to-b from-white to-blue-50/30">
+            <section className="relative py-20 bg-linear-to-b from-white to-gray-50/30">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <motion.div
                         variants={fadeInUp}
@@ -356,14 +356,14 @@ const Home = () => {
                         viewport={{ once: true }}
                         className="text-center mb-16"
                     >
-                        <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-linear-to-r from-blue-50 to-cyan-50 rounded-full border border-blue-100">
-                            <Sparkles className="w-4 h-4 text-blue-600" />
-                            <span className="text-sm font-semibold text-blue-600 uppercase tracking-wider">
+                        <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-linear-to-r from-[#B8860B]/10 to-[#B8860B]/5 rounded-full border border-[#B8860B]/20">
+                            <Sparkles className="w-4 h-4 text-red-500" />
+                            <span className="text-sm font-semibold text-[#B8860B] uppercase tracking-wider">
                                 Why Choose Us
                             </span>
                         </div>
                         <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-                            The <span className="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">AlertGroup</span> Advantage
+                            The <span className="bg-linear-to-r from-[#B8860B] to-[#B8860B]/70 bg-clip-text text-transparent">Alert Group</span> Advantage
                         </h2>
                         <p className="text-gray-600 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed">
                             Our scholarship program is designed to provide comprehensive support and create lasting impact
@@ -382,19 +382,19 @@ const Home = () => {
                                 icon: BookOpen,
                                 title: "Fully Funded Support",
                                 description: "Complete coverage of tuition, learning materials, and academic expenses for selected candidates.",
-                                color: "from-blue-500 to-cyan-400"
+                                color: "from-[#B8860B] to-[#B8860B]/80"
                             },
                             {
                                 icon: Users,
                                 title: "Mentorship Programs",
                                 description: "Access to industry experts who provide guidance for educational and career development.",
-                                color: "from-cyan-500 to-teal-400"
+                                color: "from-[#B8860B] to-[#B8860B]/60"
                             },
                             {
                                 icon: Target,
                                 title: "Inclusive Eligibility",
                                 description: "Open to students from all regions and backgrounds who demonstrate exceptional potential.",
-                                color: "from-teal-500 to-emerald-400"
+                                color: "from-[#B8860B] to-[#B8860B]/40"
                             }
                         ].map((feature, index) => (
                             <motion.div
@@ -415,7 +415,7 @@ const Home = () => {
                                             {feature.description}
                                         </p>
                                     </div>
-                                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-1 bg-linear-to-r from-blue-400 to-cyan-400 rounded-full group-hover:w-4/5 transition-all duration-500" />
+                                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-1 bg-linear-to-r from-red-500 to-red-600 rounded-full group-hover:w-4/5 transition-all duration-500" />
                                 </div>
                             </motion.div>
                         ))}
@@ -424,7 +424,7 @@ const Home = () => {
             </section>
 
             {/* Testimonial Section */}
-            <section className="relative py-20 bg-linear-to-br from-blue-900 via-blue-800 to-cyan-900">
+            <section className="relative py-20 bg-linear-to-br from-gray-900 via-gray-800 to-gray-900">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <motion.div
                         variants={fadeInUp}
@@ -434,9 +434,9 @@ const Home = () => {
                         className="text-center mb-16"
                     >
                         <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-                            Voices of <span className="bg-linear-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">Success</span>
+                            Voices of <span className="bg-linear-to-r from-[#B8860B] to-[#B8860B]/70 bg-clip-text text-transparent">Success</span>
                         </h2>
-                        <p className="text-blue-100 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed">
+                        <p className="text-gray-200 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed">
                             Hear from scholars whose lives have been transformed through our program
                         </p>
                     </motion.div>
@@ -477,7 +477,7 @@ const Home = () => {
                                     </p>
                                     <div>
                                         <div className="font-semibold text-white">{testimonial.author}</div>
-                                        <div className="text-blue-200 text-sm">{testimonial.role}</div>
+                                        <div className="text-[#B8860B] text-sm">{testimonial.role}</div>
                                     </div>
                                 </div>
                             </motion.div>
@@ -488,12 +488,12 @@ const Home = () => {
 
             {/* CTA Section */}
             <section className="relative py-24 overflow-hidden">
-                <div className="absolute inset-0 bg-linear-to-br from-blue-600 via-blue-700 to-cyan-800" />
+                <div className="absolute inset-0 bg-linear-to-br from-[#B8860B] via-[#B8860B]/80 to-red-600" />
                 <div className="absolute top-0 left-0 w-full h-20 bg-linear-to-b from-white to-transparent" />
 
                 {/* Floating Elements */}
-                <div className="absolute top-1/4 left-10 w-64 h-64 bg-linear-to-r from-cyan-500/10 to-teal-500/10 rounded-full blur-3xl" />
-                <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-linear-to-l from-blue-500/10 to-cyan-500/10 rounded-full blur-3xl" />
+                <div className="absolute top-1/4 left-10 w-64 h-64 bg-[#B8860B]/10 rounded-full blur-3xl" />
+                <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-red-500/10 rounded-full blur-3xl" />
 
                 <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <motion.div
@@ -513,7 +513,7 @@ const Home = () => {
                             Ready to Transform Your Future?
                         </h2>
 
-                        <p className="text-xl text-blue-100 max-w-2xl mx-auto leading-relaxed">
+                        <p className="text-xl text-gray-100 max-w-2xl mx-auto leading-relaxed">
                             Take the first step towards achieving your academic dreams. Apply now and join our community of scholars.
                         </p>
 
@@ -524,7 +524,7 @@ const Home = () => {
                         >
                             <Link
                                 to="/personal-info"
-                                className="group inline-flex items-center gap-3 px-10 py-4 bg-linear-to-r from-cyan-400 to-blue-300 text-blue-900 font-bold text-lg rounded-full shadow-2xl shadow-cyan-500/25 hover:shadow-3xl hover:shadow-cyan-500/40 transition-all duration-300"
+                                className="group inline-flex items-center gap-3 px-10 py-4 bg-linear-to-r from-white to-gray-100 text-[#B8860B] font-bold text-lg rounded-full shadow-2xl shadow-black/25 hover:shadow-3xl hover:shadow-black/40 transition-all duration-300"
                             >
                                 <Notebook className="w-6 h-6" />
                                 <span>Start Application Now</span>
@@ -532,7 +532,7 @@ const Home = () => {
                             </Link>
                         </motion.div>
 
-                        <div className="text-blue-200 text-sm">
+                        <div className="text-gray-200 text-sm">
                             ⚡ Average application time: 15 minutes
                         </div>
                     </motion.div>

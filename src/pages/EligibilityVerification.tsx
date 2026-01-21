@@ -56,7 +56,6 @@ const EligibilityVerification = () => {
         const { name, checked } = e.target;
         setFormData(prev => ({ ...prev, [name]: checked }));
 
-        // Clear validation errors when user checks a box
         if (validationErrors.length > 0) {
             setValidationErrors([]);
         }
@@ -65,7 +64,6 @@ const EligibilityVerification = () => {
     const validateForm = (): boolean => {
         const errors: string[] = [];
 
-        // Check if all checkboxes are checked
         const allChecked = Object.values(formData).every(check => check);
         if (!allChecked) {
             errors.push("You must agree to all eligibility criteria to continue.");
@@ -84,19 +82,15 @@ const EligibilityVerification = () => {
             return;
         }
 
-        // Update context
         updateEligibilityChecks(formData);
 
-        // Simulate API call
         setTimeout(() => {
             console.log("Eligibility checks submitted:", formData);
             setIsSubmitting(false);
             setShowSuccess(true);
 
-            // Hide success message after 3 seconds
             setTimeout(() => setShowSuccess(false), 3000);
 
-            // Navigate to next page
             navigate('/cda');
         }, 1500);
     };
@@ -186,7 +180,7 @@ const EligibilityVerification = () => {
     };
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-cyan-50 font-sans">
+        <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 font-sans">
             {/* Success Toast */}
             <AnimatePresence>
                 {showSuccess && (
@@ -196,7 +190,7 @@ const EligibilityVerification = () => {
                         exit={{ opacity: 0, y: -20 }}
                         className="fixed top-6 right-6 z-50"
                     >
-                        <div className="bg-linear-to-r from-emerald-500 to-green-500 text-white px-6 py-4 rounded-xl shadow-2xl shadow-emerald-200 flex items-center gap-3">
+                        <div className="bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white px-6 py-4 rounded-xl shadow-2xl shadow-[#B8860B]/20 flex items-center gap-3">
                             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -218,14 +212,14 @@ const EligibilityVerification = () => {
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center mb-12"
                 >
-                    <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-linear-to-r from-blue-100 to-cyan-100 rounded-full border border-blue-200">
-                        <CheckCircle className="w-4 h-4 text-blue-600" />
-                        <span className="text-sm font-semibold text-blue-600 uppercase tracking-wider">
+                    <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-linear-to-r from-[#B8860B]/10 to-[#B8860B]/5 rounded-full border border-[#B8860B]/20">
+                        <CheckCircle className="w-4 h-4 text-red-500" />
+                        <span className="text-sm font-semibold text-[#B8860B] uppercase tracking-wider">
                             Eligibility Verification
                         </span>
                     </div>
                     <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-                        Eligibility <span className="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Verification</span>
+                        Eligibility <span className="bg-linear-to-r from-[#B8860B] to-[#B8860B]/70 bg-clip-text text-transparent">Verification</span>
                     </h1>
                     <p className="text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
                         Confirm your eligibility for the AlertMFB Scholarship by reviewing and agreeing to all requirements below.
@@ -245,9 +239,9 @@ const EligibilityVerification = () => {
                                 <div key={step.number} className="flex items-center">
                                     <div className="flex flex-col items-center">
                                         <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${step.status === "current"
-                                            ? "bg-linear-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-200"
+                                            ? "bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white shadow-lg shadow-[#B8860B]/20"
                                             : step.number < 8
-                                                ? "bg-linear-to-r from-emerald-500 to-green-400 text-white shadow-lg shadow-emerald-200"
+                                                ? "bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white shadow-lg shadow-[#B8860B]/20"
                                                 : "bg-gray-100 text-gray-400"
                                             }`}>
                                             {step.number < 8 ? (
@@ -283,9 +277,9 @@ const EligibilityVerification = () => {
                     >
                         <div className="bg-white rounded-3xl shadow-2xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
                             {/* Form Header */}
-                            <div className="p-8 border-b border-gray-100 bg-linear-to-r from-blue-50 to-cyan-50">
+                            <div className="p-8 border-b border-gray-100 bg-linear-to-r from-[#B8860B]/5 to-[#B8860B]/10">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-3 bg-linear-to-r from-blue-500 to-cyan-400 rounded-xl">
+                                    <div className="p-3 bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 rounded-xl">
                                         <Shield className="w-6 h-6 text-white" />
                                     </div>
                                     <div>
@@ -299,16 +293,16 @@ const EligibilityVerification = () => {
                             <div className="p-8">
                                 {/* Progress Overview */}
                                 <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                                        <div className="text-sm text-blue-600 font-medium">Completion</div>
+                                    <div className="bg-[#B8860B]/10 rounded-xl p-4 border border-[#B8860B]/20">
+                                        <div className="text-sm text-[#B8860B] font-medium">Completion</div>
                                         <div className="text-2xl font-bold text-gray-900">{getCompletionPercentage()}%</div>
                                     </div>
-                                    <div className="bg-amber-50 rounded-xl p-4 border border-amber-100">
-                                        <div className="text-sm text-amber-600 font-medium">Required Criteria</div>
+                                    <div className="bg-[#B8860B]/10 rounded-xl p-4 border border-[#B8860B]/20">
+                                        <div className="text-sm text-[#B8860B] font-medium">Required Criteria</div>
                                         <div className="text-2xl font-bold text-gray-900">{getTotalCount()}</div>
                                     </div>
-                                    <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
-                                        <div className="text-sm text-emerald-600 font-medium">Agreed</div>
+                                    <div className="bg-[#B8860B]/10 rounded-xl p-4 border border-[#B8860B]/20">
+                                        <div className="text-sm text-[#B8860B] font-medium">Agreed</div>
                                         <div className="text-2xl font-bold text-gray-900">
                                             {getCheckedCount()} of {getTotalCount()}
                                         </div>
@@ -331,9 +325,9 @@ const EligibilityVerification = () => {
                                 )}
 
                                 {/* Important Warning */}
-                                <div className="mb-8 bg-linear-to-r from-amber-50 to-orange-50 rounded-2xl p-6 border border-amber-200">
+                                <div className="mb-8 bg-linear-to-r from-[#B8860B]/10 to-[#B8860B]/5 rounded-2xl p-6 border border-[#B8860B]/20">
                                     <div className="flex items-start gap-4">
-                                        <AlertCircle className="w-6 h-6 text-amber-600 shrink-0" />
+                                        <AlertCircle className="w-6 h-6 text-red-500 shrink-0" />
                                         <div>
                                             <h3 className="font-bold text-gray-900 mb-2">Important Legal Notice</h3>
                                             <p className="text-sm text-gray-600 mb-3">
@@ -342,15 +336,15 @@ const EligibilityVerification = () => {
                                             </p>
                                             <ul className="space-y-2">
                                                 <li className="flex items-start gap-2">
-                                                    <div className="w-2 h-2 bg-amber-500 rounded-full mt-2"></div>
+                                                    <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                                     <span className="text-sm text-gray-600">Immediate disqualification from the scholarship program</span>
                                                 </li>
                                                 <li className="flex items-start gap-2">
-                                                    <div className="w-2 h-2 bg-amber-500 rounded-full mt-2"></div>
+                                                    <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                                     <span className="text-sm text-gray-600">Recovery of any funds already disbursed</span>
                                                 </li>
                                                 <li className="flex items-start gap-2">
-                                                    <div className="w-2 h-2 bg-amber-500 rounded-full mt-2"></div>
+                                                    <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                                     <span className="text-sm text-gray-600">Legal action for fraudulent misrepresentation</span>
                                                 </li>
                                             </ul>
@@ -366,7 +360,7 @@ const EligibilityVerification = () => {
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: index * 0.1 }}
-                                            className={`bg-linear-to-r ${formData[criterion.id] ? 'from-emerald-50 to-green-50 border-emerald-200' : 'from-gray-50 to-white border-gray-200'} rounded-2xl p-6 border hover:border-blue-200 transition-all duration-300`}
+                                            className={`bg-linear-to-r ${formData[criterion.id] ? 'from-[#B8860B]/10 to-[#B8860B]/5 border-[#B8860B]/20' : 'from-gray-50 to-white border-gray-200'} rounded-2xl p-6 border hover:border-[#B8860B]/20 transition-all duration-300`}
                                         >
                                             <div className="flex items-start gap-4">
                                                 <div className="mt-1">
@@ -376,7 +370,7 @@ const EligibilityVerification = () => {
                                                         name={criterion.id}
                                                         checked={formData[criterion.id]}
                                                         onChange={handleCheckboxChange}
-                                                        className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                                        className="w-5 h-5 text-[#B8860B] bg-gray-100 border-gray-300 rounded focus:ring-[#B8860B] focus:ring-2"
                                                         required={criterion.required}
                                                     />
                                                 </div>
@@ -389,8 +383,8 @@ const EligibilityVerification = () => {
                                                             {criterion.label}
                                                         </label>
                                                         {formData[criterion.id] && (
-                                                            <div className="p-1 bg-emerald-50 rounded-full ml-2">
-                                                                <CheckCircle className="w-5 h-5 text-emerald-500" />
+                                                            <div className="p-1 bg-[#B8860B]/10 rounded-full ml-2">
+                                                                <CheckCircle className="w-5 h-5 text-[#B8860B]" />
                                                             </div>
                                                         )}
                                                     </div>
@@ -415,16 +409,16 @@ const EligibilityVerification = () => {
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-2">
                                         <div
-                                            className="bg-linear-to-r from-blue-500 to-cyan-400 h-2 rounded-full transition-all duration-500"
+                                            className="bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 h-2 rounded-full transition-all duration-500"
                                             style={{ width: `${getCompletionPercentage()}%` }}
                                         ></div>
                                     </div>
                                 </div>
 
                                 {/* Declaration Summary */}
-                                <div className="mt-8 bg-linear-to-r from-blue-50 to-cyan-50 rounded-2xl p-6 border border-blue-200">
+                                <div className="mt-8 bg-linear-to-r from-[#B8860B]/5 to-[#B8860B]/10 rounded-2xl p-6 border border-[#B8860B]/20">
                                     <div className="flex items-center gap-3 mb-4">
-                                        <FileText className="w-5 h-5 text-blue-600" />
+                                        <FileText className="w-5 h-5 text-red-500" />
                                         <h3 className="font-bold text-gray-900">Declaration Summary</h3>
                                     </div>
                                     <p className="text-sm text-gray-600">
@@ -444,7 +438,7 @@ const EligibilityVerification = () => {
                                         type="submit"
                                         disabled={isSubmitting || !isAllChecked()}
                                         onClick={handleSaveAndContinue}
-                                        className="group w-full cursor-pointer flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+                                        className="group w-full cursor-pointer flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white font-bold rounded-xl shadow-lg shadow-[#B8860B]/20 hover:shadow-xl hover:shadow-[#B8860B]/30 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                                     >
                                         {isSubmitting ? (
                                             <>
@@ -467,7 +461,7 @@ const EligibilityVerification = () => {
                                 <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-100">
                                     <Link
                                         to="/institutional-verification"
-                                        className="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center gap-1"
+                                        className="text-red-500 hover:text-[#B8860B]/80 font-medium text-sm flex items-center gap-1"
                                     >
                                         ← Back to Institutional Verification
                                     </Link>
@@ -488,7 +482,7 @@ const EligibilityVerification = () => {
                     >
                         <div className="sticky top-8 space-y-6">
                             {/* Scholarship Info Card */}
-                            <div className="bg-linear-to-br from-blue-600 to-cyan-500 rounded-3xl p-8 text-white shadow-2xl shadow-blue-200">
+                            <div className="bg-linear-to-br from-[#B8860B] to-[#B8860B]/80 rounded-3xl p-8 text-white shadow-2xl shadow-[#B8860B]/20">
                                 <div className="flex items-center gap-3 mb-6">
                                     <img
                                         src={AlertLogo}
@@ -497,7 +491,7 @@ const EligibilityVerification = () => {
                                     />
                                     <div>
                                         <h3 className="text-2xl font-bold">Eligibility Requirements</h3>
-                                        <p className="text-blue-100">Key criteria for AlertMFB Scholarship</p>
+                                        <p className="text-[#B8860B]/90">Key criteria for AlertMFB Scholarship</p>
                                     </div>
                                 </div>
 
@@ -508,7 +502,7 @@ const EligibilityVerification = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Academic Excellence</div>
-                                            <div className="text-sm text-blue-100">Minimum CGPA of 3.0/5.0 required</div>
+                                            <div className="text-sm text-white">Minimum CGPA of 3.0/5.0 required</div>
                                         </div>
                                     </div>
 
@@ -518,7 +512,7 @@ const EligibilityVerification = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Financial Need</div>
-                                            <div className="text-sm text-blue-100">Demonstrated financial need required</div>
+                                            <div className="text-sm text-white">Demonstrated financial need required</div>
                                         </div>
                                     </div>
 
@@ -528,7 +522,7 @@ const EligibilityVerification = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Good Conduct</div>
-                                            <div className="text-sm text-blue-100">No disciplinary records allowed</div>
+                                            <div className="text-sm text-white">No disciplinary records allowed</div>
                                         </div>
                                     </div>
                                 </div>
@@ -537,29 +531,29 @@ const EligibilityVerification = () => {
                             {/* Tips Card */}
                             <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-lg">
                                 <div className="flex items-center gap-2 mb-4">
-                                    <Sparkles className="w-5 h-5 text-amber-500" />
+                                    <Sparkles className="w-5 h-5 text-red-500" />
                                     <h4 className="font-bold text-gray-900">Verification Process</h4>
                                 </div>
                                 <ul className="space-y-3">
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">All declarations will be verified through official channels</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">Academic records verified with your institution</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">Financial need assessed through documentation</span>
                                     </li>
                                 </ul>
                             </div>
 
                             {/* Help Card */}
-                            <div className="bg-linear-to-r from-emerald-50 to-teal-50 rounded-3xl p-6 border border-emerald-100">
+                            <div className="bg-linear-to-r from-[#B8860B]/10 to-[#B8860B]/5 rounded-3xl p-6 border border-[#B8860B]/20">
                                 <div className="flex items-center gap-2 mb-2">
-                                    <AlertCircle className="w-5 h-5 text-emerald-600" />
+                                    <AlertCircle className="w-5 h-5 text-red-500" />
                                     <h4 className="font-bold text-gray-900">Unsure About Eligibility?</h4>
                                 </div>
                                 <p className="text-sm text-gray-600 mb-4">
@@ -567,7 +561,7 @@ const EligibilityVerification = () => {
                                 </p>
                                 <button
                                     type="button"
-                                    className="w-full px-4 py-2 bg-emerald-500 text-white text-sm font-semibold rounded-lg hover:bg-emerald-600 transition-colors"
+                                    className="w-full px-4 py-2 bg-[#B8860B] text-white text-sm font-semibold rounded-lg hover:bg-[#B8860B]/80 transition-colors"
                                 >
                                     Contact Support
                                 </button>

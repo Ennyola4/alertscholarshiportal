@@ -67,7 +67,6 @@ const DocumentsUpload = () => {
     });
 
     useEffect(() => {
-        // Update upload status when formData changes
         setUploadStatus({
             birthCertificate: !!formData.birthCertificate,
             nationalId: !!formData.nationalId,
@@ -86,7 +85,6 @@ const DocumentsUpload = () => {
         if (files && files[0]) {
             const file = files[0];
             
-            // Validate file size (5MB max)
             if (file.size > 5 * 1024 * 1024) {
                 alert(`File size must be less than 5MB for ${documentRequirements.find(doc => doc.name === name)?.title}`);
                 return;
@@ -95,7 +93,6 @@ const DocumentsUpload = () => {
             const updatedFormData = { ...formData, [name]: file };
             setFormData(updatedFormData);
             
-            // Update context
             updateDocuments({ [name]: file });
         }
     };
@@ -104,7 +101,6 @@ const DocumentsUpload = () => {
         const updatedFormData = { ...formData, [name]: null };
         setFormData(updatedFormData);
         
-        // Update context
         updateDocuments({ [name]: null });
     };
 
@@ -112,7 +108,6 @@ const DocumentsUpload = () => {
         e.preventDefault();
         setIsSubmitting(true);
 
-        // Validate that all required files are uploaded
         const requiredFiles = documentRequirements
             .filter(doc => doc.required)
             .map(doc => doc.name);
@@ -127,16 +122,13 @@ const DocumentsUpload = () => {
             return;
         }
 
-        // Simulate API call
         setTimeout(() => {
             console.log("Documents submitted:", formData);
             setIsSubmitting(false);
             setShowSuccess(true);
 
-            // Hide success message after 3 seconds
             setTimeout(() => setShowSuccess(false), 3000);
 
-            // Navigate to next page
             navigate('/referre-contact-verification');
         }, 1500);
     };
@@ -253,7 +245,7 @@ const DocumentsUpload = () => {
     };
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-cyan-50 font-sans">
+        <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 font-sans">
             {/* Success Toast */}
             <AnimatePresence>
                 {showSuccess && (
@@ -263,7 +255,7 @@ const DocumentsUpload = () => {
                         exit={{ opacity: 0, y: -20 }}
                         className="fixed top-6 right-6 z-50"
                     >
-                        <div className="bg-linear-to-r from-emerald-500 to-green-500 text-white px-6 py-4 rounded-xl shadow-2xl shadow-emerald-200 flex items-center gap-3">
+                        <div className="bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white px-6 py-4 rounded-xl shadow-2xl shadow-[#B8860B]/20 flex items-center gap-3">
                             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -285,14 +277,14 @@ const DocumentsUpload = () => {
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center mb-12"
                 >
-                    <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-linear-to-r from-blue-100 to-cyan-100 rounded-full border border-blue-200">
-                        <FileCheck className="w-4 h-4 text-blue-600" />
-                        <span className="text-sm font-semibold text-blue-600 uppercase tracking-wider">
+                    <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-linear-to-r from-[#B8860B]/10 to-[#B8860B]/5 rounded-full border border-[#B8860B]/20">
+                        <FileCheck className="w-4 h-4 text-red-500" />
+                        <span className="text-sm font-semibold text-[#B8860B] uppercase tracking-wider">
                             Document Uploads
                         </span>
                     </div>
                     <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-                        Required <span className="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Documents</span>
+                        Required <span className="bg-linear-to-r from-[#B8860B] to-[#B8860B]/70 bg-clip-text text-transparent">Documents</span>
                     </h1>
                     <p className="text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
                         Upload all mandatory documents for verification. Ensure all files are clear and legible.
@@ -312,9 +304,9 @@ const DocumentsUpload = () => {
                                 <div key={step.number} className="flex items-center">
                                     <div className="flex flex-col items-center">
                                         <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${step.status === "current"
-                                                ? "bg-linear-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-200"
+                                                ? "bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white shadow-lg shadow-[#B8860B]/20"
                                                 : step.number < 5
-                                                    ? "bg-linear-to-r from-emerald-500 to-green-400 text-white shadow-lg shadow-emerald-200"
+                                                    ? "bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white shadow-lg shadow-[#B8860B]/20"
                                                     : "bg-gray-100 text-gray-400"
                                             }`}>
                                             {step.number < 5 ? (
@@ -350,9 +342,9 @@ const DocumentsUpload = () => {
                     >
                         <div className="bg-white rounded-3xl shadow-2xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
                             {/* Form Header */}
-                            <div className="p-8 border-b border-gray-100 bg-linear-to-r from-blue-50 to-cyan-50">
+                            <div className="p-8 border-b border-gray-100 bg-linear-to-r from-[#B8860B]/5 to-[#B8860B]/10">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-3 bg-linear-to-r from-blue-500 to-cyan-400 rounded-xl">
+                                    <div className="p-3 bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 rounded-xl">
                                         <FileText className="w-6 h-6 text-white" />
                                     </div>
                                     <div>
@@ -364,9 +356,9 @@ const DocumentsUpload = () => {
 
                             {/* Form Fields */}
                             <div className="p-8">
-                                <div className="mb-6 bg-linear-to-r from-amber-50 to-orange-50 rounded-2xl p-4 border border-amber-200">
+                                <div className="mb-6 bg-linear-to-r from-[#B8860B]/10 to-[#B8860B]/5 rounded-2xl p-4 border border-[#B8860B]/20">
                                     <div className="flex items-center gap-3">
-                                        <AlertCircle className="w-5 h-5 text-amber-600" />
+                                        <AlertCircle className="w-5 h-5 text-[#B8860B]" />
                                         <div>
                                             <h3 className="font-bold text-gray-900">Important Notes</h3>
                                             <p className="text-sm text-gray-600">
@@ -379,16 +371,16 @@ const DocumentsUpload = () => {
 
                                 {/* Progress Overview */}
                                 <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                                        <div className="text-sm text-blue-600 font-medium">Total Documents</div>
+                                    <div className="bg-[#B8860B]/10 rounded-xl p-4 border border-[#B8860B]/20">
+                                        <div className="text-sm text-[#B8860B] font-medium">Total Documents</div>
                                         <div className="text-2xl font-bold text-gray-900">{documentRequirements.length}</div>
                                     </div>
-                                    <div className="bg-amber-50 rounded-xl p-4 border border-amber-100">
-                                        <div className="text-sm text-amber-600 font-medium">Required Documents</div>
+                                    <div className="bg-[#B8860B]/10 rounded-xl p-4 border border-[#B8860B]/20">
+                                        <div className="text-sm text-[#B8860B] font-medium">Required Documents</div>
                                         <div className="text-2xl font-bold text-gray-900">{getRequiredCount()}</div>
                                     </div>
-                                    <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
-                                        <div className="text-sm text-emerald-600 font-medium">Uploaded Required</div>
+                                    <div className="bg-[#B8860B]/10 rounded-xl p-4 border border-[#B8860B]/20">
+                                        <div className="text-sm text-[#B8860B] font-medium">Uploaded Required</div>
                                         <div className="text-2xl font-bold text-gray-900">
                                             {getRequiredUploadedCount()} of {getRequiredCount()}
                                         </div>
@@ -402,7 +394,7 @@ const DocumentsUpload = () => {
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: index * 0.05 }}
-                                            className="bg-linear-to-r from-gray-50 to-white rounded-2xl p-6 border border-gray-200 hover:border-blue-200 transition-all duration-300"
+                                            className="bg-linear-to-r from-gray-50 to-white rounded-2xl p-6 border border-gray-200 hover:border-[#B8860B]/20 transition-all duration-300"
                                         >
                                             <div className="flex items-start justify-between mb-4">
                                                 <div className="flex-1">
@@ -412,8 +404,8 @@ const DocumentsUpload = () => {
                                                             {doc.required && <span className="text-red-500 ml-1">*</span>}
                                                         </h3>
                                                         {uploadStatus[doc.name] && (
-                                                            <div className="p-1 bg-emerald-50 rounded-full">
-                                                                <CheckCircle className="w-4 h-4 text-emerald-500" />
+                                                            <div className="p-1 bg-[#B8860B]/10 rounded-full">
+                                                                <CheckCircle className="w-4 h-4 text-[#B8860B]" />
                                                             </div>
                                                         )}
                                                     </div>
@@ -424,7 +416,7 @@ const DocumentsUpload = () => {
                                                             {doc.format}
                                                         </span>
                                                         {doc.required ? (
-                                                            <span className="flex items-center gap-1 bg-blue-50 text-blue-600 px-2 py-1 rounded-full">
+                                                            <span className="flex items-center gap-1 bg-[#B8860B]/10 text-[#B8860B] px-2 py-1 rounded-full">
                                                                 <Shield className="w-3 h-3" />
                                                                 Required
                                                             </span>
@@ -444,7 +436,7 @@ const DocumentsUpload = () => {
                                                 <div className="flex flex-col items-center gap-4">
                                                     {!formData[doc.name] ? (
                                                         <label className="flex-1 w-full cursor-pointer">
-                                                            <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 hover:border-blue-400 transition-colors text-center">
+                                                            <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 hover:border-[#B8860B] transition-colors text-center">
                                                                 <input
                                                                     type="file"
                                                                     name={doc.name}
@@ -464,9 +456,9 @@ const DocumentsUpload = () => {
                                                         </label>
                                                     ) : (
                                                         <div className="w-full">
-                                                            <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                                                            <div className="flex items-center justify-between bg-[#B8860B]/10 border border-[#B8860B]/20 rounded-xl p-4">
                                                                 <div className="flex items-center gap-3">
-                                                                    <FileText className="w-5 h-5 text-emerald-600" />
+                                                                    <FileText className="w-5 h-5 text-[#B8860B]" />
                                                                     <div>
                                                                         <p className="font-medium text-gray-900 truncate max-w-[200px]">
                                                                             {formData[doc.name]?.name}
@@ -479,9 +471,9 @@ const DocumentsUpload = () => {
                                                                 <button
                                                                     type="button"
                                                                     onClick={() => handleRemoveFile(doc.name)}
-                                                                    className="p-1 hover:bg-emerald-100 rounded-full transition-colors"
+                                                                    className="p-1 hover:bg-[#B8860B]/20 rounded-full transition-colors"
                                                                 >
-                                                                    <X className="w-4 h-4 text-emerald-600" />
+                                                                    <X className="w-4 h-4 text-[#B8860B]" />
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -506,7 +498,7 @@ const DocumentsUpload = () => {
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-2">
                                         <div 
-                                            className="bg-linear-to-r from-blue-500 to-cyan-400 h-2 rounded-full transition-all duration-500"
+                                            className="bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 h-2 rounded-full transition-all duration-500"
                                             style={{ 
                                                 width: getRequiredCount() > 0 ? 
                                                     `${(getRequiredUploadedCount() / getRequiredCount()) * 100}%` : '0%'
@@ -524,7 +516,7 @@ const DocumentsUpload = () => {
                                         type="submit"
                                         disabled={isSubmitting || !isAllRequiredUploaded()}
                                         onClick={handleSaveAndContinue}
-                                        className="group w-full cursor-pointer flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+                                        className="group w-full cursor-pointer flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white font-bold rounded-xl shadow-lg shadow-[#B8860B]/20 hover:shadow-xl hover:shadow-[#B8860B]/30 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                                     >
                                         {isSubmitting ? (
                                             <>
@@ -547,7 +539,7 @@ const DocumentsUpload = () => {
                                 <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-100">
                                     <Link
                                         to="/assessment"
-                                        className="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center gap-1"
+                                        className="text-red-500 hover:text-[#B8860B]/80 font-medium text-sm flex items-center gap-1"
                                     >
                                         ← Back to Assessment
                                     </Link>
@@ -568,7 +560,7 @@ const DocumentsUpload = () => {
                     >
                         <div className="sticky top-8 space-y-6">
                             {/* Scholarship Info Card */}
-                            <div className="bg-linear-to-br from-blue-600 to-cyan-500 rounded-3xl p-8 text-white shadow-2xl shadow-blue-200">
+                            <div className="bg-linear-to-br from-[#B8860B] to-[#B8860B]/80 rounded-3xl p-8 text-white shadow-2xl shadow-[#B8860B]/20">
                                 <div className="flex items-center gap-3 mb-6">
                                     <img
                                         src={AlertLogo}
@@ -577,7 +569,7 @@ const DocumentsUpload = () => {
                                     />
                                     <div>
                                         <h3 className="text-2xl font-bold">Document Guidelines</h3>
-                                        <p className="text-blue-100">Ensuring successful verification</p>
+                                        <p className="text-white">Ensuring successful verification</p>
                                     </div>
                                 </div>
 
@@ -588,7 +580,7 @@ const DocumentsUpload = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Clear & Legible</div>
-                                            <div className="text-sm text-blue-100">Ensure all text and details are readable</div>
+                                            <div className="text-sm text-white">Ensure all text and details are readable</div>
                                         </div>
                                     </div>
 
@@ -598,7 +590,7 @@ const DocumentsUpload = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Valid Documents</div>
-                                            <div className="text-sm text-blue-100">All documents must be current and valid</div>
+                                            <div className="text-sm text-[#B8860B]/90">All documents must be current and valid</div>
                                         </div>
                                     </div>
 
@@ -608,7 +600,7 @@ const DocumentsUpload = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Proper Format</div>
-                                            <div className="text-sm text-blue-100">Upload in specified formats only</div>
+                                            <div className="text-sm text-[#B8860B]/90">Upload in specified formats only</div>
                                         </div>
                                     </div>
                                 </div>
@@ -617,29 +609,29 @@ const DocumentsUpload = () => {
                             {/* Tips Card */}
                             <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-lg">
                                 <div className="flex items-center gap-2 mb-4">
-                                    <Sparkles className="w-5 h-5 text-amber-500" />
+                                    <Sparkles className="w-5 h-5 text-red-500" />
                                     <h4 className="font-bold text-gray-900">Tips for Success</h4>
                                 </div>
                                 <ul className="space-y-3">
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">Scan documents in high resolution</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">Ensure all edges are visible in photos</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">Name files clearly for easy identification</span>
                                     </li>
                                 </ul>
                             </div>
 
                             {/* Help Card */}
-                            <div className="bg-linear-to-r from-emerald-50 to-teal-50 rounded-3xl p-6 border border-emerald-100">
+                            <div className="bg-linear-to-r from-[#B8860B]/10 to-[#B8860B]/5 rounded-3xl p-6 border border-[#B8860B]/20">
                                 <div className="flex items-center gap-2 mb-2">
-                                    <AlertCircle className="w-5 h-5 text-emerald-600" />
+                                    <AlertCircle className="w-5 h-5 text-[#B8860B]" />
                                     <h4 className="font-bold text-gray-900">Need Assistance?</h4>
                                 </div>
                                 <p className="text-sm text-gray-600 mb-4">
@@ -647,7 +639,7 @@ const DocumentsUpload = () => {
                                 </p>
                                 <button 
                                     type="button"
-                                    className="w-full px-4 py-2 bg-emerald-500 text-white text-sm font-semibold rounded-lg hover:bg-emerald-600 transition-colors"
+                                    className="w-full px-4 py-2 bg-[#B8860B] text-white text-sm font-semibold rounded-lg hover:bg-[#B8860B]/80 transition-colors"
                                 >
                                     Contact Support
                                 </button>

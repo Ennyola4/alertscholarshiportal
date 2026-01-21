@@ -219,7 +219,7 @@ const ApplicantSignature = () => {
     const completion = getCompletionStatus();
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-cyan-50 font-sans">
+        <div className="min-h-screen bg-linear-to-br from-[#FDF6E3] via-white to-[#F5E6C8] font-sans">
             {/* Success Toast */}
             <AnimatePresence>
                 {showSuccess && (
@@ -229,7 +229,7 @@ const ApplicantSignature = () => {
                         exit={{ opacity: 0, y: -20 }}
                         className="fixed top-6 right-6 z-50"
                     >
-                        <div className="bg-linear-to-r from-emerald-500 to-green-500 text-white px-6 py-4 rounded-xl shadow-2xl shadow-emerald-200 flex items-center gap-3">
+                        <div className="bg-linear-to-r from-[#B8860B] to-[#D4A017] text-white px-6 py-4 rounded-xl shadow-2xl shadow-[#B8860B]/30 flex items-center gap-3">
                             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -254,7 +254,7 @@ const ApplicantSignature = () => {
                         className="fixed top-6 right-6 z-50"
                         onAnimationComplete={() => setTimeout(() => setShowFinalWarning(false), 5000)}
                     >
-                        <div className="bg-linear-to-r from-amber-500 to-orange-500 text-white px-6 py-4 rounded-xl shadow-2xl shadow-amber-200 flex items-center gap-3">
+                        <div className="bg-linear-to-r from-[#B8860B] to-[#D4A017] text-white px-6 py-4 rounded-xl shadow-2xl shadow-[#B8860B]/30 flex items-center gap-3">
                             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                                 <AlertCircle className="w-5 h-5" />
                             </div>
@@ -274,14 +274,14 @@ const ApplicantSignature = () => {
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center mb-12"
                 >
-                    <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-linear-to-r from-blue-100 to-cyan-100 rounded-full border border-blue-200">
-                        <FileCheck className="w-4 h-4 text-blue-600" />
-                        <span className="text-sm font-semibold text-blue-600 uppercase tracking-wider">
+                    <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-linear-to-r from-[#F5E6C8] to-[#FDF6E3] rounded-full border border-[#B8860B]/30">
+                        <FileCheck className="w-4 h-4 text-red-500" />
+                        <span className="text-sm font-semibold text-[#B8860B] uppercase tracking-wider">
                             Final Step
                         </span>
                     </div>
                     <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-                        Applicant <span className="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Signature</span>
+                        Applicant <span className="bg-linear-to-r from-[#B8860B] to-[#D4A017] bg-clip-text text-transparent">Signature</span>
                     </h1>
                     <p className="text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
                         Provide your final signature to complete and submit your scholarship application.
@@ -301,8 +301,8 @@ const ApplicantSignature = () => {
                                 <div key={step.number} className="flex items-center">
                                     <div className="flex flex-col items-center">
                                         <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${step.status === "current"
-                                            ? "bg-linear-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-200" // Fixed typo here
-                                            : "bg-linear-to-r from-emerald-500 to-green-400 text-white shadow-lg shadow-emerald-200"
+                                            ? "bg-linear-to-r from-[#B8860B] to-[#D4A017] text-white shadow-lg shadow-[#B8860B]/30"
+                                            : "bg-linear-to-r from-[#B8860B] to-[#D4A017] text-white shadow-lg shadow-[#B8860B]/30"
                                             }`}>
                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -333,9 +333,9 @@ const ApplicantSignature = () => {
                     >
                         <div className="bg-white rounded-3xl shadow-2xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
                             {/* Form Header */}
-                            <div className="p-8 border-b border-gray-100 bg-linear-to-r from-blue-50 to-cyan-50">
+                            <div className="p-8 border-b border-gray-100 bg-linear-to-r from-[#FDF6E3] to-[#F5E6C8]">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-3 bg-linear-to-r from-blue-500 to-cyan-400 rounded-xl">
+                                    <div className="p-3 bg-linear-to-r from-[#B8860B] to-[#D4A017] rounded-xl">
                                         <FileSignature className="w-6 h-6 text-white" />
                                     </div>
                                     <div>
@@ -349,16 +349,16 @@ const ApplicantSignature = () => {
                             <div className="p-8">
                                 {/* Progress Overview */}
                                 <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                                        <div className="text-sm text-blue-600 font-medium">Completion</div>
+                                    <div className="bg-[#FDF6E3] rounded-xl p-4 border border-[#F5E6C8]">
+                                        <div className="text-sm text-[#B8860B] font-medium">Completion</div>
                                         <div className="text-2xl font-bold text-gray-900">{completion.percentage}%</div>
                                     </div>
-                                    <div className="bg-amber-50 rounded-xl p-4 border border-amber-100">
-                                        <div className="text-sm text-amber-600 font-medium">Required Fields</div>
+                                    <div className="bg-[#FDF6E3] rounded-xl p-4 border border-[#F5E6C8]">
+                                        <div className="text-sm text-[#B8860B] font-medium">Required Fields</div>
                                         <div className="text-2xl font-bold text-gray-900">{completion.total}</div>
                                     </div>
-                                    <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
-                                        <div className="text-sm text-emerald-600 font-medium">Filled Fields</div>
+                                    <div className="bg-[#FDF6E3] rounded-xl p-4 border border-[#F5E6C8]">
+                                        <div className="text-sm text-[#B8860B] font-medium">Filled Fields</div>
                                         <div className="text-2xl font-bold text-gray-900">
                                             {completion.filled} of {completion.total}
                                         </div>
@@ -366,9 +366,9 @@ const ApplicantSignature = () => {
                                 </div>
 
                                 {/* Final Warning */}
-                                <div className="mb-8 bg-linear-to-r from-purple-50 to-indigo-50 rounded-2xl p-6 border border-purple-200">
+                                <div className="mb-8 bg-linear-to-r from-[#FDF6E3] to-[#F5E6C8] rounded-2xl p-6 border border-[#B8860B]/30">
                                     <div className="flex items-start gap-4">
-                                        <AlertCircle className="w-6 h-6 text-purple-600 shrink-0" />
+                                        <AlertCircle className="w-6 h-6 text-red-500 shrink-0" />
                                         <div>
                                             <h3 className="font-bold text-gray-900 mb-2">Final Submission Notice</h3>
                                             <p className="text-sm text-gray-600">
@@ -381,9 +381,9 @@ const ApplicantSignature = () => {
 
                                 {/* Validation Errors */}
                                 {Object.keys(validationErrors).length > 0 && (
-                                    <div className="mb-6 bg-linear-to-r from-red-50 to-pink-50 rounded-2xl p-4 border border-red-200">
+                                    <div className="mb-6 bg-linear-to-r from-[#FDF6E3] to-[#F5E6C8] rounded-2xl p-4 border border-[#B8860B]/30">
                                         <div className="flex items-center gap-3">
-                                            <AlertCircle className="w-5 h-5 text-red-600" />
+                                            <AlertCircle className="w-5 h-5 text-[#B8860B]" />
                                             <div>
                                                 <h3 className="font-bold text-gray-900">Validation Required</h3>
                                                 {Object.entries(validationErrors).map(([field, error]) => (
@@ -397,10 +397,10 @@ const ApplicantSignature = () => {
                                 {/* Form Fields Grid */}
                                 <div className="space-y-8">
                                     {/* Full Name */}
-                                    <div className="bg-linear-to-r from-gray-50 to-white rounded-2xl p-6 border border-gray-200 hover:border-blue-200 transition-all duration-300">
+                                    <div className="bg-linear-to-r from-gray-50 to-white rounded-2xl p-6 border border-gray-200 hover:border-[#B8860B]/30 transition-all duration-300">
                                         <div className="flex items-center gap-3 mb-4">
-                                            <div className="p-2 bg-blue-100 rounded-lg">
-                                                <User className="w-5 h-5 text-blue-600" />
+                                            <div className="p-2 bg-[#F5E6C8] rounded-lg">
+                                                <User className="w-5 h-5 text-[#B8860B]" />
                                             </div>
                                             <div>
                                                 <label className="block text-lg font-bold text-gray-900 mb-1">
@@ -415,7 +415,7 @@ const ApplicantSignature = () => {
                                             value={formData.fullName}
                                             onChange={handleChange}
                                             placeholder="Enter your full legal name"
-                                            className={`w-full px-4 py-3 bg-gray-50 border ${validationErrors.fullName ? 'border-red-300' : 'border-gray-200'} rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+                                            className={`w-full px-4 py-3 bg-gray-50 border ${validationErrors.fullName ? 'border-red-300' : 'border-gray-200'} rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B8860B] focus:border-transparent transition-all`}
                                             required
                                         />
                                         {validationErrors.fullName && (
@@ -424,10 +424,10 @@ const ApplicantSignature = () => {
                                     </div>
 
                                     {/* Digital Signature Upload */}
-                                    <div className="bg-linear-to-r from-gray-50 to-white rounded-2xl p-6 border border-gray-200 hover:border-blue-200 transition-all duration-300">
+                                    <div className="bg-linear-to-r from-gray-50 to-white rounded-2xl p-6 border border-gray-200 hover:border-[#B8860B]/30 transition-all duration-300">
                                         <div className="flex items-center gap-3 mb-4">
-                                            <div className="p-2 bg-blue-100 rounded-lg">
-                                                <FileSignature className="w-5 h-5 text-blue-600" />
+                                            <div className="p-2 bg-[#F5E6C8] rounded-lg">
+                                                <FileSignature className="w-5 h-5 text-[#B8860B]" />
                                             </div>
                                             <div>
                                                 <label className="block text-lg font-bold text-gray-900 mb-1">
@@ -439,7 +439,7 @@ const ApplicantSignature = () => {
                                         <div className="flex flex-col items-center gap-4">
                                             {!formData.digitalSignature ? (
                                                 <label className="flex-1 w-full cursor-pointer">
-                                                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 hover:border-blue-400 transition-colors text-center">
+                                                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 hover:border-[#B8860B]/50 transition-colors text-center">
                                                         <input
                                                             type="file"
                                                             name="digitalSignature"
@@ -459,9 +459,9 @@ const ApplicantSignature = () => {
                                                 </label>
                                             ) : (
                                                 <div className="w-full">
-                                                    <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                                                    <div className="flex items-center justify-between bg-[#FDF6E3] border border-[#B8860B]/30 rounded-xl p-4">
                                                         <div className="flex items-center gap-3">
-                                                            <FileSignature className="w-5 h-5 text-emerald-600" />
+                                                            <FileSignature className="w-5 h-5 text-[#B8860B]" />
                                                             <div>
                                                                 <p className="font-medium text-gray-900 truncate max-w-[200px]">
                                                                     {formData.digitalSignature.name}
@@ -474,9 +474,9 @@ const ApplicantSignature = () => {
                                                         <button
                                                             type="button"
                                                             onClick={handleRemoveFile}
-                                                            className="p-1 hover:bg-emerald-100 rounded-full transition-colors"
+                                                            className="p-1 hover:bg-[#F5E6C8] rounded-full transition-colors"
                                                         >
-                                                            <X className="w-4 h-4 text-emerald-600" />
+                                                            <X className="w-4 h-4 text-[#B8860B]" />
                                                         </button>
                                                     </div>
                                                 </div>
@@ -488,10 +488,10 @@ const ApplicantSignature = () => {
                                     </div>
 
                                     {/* Date */}
-                                    <div className="bg-linear-to-r from-gray-50 to-white rounded-2xl p-6 border border-gray-200 hover:border-blue-200 transition-all duration-300">
+                                    <div className="bg-linear-to-r from-gray-50 to-white rounded-2xl p-6 border border-gray-200 hover:border-[#B8860B]/30 transition-all duration-300">
                                         <div className="flex items-center gap-3 mb-4">
-                                            <div className="p-2 bg-blue-100 rounded-lg">
-                                                <Calendar className="w-5 h-5 text-blue-600" />
+                                            <div className="p-2 bg-[#F5E6C8] rounded-lg">
+                                                <Calendar className="w-5 h-5 text-[#B8860B]" />
                                             </div>
                                             <div>
                                                 <label className="block text-lg font-bold text-gray-900 mb-1">
@@ -506,7 +506,7 @@ const ApplicantSignature = () => {
                                             value={formData.date}
                                             max={today}
                                             onChange={handleChange}
-                                            className={`w-full px-4 py-3 bg-gray-50 border ${validationErrors.date ? 'border-red-300' : 'border-gray-200'} rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+                                            className={`w-full px-4 py-3 bg-gray-50 border ${validationErrors.date ? 'border-red-300' : 'border-gray-200'} rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B8860B] focus:border-transparent transition-all`}
                                             required
                                         />
                                         {validationErrors.date && (
@@ -527,16 +527,16 @@ const ApplicantSignature = () => {
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-2">
                                         <div
-                                            className="bg-linear-to-r from-blue-500 to-cyan-400 h-2 rounded-full transition-all duration-500"
+                                            className="bg-linear-to-r from-[#B8860B] to-[#D4A017] h-2 rounded-full transition-all duration-500"
                                             style={{ width: `${completion.percentage}%` }}
                                         ></div>
                                     </div>
                                 </div>
 
                                 {/* Final Declaration */}
-                                <div className="mt-8 bg-linear-to-r from-emerald-50 to-green-50 rounded-2xl p-6 border border-emerald-200">
+                                <div className="mt-8 bg-linear-to-r from-[#FDF6E3] to-[#F5E6C8] rounded-2xl p-6 border border-[#B8860B]/30">
                                     <div className="flex items-center gap-3 mb-4">
-                                        <CheckCircle className="w-6 h-6 text-emerald-600" />
+                                        <CheckCircle className="w-6 h-6 text-red-500" />
                                         <h3 className="font-bold text-gray-900">Final Declaration</h3>
                                     </div>
                                     <p className="text-sm text-gray-600">
@@ -559,7 +559,7 @@ const ApplicantSignature = () => {
                                         : ''
                                         } ${isSubmitting
                                             ? 'bg-gray-400 text-gray-300'
-                                            : 'bg-linear-to-r from-emerald-500 to-green-500 text-white shadow-emerald-200 hover:shadow-xl hover:shadow-emerald-300'
+                                            : 'bg-linear-to-r from-[#B8860B] to-[#D4A017] text-white shadow-[#B8860B]/30 hover:shadow-xl hover:shadow-[#B8860B]/40'
                                         }`}
                                 >
                                     {isSubmitting ? (
@@ -582,7 +582,7 @@ const ApplicantSignature = () => {
                                 <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-100">
                                     <Link
                                         to="/consent-declaration"
-                                        className="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center gap-1"
+                                        className="text-red-500 hover:text-[#D4A017] font-medium text-sm flex items-center gap-1"
                                     >
                                         ← Back to Consent Declaration
                                     </Link>
@@ -603,7 +603,7 @@ const ApplicantSignature = () => {
                     >
                         <div className="sticky top-8 space-y-6">
                             {/* Scholarship Info Card */}
-                            <div className="bg-linear-to-br from-emerald-600 to-green-500 rounded-3xl p-8 text-white shadow-2xl shadow-emerald-200">
+                            <div className="bg-linear-to-br from-[#B8860B] to-[#D4A017] rounded-3xl p-8 text-white shadow-2xl shadow-[#B8860B]/30">
                                 <div className="flex items-center gap-3 mb-6">
                                     <img
                                         src={AlertLogo}
@@ -612,7 +612,7 @@ const ApplicantSignature = () => {
                                     />
                                     <div>
                                         <h3 className="text-2xl font-bold">Final Step Complete!</h3>
-                                        <p className="text-emerald-100">You're almost there</p>
+                                        <p className="text-[#FDF6E3]">You're almost there</p>
                                     </div>
                                 </div>
 
@@ -623,7 +623,7 @@ const ApplicantSignature = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Application Complete</div>
-                                            <div className="text-sm text-emerald-100">All 10 steps successfully completed</div>
+                                            <div className="text-sm text-[#FDF6E3]">All 10 steps successfully completed</div>
                                         </div>
                                     </div>
 
@@ -633,7 +633,7 @@ const ApplicantSignature = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Legal Signature</div>
-                                            <div className="text-sm text-emerald-100">Your signature makes this legally binding</div>
+                                            <div className="text-sm text-[#FDF6E3]">Your signature makes this legally binding</div>
                                         </div>
                                     </div>
 
@@ -643,7 +643,7 @@ const ApplicantSignature = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Next Steps</div>
-                                            <div className="text-sm text-emerald-100">Review process begins after submission</div>
+                                            <div className="text-sm text-[#FDF6E3]">Review process begins after submission</div>
                                         </div>
                                     </div>
                                 </div>
@@ -652,29 +652,29 @@ const ApplicantSignature = () => {
                             {/* Tips Card */}
                             <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-lg">
                                 <div className="flex items-center gap-2 mb-4">
-                                    <Sparkles className="w-5 h-5 text-amber-500" />
+                                    <Sparkles className="w-5 h-5 text-red-500" />
                                     <h4 className="font-bold text-gray-900">Signature Guidelines</h4>
                                 </div>
                                 <ul className="space-y-3">
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">Use your legal signature as on official documents</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">Ensure signature is clear and legible</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">Date should match the day you sign</span>
                                     </li>
                                 </ul>
                             </div>
 
                             {/* Help Card */}
-                            <div className="bg-linear-to-r from-blue-50 to-cyan-50 rounded-3xl p-6 border border-blue-100">
+                            <div className="bg-linear-to-r from-[#FDF6E3] to-[#F5E6C8] rounded-3xl p-6 border border-[#B8860B]/30">
                                 <div className="flex items-center gap-2 mb-2">
-                                    <AlertCircle className="w-5 h-5 text-blue-600" />
+                                    <AlertCircle className="w-5 h-5 text-red-500" />
                                     <h4 className="font-bold text-gray-900">Need Assistance?</h4>
                                 </div>
                                 <p className="text-sm text-gray-600 mb-4">
@@ -682,7 +682,7 @@ const ApplicantSignature = () => {
                                 </p>
                                 <button
                                     type="button"
-                                    className="w-full px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded-lg hover:bg-blue-600 transition-colors"
+                                    className="w-full px-4 py-2 bg-[#B8860B] text-white text-sm font-semibold rounded-lg hover:bg-[#D4A017] transition-colors"
                                 >
                                     Contact Support
                                 </button>

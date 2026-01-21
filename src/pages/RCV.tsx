@@ -13,7 +13,7 @@ import {
     FileText
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import AlertLogo from "../assets/images/AlertLogo.jpg";
+import AlertLogo from "../assets/images/AlertLogo.png";
 import { useApplication } from "../context/ApplicationContext";
 
 interface FormData {
@@ -61,7 +61,6 @@ const RCV = () => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
 
-        // Clear validation error for this field
         if (validationErrors[name]) {
             setValidationErrors(prev => {
                 const newErrors = { ...prev };
@@ -74,21 +73,18 @@ const RCV = () => {
     const validateForm = (): boolean => {
         const errors: Record<string, string> = {};
 
-        // Validate Referee 1
         if (!formData.referee1Name.trim()) errors.referee1Name = "Referee name is required";
         if (!formData.referee1Phone.trim()) errors.referee1Phone = "Phone number is required";
         if (!formData.referee1Email.trim()) errors.referee1Email = "Email address is required";
         if (!formData.referee1Title.trim()) errors.referee1Title = "Position/title is required";
         if (!formData.referee1Relationship.trim()) errors.referee1Relationship = "Relationship is required";
 
-        // Validate Referee 2
         if (!formData.referee2Name.trim()) errors.referee2Name = "Referee name is required";
         if (!formData.referee2Phone.trim()) errors.referee2Phone = "Phone number is required";
         if (!formData.referee2Email.trim()) errors.referee2Email = "Email address is required";
         if (!formData.referee2Title.trim()) errors.referee2Title = "Position/title is required";
         if (!formData.referee2Relationship.trim()) errors.referee2Relationship = "Relationship is required";
 
-        // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (formData.referee1Email && !emailRegex.test(formData.referee1Email)) {
             errors.referee1Email = "Invalid email format";
@@ -97,7 +93,6 @@ const RCV = () => {
             errors.referee2Email = "Invalid email format";
         }
 
-        // Phone validation (basic Nigerian format)
         const phoneRegex = /^\+?234[789]\d{9}$|^0[789]\d{9}$/;
         if (formData.referee1Phone && !phoneRegex.test(formData.referee1Phone.replace(/\s/g, ''))) {
             errors.referee1Phone = "Invalid phone number format. Use format: +2348012345678 or 08012345678";
@@ -120,19 +115,15 @@ const RCV = () => {
             return;
         }
 
-        // Update context
         updateRefereeContact(formData);
 
-        // Simulate API call
         setTimeout(() => {
             console.log("Referee data submitted:", formData);
             setIsSubmitting(false);
             setShowSuccess(true);
 
-            // Hide success message after 3 seconds
             setTimeout(() => setShowSuccess(false), 3000);
 
-            // Navigate to next page
             navigate('/institutional-verification');
         }, 1500);
     };
@@ -189,32 +180,32 @@ const RCV = () => {
         {
             label: "Full Name",
             name: "referee1Name",
-            icon: <UserCheck className="w-4 h-4" />,
+            icon: <UserCheck className="w-4 h-4 text-red-500" />,
             type: 'text'
         },
         {
             label: "Phone Number",
             name: "referee1Phone",
-            icon: <Phone className="w-4 h-4" />,
+            icon: <Phone className="w-4 h-4 text-red-500" />,
             type: 'tel'
         },
         {
             label: "Email Address",
             name: "referee1Email",
-            icon: <Mail className="w-4 h-4" />,
+            icon: <Mail className="w-4 h-4 text-red-500" />,
             type: 'email'
         },
         {
             label: "Position/Title",
             name: "referee1Title",
-            icon: <Briefcase className="w-4 h-4" />,
+            icon: <Briefcase className="w-4 h-4 text-red-500" />,
             type: 'select',
             options: positions
         },
         {
             label: "Relationship to Applicant",
             name: "referee1Relationship",
-            icon: <Users className="w-4 h-4" />,
+            icon: <Users className="w-4 h-4 text-red-500" />,
             type: 'select',
             options: relationships
         },
@@ -243,7 +234,7 @@ const RCV = () => {
                             name={fieldName}
                             value={value}
                             onChange={handleChange}
-                            className={`w-full px-4 py-3 bg-gray-50 border ${error ? 'border-red-300' : 'border-gray-200'} rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                            className={`w-full px-4 py-3 bg-gray-50 border ${error ? 'border-red-300' : 'border-gray-200'} rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B8860B] focus:border-transparent`}
                             required
                         >
                             <option value="">Select {field.label}</option>
@@ -265,7 +256,7 @@ const RCV = () => {
                                     field.type === 'tel' ? "+2348012345678 or 08012345678" :
                                         `Enter ${field.label.toLowerCase()}`
                             }
-                            className={`w-full px-4 py-3 bg-gray-50 border ${error ? 'border-red-300' : 'border-gray-200'} rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+                            className={`w-full px-4 py-3 bg-gray-50 border ${error ? 'border-red-300' : 'border-gray-200'} rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B8860B] focus:border-transparent transition-all`}
                             required
                         />
                         {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
@@ -276,7 +267,7 @@ const RCV = () => {
     };
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-cyan-50 font-sans">
+        <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 font-sans">
             {/* Success Toast */}
             <AnimatePresence>
                 {showSuccess && (
@@ -286,7 +277,7 @@ const RCV = () => {
                         exit={{ opacity: 0, y: -20 }}
                         className="fixed top-6 right-6 z-50"
                     >
-                        <div className="bg-linear-to-r from-emerald-500 to-green-500 text-white px-6 py-4 rounded-xl shadow-2xl shadow-emerald-200 flex items-center gap-3">
+                        <div className="bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white px-6 py-4 rounded-xl shadow-2xl shadow-[#B8860B]/20 flex items-center gap-3">
                             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -308,14 +299,14 @@ const RCV = () => {
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center mb-12"
                 >
-                    <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-linear-to-r from-blue-100 to-cyan-100 rounded-full border border-blue-200">
-                        <UserCheck className="w-4 h-4 text-blue-600" />
-                        <span className="text-sm font-semibold text-blue-600 uppercase tracking-wider">
+                    <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-linear-to-r from-[#B8860B]/10 to-[#B8860B]/5 rounded-full border border-[#B8860B]/20">
+                        <UserCheck className="w-4 h-4 text-red-500" />
+                        <span className="text-sm font-semibold text-[#B8860B] uppercase tracking-wider">
                             Referee Contact Verification
                         </span>
                     </div>
                     <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-                        Referee <span className="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Contact Details</span>
+                        Referee <span className="bg-linear-to-r from-[#B8860B] to-[#B8860B]/70 bg-clip-text text-transparent">Contact Details</span>
                     </h1>
                     <p className="text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
                         Provide contact information for two referees who can verify your academic performance and character.
@@ -335,9 +326,9 @@ const RCV = () => {
                                 <div key={step.number} className="flex items-center">
                                     <div className="flex flex-col items-center">
                                         <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${step.status === "current"
-                                                ? "bg-linear-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-200"
+                                                ? "bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white shadow-lg shadow-[#B8860B]/20"
                                                 : step.number < 6
-                                                    ? "bg-linear-to-r from-emerald-500 to-green-400 text-white shadow-lg shadow-emerald-200"
+                                                    ? "bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white shadow-lg shadow-[#B8860B]/20"
                                                     : "bg-gray-100 text-gray-400"
                                             }`}>
                                             {step.number < 6 ? (
@@ -373,9 +364,9 @@ const RCV = () => {
                     >
                         <div className="bg-white rounded-3xl shadow-2xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
                             {/* Form Header */}
-                            <div className="p-8 border-b border-gray-100 bg-linear-to-r from-blue-50 to-cyan-50">
+                            <div className="p-8 border-b border-gray-100 bg-linear-to-r from-[#B8860B]/5 to-[#B8860B]/10">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-3 bg-linear-to-r from-blue-500 to-cyan-400 rounded-xl">
+                                    <div className="p-3 bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 rounded-xl">
                                         <Users className="w-6 h-6 text-white" />
                                     </div>
                                     <div>
@@ -389,16 +380,16 @@ const RCV = () => {
                             <div className="p-8">
                                 {/* Progress Overview */}
                                 <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                                        <div className="text-sm text-blue-600 font-medium">Form Completion</div>
+                                    <div className="bg-[#B8860B]/10 rounded-xl p-4 border border-[#B8860B]/20">
+                                        <div className="text-sm text-[#B8860B] font-medium">Form Completion</div>
                                         <div className="text-2xl font-bold text-gray-900">{getCompletionPercentage()}%</div>
                                     </div>
-                                    <div className="bg-amber-50 rounded-xl p-4 border border-amber-100">
-                                        <div className="text-sm text-amber-600 font-medium">Required Fields</div>
+                                    <div className="bg-[#B8860B]/10 rounded-xl p-4 border border-[#B8860B]/20">
+                                        <div className="text-sm text-[#B8860B] font-medium">Required Fields</div>
                                         <div className="text-2xl font-bold text-gray-900">10</div>
                                     </div>
-                                    <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
-                                        <div className="text-sm text-emerald-600 font-medium">Filled Fields</div>
+                                    <div className="bg-[#B8860B]/10 rounded-xl p-4 border border-[#B8860B]/20">
+                                        <div className="text-sm text-[#B8860B] font-medium">Filled Fields</div>
                                         <div className="text-2xl font-bold text-gray-900">
                                             {Object.values(formData).filter(value => value.trim() !== '').length} of 10
                                         </div>
@@ -406,9 +397,9 @@ const RCV = () => {
                                 </div>
 
                                 {/* Important Note */}
-                                <div className="mb-8 bg-linear-to-r from-purple-50 to-indigo-50 rounded-2xl p-4 border border-purple-200">
+                                <div className="mb-8 bg-linear-to-r from-[#B8860B]/10 to-[#B8860B]/5 rounded-2xl p-4 border border-[#B8860B]/20">
                                     <div className="flex items-center gap-3">
-                                        <AlertCircle className="w-5 h-5 text-purple-600" />
+                                        <AlertCircle className="w-5 h-5 text-[#B8860B]" />
                                         <div>
                                             <h3 className="font-bold text-gray-900">Important Notice</h3>
                                             <p className="text-sm text-gray-600">
@@ -425,7 +416,7 @@ const RCV = () => {
                                     className="mb-10"
                                 >
                                     <div className="flex items-center gap-3 mb-6">
-                                        <div className="p-2 bg-linear-to-r from-blue-500 to-cyan-400 rounded-lg">
+                                        <div className="p-2 bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 rounded-lg">
                                             <UserCheck className="w-5 h-5 text-white" />
                                         </div>
                                         <h3 className="text-xl font-bold text-gray-900">Referee 1</h3>
@@ -448,7 +439,7 @@ const RCV = () => {
                                     className="mb-8"
                                 >
                                     <div className="flex items-center gap-3 mb-6">
-                                        <div className="p-2 bg-linear-to-r from-blue-500 to-cyan-400 rounded-lg">
+                                        <div className="p-2 bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 rounded-lg">
                                             <UserCheck className="w-5 h-5 text-white" />
                                         </div>
                                         <h3 className="text-xl font-bold text-gray-900">Referee 2</h3>
@@ -475,7 +466,7 @@ const RCV = () => {
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-2">
                                         <div
-                                            className="bg-linear-to-r from-blue-500 to-cyan-400 h-2 rounded-full transition-all duration-500"
+                                            className="bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 h-2 rounded-full transition-all duration-500"
                                             style={{ width: `${getCompletionPercentage()}%` }}
                                         ></div>
                                     </div>
@@ -490,7 +481,7 @@ const RCV = () => {
                                         type="submit"
                                         disabled={isSubmitting || getCompletionPercentage() < 100}
                                         onClick={handleSaveAndContinue}
-                                        className="group w-full cursor-pointer flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+                                        className="group w-full cursor-pointer flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white font-bold rounded-xl shadow-lg shadow-[#B8860B]/20 hover:shadow-xl hover:shadow-[#B8860B]/30 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                                     >
                                         {isSubmitting ? (
                                             <>
@@ -513,7 +504,7 @@ const RCV = () => {
                                 <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-100">
                                     <Link
                                         to="/documents-upload"
-                                        className="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center gap-1"
+                                        className="text-red-500 hover:text-[#B8860B]/80 font-medium text-sm flex items-center gap-1"
                                     >
                                         ← Back to Documents Upload
                                     </Link>
@@ -534,7 +525,7 @@ const RCV = () => {
                     >
                         <div className="sticky top-8 space-y-6">
                             {/* Scholarship Info Card */}
-                            <div className="bg-linear-to-br from-blue-600 to-cyan-500 rounded-3xl p-8 text-white shadow-2xl shadow-blue-200">
+                            <div className="bg-linear-to-br from-[#B8860B] to-[#B8860B]/80 rounded-3xl p-8 text-white shadow-2xl shadow-[#B8860B]/20">
                                 <div className="flex items-center gap-3 mb-6">
                                     <img
                                         src={AlertLogo}
@@ -543,7 +534,7 @@ const RCV = () => {
                                     />
                                     <div>
                                         <h3 className="text-2xl font-bold">Referee Guidelines</h3>
-                                        <p className="text-blue-100">Selecting appropriate referees</p>
+                                        <p className="text-white">Selecting appropriate referees</p>
                                     </div>
                                 </div>
 
@@ -554,7 +545,7 @@ const RCV = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Professional Referees</div>
-                                            <div className="text-sm text-blue-100">Academic supervisors or employers preferred</div>
+                                            <div className="text-sm text-white">Academic supervisors or employers preferred</div>
                                         </div>
                                     </div>
 
@@ -564,7 +555,7 @@ const RCV = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Informed Consent</div>
-                                            <div className="text-sm text-blue-100">Inform referees they will be contacted</div>
+                                            <div className="text-sm text-white">Inform referees they will be contacted</div>
                                         </div>
                                     </div>
 
@@ -574,7 +565,7 @@ const RCV = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Accurate Information</div>
-                                            <div className="text-sm text-blue-100">Ensure all contact details are correct</div>
+                                            <div className="text-sm text-white">Ensure all contact details are correct</div>
                                         </div>
                                     </div>
                                 </div>
@@ -583,29 +574,29 @@ const RCV = () => {
                             {/* Tips Card */}
                             <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-lg">
                                 <div className="flex items-center gap-2 mb-4">
-                                    <Sparkles className="w-5 h-5 text-amber-500" />
+                                    <Sparkles className="w-5 h-5 text-red-500" />
                                     <h4 className="font-bold text-gray-900">Referee Selection Tips</h4>
                                 </div>
                                 <ul className="space-y-3">
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">Choose referees who know you well academically/professionally</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">Avoid family members or close relatives</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">Referees should have known you for at least 1 year</span>
                                     </li>
                                 </ul>
                             </div>
 
                             {/* Help Card */}
-                            <div className="bg-linear-to-r from-emerald-50 to-teal-50 rounded-3xl p-6 border border-emerald-100">
+                            <div className="bg-linear-to-r from-[#B8860B]/10 to-[#B8860B]/5 rounded-3xl p-6 border border-[#B8860B]/20">
                                 <div className="flex items-center gap-2 mb-2">
-                                    <AlertCircle className="w-5 h-5 text-emerald-600" />
+                                    <AlertCircle className="w-5 h-5 text-[#B8860B]" />
                                     <h4 className="font-bold text-gray-900">Need Assistance?</h4>
                                 </div>
                                 <p className="text-sm text-gray-600 mb-4">
@@ -613,7 +604,7 @@ const RCV = () => {
                                 </p>
                                 <button
                                     type="button"
-                                    className="w-full px-4 py-2 bg-emerald-500 text-white text-sm font-semibold rounded-lg hover:bg-emerald-600 transition-colors"
+                                    className="w-full px-4 py-2 bg-[#B8860B] text-white text-sm font-semibold rounded-lg hover:bg-[#B8860B]/80 transition-colors"
                                 >
                                     Contact Support
                                 </button>

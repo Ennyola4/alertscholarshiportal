@@ -55,7 +55,6 @@ const IVC = () => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
 
-        // Clear validation error for this field
         if (validationErrors[name]) {
             setValidationErrors(prev => {
                 const newErrors = { ...prev };
@@ -68,24 +67,20 @@ const IVC = () => {
     const validateForm = (): boolean => {
         const errors: Record<string, string> = {};
 
-        // Validate all fields are filled
         if (!formData.institutionOfficer.trim()) errors.institutionOfficer = "Officer name is required";
         if (!formData.institutionEmail.trim()) errors.institutionEmail = "Email address is required";
         if (!formData.institutionPhone.trim()) errors.institutionPhone = "Phone number is required";
 
-        // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (formData.institutionEmail && !emailRegex.test(formData.institutionEmail)) {
             errors.institutionEmail = "Invalid email format. Use format: officer@university.edu.ng";
         }
 
-        // Validate institutional email domain
         const institutionalDomains = ['.edu.ng', '.edu.gh', '.edu', 'ac.uk', '.edu.au'];
         if (formData.institutionEmail && !institutionalDomains.some(domain => formData.institutionEmail.toLowerCase().includes(domain))) {
             errors.institutionEmail = "Please use an official institutional email address";
         }
 
-        // Phone validation (basic Nigerian format)
         const phoneRegex = /^\+?234[789]\d{9}$|^0[789]\d{9}$/;
         if (formData.institutionPhone && !phoneRegex.test(formData.institutionPhone.replace(/\s/g, ''))) {
             errors.institutionPhone = "Invalid phone number format. Use format: +2348012345678 or 08012345678";
@@ -105,19 +100,15 @@ const IVC = () => {
             return;
         }
 
-        // Update context
         updateInstitutionalVerification(formData);
 
-        // Simulate API call
         setTimeout(() => {
             console.log("Institutional verification data submitted:", formData);
             setIsSubmitting(false);
             setShowSuccess(true);
 
-            // Hide success message after 3 seconds
             setTimeout(() => setShowSuccess(false), 3000);
 
-            // Navigate to next page
             navigate('/eligibility-verification');
         }, 1500);
     };
@@ -143,7 +134,7 @@ const IVC = () => {
         {
             label: "Name of Department Officer / Course Adviser",
             name: "institutionOfficer",
-            icon: <UserCheck className="w-4 h-4" />,
+            icon: <UserCheck className="w-4 h-4 text-red-500" />,
             type: 'text',
             placeholder: "Enter full name of institutional contact",
             description: "e.g., Dr. John Doe - Head of Department, Computer Science"
@@ -151,7 +142,7 @@ const IVC = () => {
         {
             label: "Institutional Email Address",
             name: "institutionEmail",
-            icon: <Mail className="w-4 h-4" />,
+            icon: <Mail className="w-4 h-4 text-red-500" />,
             type: 'email',
             placeholder: "officer@university.edu.ng",
             description: "Must be an official institutional email address"
@@ -159,7 +150,7 @@ const IVC = () => {
         {
             label: "Phone Number",
             name: "institutionPhone",
-            icon: <Phone className="w-4 h-4" />,
+            icon: <Phone className="w-4 h-4 text-red-500" />,
             type: 'tel',
             placeholder: "+234 801 234 5678",
             description: "Official department or office phone number"
@@ -173,7 +164,7 @@ const IVC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-cyan-50 font-sans">
+        <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 font-sans">
             {/* Success Toast */}
             <AnimatePresence>
                 {showSuccess && (
@@ -183,7 +174,7 @@ const IVC = () => {
                         exit={{ opacity: 0, y: -20 }}
                         className="fixed top-6 right-6 z-50"
                     >
-                        <div className="bg-linear-to-r from-emerald-500 to-green-500 text-white px-6 py-4 rounded-xl shadow-2xl shadow-emerald-200 flex items-center gap-3">
+                        <div className="bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white px-6 py-4 rounded-xl shadow-2xl shadow-[#B8860B]/20 flex items-center gap-3">
                             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -205,14 +196,14 @@ const IVC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center mb-12"
                 >
-                    <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-linear-to-r from-blue-100 to-cyan-100 rounded-full border border-blue-200">
-                        <Building2 className="w-4 h-4 text-blue-600" />
-                        <span className="text-sm font-semibold text-blue-600 uppercase tracking-wider">
+                    <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-linear-to-r from-[#B8860B]/10 to-[#B8860B]/5 rounded-full border border-[#B8860B]/20">
+                        <Building2 className="w-4 h-4 text-red-500" />
+                        <span className="text-sm font-semibold text-[#B8860B] uppercase tracking-wider">
                             Institutional Verification
                         </span>
                     </div>
                     <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-                        Institutional <span className="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Verification</span>
+                        Institutional <span className="bg-linear-to-r from-[#B8860B] to-[#B8860B]/70 bg-clip-text text-transparent">Verification</span>
                     </h1>
                     <p className="text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
                         Provide contact information for institutional verification of your academic records and enrollment status.
@@ -232,9 +223,9 @@ const IVC = () => {
                                 <div key={step.number} className="flex items-center">
                                     <div className="flex flex-col items-center">
                                         <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${step.status === "current"
-                                                ? "bg-linear-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-200"
+                                                ? "bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white shadow-lg shadow-[#B8860B]/20"
                                                 : step.number < 7
-                                                    ? "bg-linear-to-r from-emerald-500 to-green-400 text-white shadow-lg shadow-emerald-200"
+                                                    ? "bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white shadow-lg shadow-[#B8860B]/20"
                                                     : "bg-gray-100 text-gray-400"
                                             }`}>
                                             {step.number < 7 ? (
@@ -270,9 +261,9 @@ const IVC = () => {
                     >
                         <div className="bg-white rounded-3xl shadow-2xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
                             {/* Form Header */}
-                            <div className="p-8 border-b border-gray-100 bg-linear-to-r from-blue-50 to-cyan-50">
+                            <div className="p-8 border-b border-gray-100 bg-linear-to-r from-[#B8860B]/5 to-[#B8860B]/10">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-3 bg-linear-to-r from-blue-500 to-cyan-400 rounded-xl">
+                                    <div className="p-3 bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 rounded-xl">
                                         <Building2 className="w-6 h-6 text-white" />
                                     </div>
                                     <div>
@@ -286,16 +277,16 @@ const IVC = () => {
                             <div className="p-8">
                                 {/* Progress Overview */}
                                 <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                                        <div className="text-sm text-blue-600 font-medium">Form Completion</div>
+                                    <div className="bg-[#B8860B]/10 rounded-xl p-4 border border-[#B8860B]/20">
+                                        <div className="text-sm text-[#B8860B] font-medium">Form Completion</div>
                                         <div className="text-2xl font-bold text-gray-900">{getCompletionPercentage()}%</div>
                                     </div>
-                                    <div className="bg-amber-50 rounded-xl p-4 border border-amber-100">
-                                        <div className="text-sm text-amber-600 font-medium">Required Fields</div>
+                                    <div className="bg-[#B8860B]/10 rounded-xl p-4 border border-[#B8860B]/20">
+                                        <div className="text-sm text-[#B8860B] font-medium">Required Fields</div>
                                         <div className="text-2xl font-bold text-gray-900">3</div>
                                     </div>
-                                    <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
-                                        <div className="text-sm text-emerald-600 font-medium">Filled Fields</div>
+                                    <div className="bg-[#B8860B]/10 rounded-xl p-4 border border-[#B8860B]/20">
+                                        <div className="text-sm text-[#B8860B] font-medium">Filled Fields</div>
                                         <div className="text-2xl font-bold text-gray-900">
                                             {Object.values(formData).filter(value => value.trim() !== '').length} of 3
                                         </div>
@@ -303,9 +294,9 @@ const IVC = () => {
                                 </div>
 
                                 {/* Important Note */}
-                                <div className="mb-8 bg-linear-to-r from-blue-50 to-cyan-50 rounded-2xl p-4 border border-blue-200">
+                                <div className="mb-8 bg-linear-to-r from-[#B8860B]/5 to-[#B8860B]/10 rounded-2xl p-4 border border-[#B8860B]/20">
                                     <div className="flex items-center gap-3">
-                                        <AlertCircle className="w-5 h-5 text-blue-600" />
+                                        <AlertCircle className="w-5 h-5 text-[#B8860B]" />
                                         <div>
                                             <h3 className="font-bold text-gray-900">Important Notice</h3>
                                             <p className="text-sm text-gray-600">
@@ -331,7 +322,7 @@ const IVC = () => {
                                                     value={formData[field.name]}
                                                     onChange={handleChange}
                                                     placeholder={field.placeholder}
-                                                    className={`w-full px-4 py-3 bg-gray-50 border ${validationErrors[field.name] ? 'border-red-300' : 'border-gray-200'} rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+                                                    className={`w-full px-4 py-3 bg-gray-50 border ${validationErrors[field.name] ? 'border-red-300' : 'border-gray-200'} rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B8860B] focus:border-transparent transition-all`}
                                                     required
                                                 />
                                                 {validationErrors[field.name] && (
@@ -348,20 +339,20 @@ const IVC = () => {
                                 {/* Additional Information */}
                                 <div className="mt-8 bg-linear-to-r from-gray-50 to-white rounded-2xl p-6 border border-gray-200">
                                     <div className="flex items-center gap-3 mb-4">
-                                        <GraduationCap className="w-5 h-5 text-blue-600" />
+                                        <GraduationCap className="w-5 h-5 text-red-500" />
                                         <h3 className="font-bold text-gray-900">Verification Process</h3>
                                     </div>
                                     <ul className="space-y-2">
                                         <li className="flex items-start gap-2">
-                                            <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                            <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                             <span className="text-sm text-gray-600">Our team will contact the provided institutional officer to verify your academic records</span>
                                         </li>
                                         <li className="flex items-start gap-2">
-                                            <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                            <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                             <span className="text-sm text-gray-600">Verification includes confirmation of enrollment, CGPA, and academic standing</span>
                                         </li>
                                         <li className="flex items-start gap-2">
-                                            <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                            <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                             <span className="text-sm text-gray-600">All communication is conducted professionally and confidentially</span>
                                         </li>
                                     </ul>
@@ -379,7 +370,7 @@ const IVC = () => {
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-2">
                                         <div
-                                            className="bg-linear-to-r from-blue-500 to-cyan-400 h-2 rounded-full transition-all duration-500"
+                                            className="bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 h-2 rounded-full transition-all duration-500"
                                             style={{ width: `${getCompletionPercentage()}%` }}
                                         ></div>
                                     </div>
@@ -394,7 +385,7 @@ const IVC = () => {
                                         type="submit"
                                         disabled={isSubmitting || getCompletionPercentage() < 100}
                                         onClick={handleSaveAndContinue}
-                                        className="group w-full cursor-pointer flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+                                        className="group w-full cursor-pointer flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white font-bold rounded-xl shadow-lg shadow-[#B8860B]/20 hover:shadow-xl hover:shadow-[#B8860B]/30 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                                     >
                                         {isSubmitting ? (
                                             <>
@@ -417,7 +408,7 @@ const IVC = () => {
                                 <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-100">
                                     <Link
                                         to="/referee-contact"
-                                        className="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center gap-1"
+                                        className="text-red-500 hover:text-[#B8860B]/80 font-medium text-sm flex items-center gap-1"
                                     >
                                         ← Back to Referee Contact Verification
                                     </Link>
@@ -438,7 +429,7 @@ const IVC = () => {
                     >
                         <div className="sticky top-8 space-y-6">
                             {/* Scholarship Info Card */}
-                            <div className="bg-linear-to-br from-blue-600 to-cyan-500 rounded-3xl p-8 text-white shadow-2xl shadow-blue-200">
+                            <div className="bg-linear-to-br from-[#B8860B] to-[#B8860B]/80 rounded-3xl p-8 text-white shadow-2xl shadow-[#B8860B]/20">
                                 <div className="flex items-center gap-3 mb-6">
                                     <img
                                         src={AlertLogo}
@@ -447,7 +438,7 @@ const IVC = () => {
                                     />
                                     <div>
                                         <h3 className="text-2xl font-bold">Verification Guidelines</h3>
-                                        <p className="text-blue-100">Ensuring accurate institutional verification</p>
+                                        <p className="text-white">Ensuring accurate institutional verification</p>
                                     </div>
                                 </div>
 
@@ -458,7 +449,7 @@ const IVC = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Official Contacts</div>
-                                            <div className="text-sm text-blue-100">Provide only official institutional contacts</div>
+                                            <div className="text-sm text-white">Provide only official institutional contacts</div>
                                         </div>
                                     </div>
 
@@ -468,7 +459,7 @@ const IVC = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Confidential Process</div>
-                                            <div className="text-sm text-blue-100">All verification is conducted confidentially</div>
+                                            <div className="text-sm text-white">All verification is conducted confidentially</div>
                                         </div>
                                     </div>
 
@@ -478,7 +469,7 @@ const IVC = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Academic Verification</div>
-                                            <div className="text-sm text-blue-100">We verify enrollment and academic performance</div>
+                                            <div className="text-sm text-white">We verify enrollment and academic performance</div>
                                         </div>
                                     </div>
                                 </div>
@@ -487,29 +478,29 @@ const IVC = () => {
                             {/* Tips Card */}
                             <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-lg">
                                 <div className="flex items-center gap-2 mb-4">
-                                    <Sparkles className="w-5 h-5 text-amber-500" />
+                                    <Sparkles className="w-5 h-5 text-red-500" />
                                     <h4 className="font-bold text-gray-900">Recommended Contacts</h4>
                                 </div>
                                 <ul className="space-y-3">
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">Head of Department or Course Adviser</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">Academic Affairs Officer or Registrar</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">Departmental Examination Officer</span>
                                     </li>
                                 </ul>
                             </div>
 
                             {/* Help Card */}
-                            <div className="bg-linear-to-r from-emerald-50 to-teal-50 rounded-3xl p-6 border border-emerald-100">
+                            <div className="bg-linear-to-r from-[#B8860B]/10 to-[#B8860B]/5 rounded-3xl p-6 border border-[#B8860B]/20">
                                 <div className="flex items-center gap-2 mb-2">
-                                    <AlertCircle className="w-5 h-5 text-emerald-600" />
+                                    <AlertCircle className="w-5 h-5 text-[#B8860B]" />
                                     <h4 className="font-bold text-gray-900">Need Assistance?</h4>
                                 </div>
                                 <p className="text-sm text-gray-600 mb-4">
@@ -517,7 +508,7 @@ const IVC = () => {
                                 </p>
                                 <button
                                     type="button"
-                                    className="w-full px-4 py-2 bg-emerald-500 text-white text-sm font-semibold rounded-lg hover:bg-emerald-600 transition-colors"
+                                    className="w-full px-4 py-2 bg-[#B8860B] text-white text-sm font-semibold rounded-lg hover:bg-[#B8860B]/80 transition-colors"
                                 >
                                     Contact Support
                                 </button>

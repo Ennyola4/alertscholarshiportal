@@ -250,7 +250,7 @@ const CDA = () => {
     };
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-cyan-50 font-sans">
+        <div className="min-h-screen  font-sans">
             {/* Success Toast */}
             <AnimatePresence>
                 {showSuccess && (
@@ -260,7 +260,7 @@ const CDA = () => {
                         exit={{ opacity: 0, y: -20 }}
                         className="fixed top-6 right-6 z-50"
                     >
-                        <div className="bg-linear-to-r from-emerald-500 to-green-500 text-white px-6 py-4 rounded-xl shadow-2xl shadow-emerald-200 flex items-center gap-3">
+                        <div className="bg-linear-to-r from-[#B8860B] to-[#D4A017] text-white px-6 py-4 rounded-xl shadow-2xl shadow-[#B8860B]/30 flex items-center gap-3">
                             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -285,7 +285,7 @@ const CDA = () => {
                         className="fixed top-6 right-6 z-50"
                         onAnimationComplete={() => setTimeout(() => setShowWarning(false), 5000)}
                     >
-                        <div className="bg-linear-to-r from-amber-500 to-orange-500 text-white px-6 py-4 rounded-xl shadow-2xl shadow-amber-200 flex items-center gap-3">
+                        <div className="bg-linear-to-r from-[#B8860B] to-[#D4A017] text-white px-6 py-4 rounded-xl shadow-2xl shadow-[#B8860B]/30 flex items-center gap-3">
                             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                                 <AlertCircle className="w-5 h-5" />
                             </div>
@@ -305,14 +305,14 @@ const CDA = () => {
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center mb-12"
                 >
-                    <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-linear-to-r from-blue-100 to-cyan-100 rounded-full border border-blue-200">
-                        <FileSignature className="w-4 h-4 text-blue-600" />
-                        <span className="text-sm font-semibold text-blue-600 uppercase tracking-wider">
+                    <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-linear-to-r from-[#F5E6C8] to-[#FDF6E3] rounded-full border border-[#B8860B]/30">
+                        <FileSignature className="w-4 h-4 text-red-500" />
+                        <span className="text-sm font-semibold text-[#B8860B] uppercase tracking-wider">
                             Consent & Declaration
                         </span>
                     </div>
                     <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-                        Consent, Declaration <span className="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">& Attestation</span>
+                        Consent, Declaration <span className="bg-linear-to-r from-[#B8860B] to-[#D4A017] bg-clip-text text-transparent">& Attestation</span>
                     </h1>
                     <p className="text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
                         Review and accept all declarations and consents required for your scholarship application. All items must be accepted to proceed.
@@ -333,9 +333,9 @@ const CDA = () => {
                                     <div className="flex flex-col items-center">
                                         <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${
                                             step.status === "current"
-                                                ? "bg-linear-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-200"
+                                                ? "bg-linear-to-r from-[#B8860B] to-[#D4A017] text-white shadow-lg shadow-[#B8860B]/30"
                                                 : step.number < 9
-                                                ? "bg-linear-to-r from-emerald-500 to-green-400 text-white shadow-lg shadow-emerald-200"
+                                                ? "bg-linear-to-r from-[#B8860B] to-[#D4A017] text-white shadow-lg shadow-[#B8860B]/30"
                                                 : "bg-gray-100 text-gray-400"
                                         }`}>
                                             {step.number < 9 ? (
@@ -371,9 +371,9 @@ const CDA = () => {
                     >
                         <div className="bg-white rounded-3xl shadow-2xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
                             {/* Form Header */}
-                            <div className="p-8 border-b border-gray-100 bg-linear-to-r from-blue-50 to-cyan-50">
+                            <div className="p-8 border-b border-gray-100 bg-linear-to-r from-[#FDF6E3] to-[#F5E6C8]">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-3 bg-linear-to-r from-blue-500 to-cyan-400 rounded-xl">
+                                    <div className="p-3 bg-linear-to-r from-[#B8860B] to-[#D4A017] rounded-xl">
                                         <FileSignature className="w-6 h-6 text-white" />
                                     </div>
                                     <div>
@@ -387,16 +387,16 @@ const CDA = () => {
                             <div className="p-8">
                                 {/* Progress Overview */}
                                 <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                                        <div className="text-sm text-blue-600 font-medium">Completion</div>
+                                    <div className="bg-[#FDF6E3] rounded-xl p-4 border border-[#F5E6C8]">
+                                        <div className="text-sm text-[#B8860B] font-medium">Completion</div>
                                         <div className="text-2xl font-bold text-gray-900">{getCompletionPercentage()}%</div>
                                     </div>
-                                    <div className="bg-amber-50 rounded-xl p-4 border border-amber-100">
-                                        <div className="text-sm text-amber-600 font-medium">Total Declarations</div>
+                                    <div className="bg-[#FDF6E3] rounded-xl p-4 border border-[#F5E6C8]">
+                                        <div className="text-sm text-[#B8860B] font-medium">Total Declarations</div>
                                         <div className="text-2xl font-bold text-gray-900">{getTotalCount()}</div>
                                     </div>
-                                    <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
-                                        <div className="text-sm text-emerald-600 font-medium">Accepted</div>
+                                    <div className="bg-[#FDF6E3] rounded-xl p-4 border border-[#F5E6C8]">
+                                        <div className="text-sm text-[#B8860B] font-medium">Accepted</div>
                                         <div className="text-2xl font-bold text-gray-900">
                                             {getAcceptedCount()} of {getTotalCount()}
                                         </div>
@@ -404,17 +404,17 @@ const CDA = () => {
                                 </div>
 
                                 {/* Important Legal Notice */}
-                                <div className="mb-8 bg-linear-to-r from-amber-50 to-orange-50 rounded-2xl p-6 border border-amber-200">
+                                <div className="mb-8 bg-linear-to-r from-[#FDF6E3] to-[#F5E6C8] rounded-2xl p-6 border border-[#B8860B]/30">
                                     <div className="flex items-start gap-4">
-                                        <AlertCircle className="w-6 h-6 text-amber-600 shrink-0" />
+                                        <AlertCircle className="w-6 h-6 text-red-500 shrink-0" />
                                         <div>
                                             <h3 className="font-bold text-gray-900 mb-2">Important Legal Notice</h3>
                                             <p className="text-sm text-gray-600 mb-3">
                                                 These declarations constitute a legally binding agreement between you and AlertMFB. 
                                                 By checking these boxes, you are acknowledging and agreeing to all terms and conditions.
                                             </p>
-                                            <div className="flex items-center gap-2 text-sm text-amber-700">
-                                                <AlertCircle className="w-4 h-4" />
+                                            <div className="flex items-center gap-2 text-sm text-[#B8860B]">
+                                                <AlertCircle className="w-4 h-4 text-red-500" />
                                                 <span>All declarations must be accepted to proceed with your application.</span>
                                             </div>
                                         </div>
@@ -423,9 +423,9 @@ const CDA = () => {
 
                                 {/* Validation Errors */}
                                 {validationErrors.length > 0 && (
-                                    <div className="mb-6 bg-linear-to-r from-red-50 to-pink-50 rounded-2xl p-4 border border-red-200">
+                                    <div className="mb-6 bg-linear-to-r from-[#FDF6E3] to-[#F5E6C8] rounded-2xl p-4 border border-[#B8860B]/30">
                                         <div className="flex items-center gap-3">
-                                            <AlertCircle className="w-5 h-5 text-red-600" />
+                                            <AlertCircle className="w-5 h-5 text-[#B8860B]" />
                                             <div>
                                                 <h3 className="font-bold text-gray-900">Action Required</h3>
                                                 {validationErrors.map((error, index) => (
@@ -448,7 +448,7 @@ const CDA = () => {
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-2">
                                         <motion.div
-                                            className="bg-linear-to-r from-blue-500 to-cyan-400 h-2 rounded-full"
+                                            className="bg-linear-to-r from-[#B8860B] to-[#D4A017] h-2 rounded-full"
                                             initial={{ width: 0 }}
                                             animate={{ width: `${getCompletionPercentage()}%` }}
                                             transition={{ duration: 0.5 }}
@@ -465,14 +465,14 @@ const CDA = () => {
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: sectionIndex * 0.1 }}
                                             className={`bg-linear-to-r ${section.consents.every(consent => formData[consent.id]) 
-                                                ? 'from-emerald-50 to-green-50 border-emerald-200' 
+                                                ? 'from-[#FDF6E3] to-[#F5E6C8] border-[#B8860B]/30' 
                                                 : 'from-gray-50 to-white border-gray-200'
-                                            } rounded-2xl p-6 border hover:border-blue-200 transition-all duration-300`}
+                                            } rounded-2xl p-6 border hover:border-[#B8860B]/30 transition-all duration-300`}
                                         >
                                             <div className="flex items-center gap-3 mb-6">
                                                 <div className={`w-8 h-8 ${section.consents.every(consent => formData[consent.id]) 
-                                                    ? 'bg-linear-to-r from-emerald-500 to-green-400' 
-                                                    : 'bg-linear-to-r from-blue-500 to-cyan-400'
+                                                    ? 'bg-linear-to-r from-[#B8860B] to-[#D4A017]' 
+                                                    : 'bg-linear-to-r from-[#B8860B] to-[#D4A017]'
                                                 } rounded-lg flex items-center justify-center`}>
                                                     <span className="text-white font-bold">{section.id}</span>
                                                 </div>
@@ -487,9 +487,9 @@ const CDA = () => {
                                                         animate={{ opacity: 1, x: 0 }}
                                                         transition={{ delay: (sectionIndex * 0.1) + (consentIndex * 0.05) }}
                                                         className={`flex items-start gap-4 p-4 ${formData[consent.id] 
-                                                            ? 'bg-emerald-50 border-emerald-200' 
+                                                            ? 'bg-[#FDF6E3] border-[#B8860B]/30' 
                                                             : 'bg-white border-gray-100'
-                                                        } rounded-xl border hover:border-blue-100 transition-all`}
+                                                        } rounded-xl border hover:border-[#B8860B]/30 transition-all`}
                                                     >
                                                         <div className="mt-1">
                                                             <input
@@ -498,7 +498,7 @@ const CDA = () => {
                                                                 name={consent.id}
                                                                 checked={formData[consent.id]}
                                                                 onChange={handleConsentChange}
-                                                                className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                                                className="w-5 h-5 text-[#B8860B] bg-gray-100 border-gray-300 rounded focus:ring-[#B8860B] focus:ring-2"
                                                                 required={consent.required}
                                                             />
                                                         </div>
@@ -511,8 +511,8 @@ const CDA = () => {
                                                                     {consent.label}
                                                                 </label>
                                                                 {formData[consent.id] && (
-                                                                    <div className="p-1 bg-emerald-50 rounded-full ml-2">
-                                                                        <CheckCircle className="w-5 h-5 text-emerald-500" />
+                                                                    <div className="p-1 bg-[#FDF6E3] rounded-full ml-2">
+                                                                        <CheckCircle className="w-5 h-5 text-[#B8860B]" />
                                                                     </div>
                                                                 )}
                                                             </div>
@@ -529,11 +529,11 @@ const CDA = () => {
                                     <motion.div
                                         initial={{ opacity: 0, scale: 0.9 }}
                                         animate={{ opacity: 1, scale: 1 }}
-                                        className="mt-8 bg-linear-to-r from-emerald-50 to-green-50 rounded-2xl p-6 border border-emerald-200"
+                                        className="mt-8 bg-linear-to-r from-[#FDF6E3] to-[#F5E6C8] rounded-2xl p-6 border border-[#B8860B]/30"
                                     >
                                         <div className="flex items-center gap-3">
-                                            <div className="p-2 bg-emerald-100 rounded-lg">
-                                                <CheckCircle className="w-6 h-6 text-emerald-600" />
+                                            <div className="p-2 bg-[#F5E6C8] rounded-lg">
+                                                <CheckCircle className="w-6 h-6 text-red-500" />
                                             </div>
                                             <div>
                                                 <h3 className="font-bold text-gray-900">All Declarations Accepted</h3>
@@ -554,7 +554,7 @@ const CDA = () => {
                                         type="submit"
                                         disabled={isSubmitting || !isAllAccepted()}
                                         onClick={handleSaveAndContinue}
-                                        className="group w-full cursor-pointer flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+                                        className="group w-full cursor-pointer flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-[#B8860B] to-[#D4A017] text-white font-bold rounded-xl shadow-lg shadow-[#B8860B]/30 hover:shadow-xl hover:shadow-[#B8860B]/40 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                                     >
                                         {isSubmitting ? (
                                             <>
@@ -577,7 +577,7 @@ const CDA = () => {
                                 <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-100">
                                     <Link
                                         to="/eligibility-verification"
-                                        className="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center gap-1"
+                                        className="text-red-500 hover:text-[#D4A017] font-medium text-sm flex items-center gap-1"
                                     >
                                         ← Back to Eligibility Verification
                                     </Link>
@@ -598,7 +598,7 @@ const CDA = () => {
                     >
                         <div className="sticky top-8 space-y-6">
                             {/* Scholarship Info Card */}
-                            <div className="bg-linear-to-br from-blue-600 to-cyan-500 rounded-3xl p-8 text-white shadow-2xl shadow-blue-200">
+                            <div className="bg-linear-to-br from-[#B8860B] to-[#D4A017] rounded-3xl p-8 text-white shadow-2xl shadow-[#B8860B]/30">
                                 <div className="flex items-center gap-3 mb-6">
                                     <img
                                         src={AlertLogo}
@@ -607,7 +607,7 @@ const CDA = () => {
                                     />
                                     <div>
                                         <h3 className="text-2xl font-bold">Legal Declarations</h3>
-                                        <p className="text-blue-100">Understanding your commitments</p>
+                                        <p className="text-[#FDF6E3]">Understanding your commitments</p>
                                     </div>
                                 </div>
 
@@ -618,7 +618,7 @@ const CDA = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Data Protection</div>
-                                            <div className="text-sm text-blue-100">Your data is protected and used responsibly</div>
+                                            <div className="text-sm text-[#FDF6E3]">Your data is protected and used responsibly</div>
                                         </div>
                                     </div>
 
@@ -628,7 +628,7 @@ const CDA = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Verification Rights</div>
-                                            <div className="text-sm text-blue-100">We verify all application information</div>
+                                            <div className="text-sm text-[#FDF6E3]">We verify all application information</div>
                                         </div>
                                     </div>
 
@@ -638,7 +638,7 @@ const CDA = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Post-Graduation</div>
-                                            <div className="text-sm text-blue-100">One-year work commitment opportunity</div>
+                                            <div className="text-sm text-[#FDF6E3]">One-year work commitment opportunity</div>
                                         </div>
                                     </div>
                                 </div>
@@ -647,29 +647,29 @@ const CDA = () => {
                             {/* Tips Card */}
                             <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-lg">
                                 <div className="flex items-center gap-2 mb-4">
-                                    <Sparkles className="w-5 h-5 text-amber-500" />
+                                    <Sparkles className="w-5 h-5 text-red-500" />
                                     <h4 className="font-bold text-gray-900">Important to Note</h4>
                                 </div>
                                 <ul className="space-y-3">
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">These declarations are legally binding</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">Data is retained for 5 years as per policy</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">All declarations must be accepted to proceed</span>
                                     </li>
                                 </ul>
                             </div>
 
                             {/* Help Card */}
-                            <div className="bg-linear-to-r from-emerald-50 to-teal-50 rounded-3xl p-6 border border-emerald-100">
+                            <div className="bg-linear-to-r from-[#FDF6E3] to-[#F5E6C8] rounded-3xl p-6 border border-[#B8860B]/30">
                                 <div className="flex items-center gap-2 mb-2">
-                                    <AlertCircle className="w-5 h-5 text-emerald-600" />
+                                    <AlertCircle className="w-5 h-5 text-red-500" />
                                     <h4 className="font-bold text-gray-900">Need Clarification?</h4>
                                 </div>
                                 <p className="text-sm text-gray-600 mb-4">
@@ -677,7 +677,7 @@ const CDA = () => {
                                 </p>
                                 <button 
                                     type="button"
-                                    className="w-full px-4 py-2 bg-emerald-500 text-white text-sm font-semibold rounded-lg hover:bg-emerald-600 transition-colors"
+                                    className="w-full px-4 py-2 bg-[#B8860B] text-white text-sm font-semibold rounded-lg hover:bg-[#D4A017] transition-colors"
                                 >
                                     Contact Support
                                 </button>

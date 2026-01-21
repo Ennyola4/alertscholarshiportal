@@ -3,18 +3,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import { BookOpen, User, Phone, Mail, Calendar, MapPin, Home, ChevronRight, Sparkles, GraduationCap, Target } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import AlertLogo from "../assets/images/AlertLogo.png";
-import { useApplication } from "../context/ApplicationContext"; // Add this import
+import { useApplication } from "../context/ApplicationContext";
 
 const PersonalInfo = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { applicationData, updatePersonalInfo } = useApplication(); // Use the context
+    const { applicationData, updatePersonalInfo } = useApplication();
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [location.pathname]);
 
-    // Initialize form data from global state
     const [formData, setFormData] = useState(applicationData.personalInfo);
     const [showSuccess, setShowSuccess] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
@@ -29,7 +28,6 @@ const PersonalInfo = () => {
         e.preventDefault();
         setIsSaving(true);
 
-        // Validate required fields
         const requiredFields = ['fullName', 'phone', 'email', 'dob', 'gender', 'state', 'lga', 'address'];
         const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
 
@@ -39,19 +37,15 @@ const PersonalInfo = () => {
             return;
         }
 
-        // Save to global state
         updatePersonalInfo(formData);
 
-        // Simulate API call
         setTimeout(() => {
             console.log("Personal info saved:", formData);
             setIsSaving(false);
             setShowSuccess(true);
 
-            // Hide success message after 3 seconds
             setTimeout(() => setShowSuccess(false), 5000);
 
-            // Navigate to next page
             navigate('/parent-info');
         }, 5000);
     };
@@ -60,7 +54,6 @@ const PersonalInfo = () => {
         handleSubmit(e);
     };
 
-    //  steps array
     const steps = [
         { number: 1, label: "Personal Info", status: "current" },
         { number: 2, label: "Parent Info", status: "upcoming" },
@@ -83,7 +76,7 @@ const PersonalInfo = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-cyan-50 font-sans">
+        <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 font-sans">
             {/* Success Toast */}
             <AnimatePresence>
                 {showSuccess && (
@@ -93,7 +86,7 @@ const PersonalInfo = () => {
                         exit={{ opacity: 0, y: -20 }}
                         className="fixed top-6 right-6 z-50"
                     >
-                        <div className="bg-linear-to-r from-emerald-500 to-green-500 text-white px-6 py-4 rounded-xl shadow-2xl shadow-emerald-200 flex items-center gap-3">
+                        <div className="bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white px-6 py-4 rounded-xl shadow-2xl shadow-[#B8860B]/20 flex items-center gap-3">
                             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -115,14 +108,14 @@ const PersonalInfo = () => {
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center mb-12"
                 >
-                    <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-linear-to-r from-blue-100 to-cyan-100 rounded-full border border-blue-200">
-                        <GraduationCap className="w-4 h-4 text-blue-600" />
-                        <span className="text-sm font-semibold text-blue-600 uppercase tracking-wider">
+                    <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-linear-to-r from-[#B8860B]/10 to-[#B8860B]/5 rounded-full border border-[#B8860B]/20">
+                        <GraduationCap className="w-4 h-4 text-red-500" />
+                        <span className="text-sm font-semibold text-[#B8860B] uppercase tracking-wider">
                             Scholarship Application
                         </span>
                     </div>
                     <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-                        Personal <span className="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Information</span>
+                        Personal <span className="bg-linear-to-r from-[#B8860B] to-[#B8860B]/70 bg-clip-text text-transparent">Information</span>
                     </h1>
                     <p className="text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
                         Complete the form below to begin your scholarship journey. We're excited to help you achieve your academic dreams!
@@ -142,9 +135,9 @@ const PersonalInfo = () => {
                                 <div key={step.number} className="flex items-center">
                                     <div className="flex flex-col items-center">
                                         <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${step.status === "current"
-                                                ? "bg-linear-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-200"
+                                                ? "bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white shadow-lg shadow-[#B8860B]/20"
                                                 : step.number < 1
-                                                    ? "bg-linear-to-r from-emerald-500 to-green-400 text-white shadow-lg shadow-emerald-200"
+                                                    ? "bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white shadow-lg shadow-[#B8860B]/20"
                                                     : "bg-gray-100 text-gray-400"
                                             }`}>
                                             {step.number < 1 ? (
@@ -180,9 +173,9 @@ const PersonalInfo = () => {
                     >
                         <div className="bg-white rounded-3xl shadow-2xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
                             {/* Form Header */}
-                            <div className="p-8 border-b border-gray-100 bg-linear-to-r from-blue-50 to-cyan-50">
+                            <div className="p-8 border-b border-gray-100 bg-linear-to-r from-[#B8860B]/5 to-[#B8860B]/10">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-3 bg-linear-to-r from-blue-500 to-cyan-400 rounded-xl">
+                                    <div className="p-3 bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 rounded-xl">
                                         <User className="w-6 h-6 text-white" />
                                     </div>
                                     <div>
@@ -198,7 +191,7 @@ const PersonalInfo = () => {
                                     {/* Full Name */}
                                     <div className="space-y-2">
                                         <label className="flex items-center gap-2 text-gray-700 font-medium">
-                                            <User className="w-4 h-4" />
+                                            <User className="w-4 h-4 text-red-500" />
                                             Full Name
                                         </label>
                                         <input
@@ -207,7 +200,7 @@ const PersonalInfo = () => {
                                             value={formData.fullName}
                                             onChange={handleChange}
                                             placeholder="Surname, First Name, Other Names"
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B8860B] focus:border-transparent transition-all"
                                             required
                                         />
                                     </div>
@@ -215,7 +208,7 @@ const PersonalInfo = () => {
                                     {/* Phone Number */}
                                     <div className="space-y-2">
                                         <label className="flex items-center gap-2 text-gray-700 font-medium">
-                                            <Phone className="w-4 h-4" />
+                                            <Phone className="w-4 h-4 text-red-500" />
                                             Phone Number
                                         </label>
                                         <input
@@ -224,7 +217,7 @@ const PersonalInfo = () => {
                                             value={formData.phone}
                                             onChange={handleChange}
                                             placeholder="+234 801 234 5678"
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B8860B] focus:border-transparent transition-all"
                                             required
                                         />
                                     </div>
@@ -232,7 +225,7 @@ const PersonalInfo = () => {
                                     {/* Email Address */}
                                     <div className="space-y-2">
                                         <label className="flex items-center gap-2 text-gray-700 font-medium">
-                                            <Mail className="w-4 h-4" />
+                                            <Mail className="w-4 h-4 text-red-500" />
                                             Email Address
                                         </label>
                                         <input
@@ -241,7 +234,7 @@ const PersonalInfo = () => {
                                             value={formData.email}
                                             onChange={handleChange}
                                             placeholder="example@email.com"
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B8860B] focus:border-transparent transition-all"
                                             required
                                         />
                                     </div>
@@ -249,7 +242,7 @@ const PersonalInfo = () => {
                                     {/* Date of Birth */}
                                     <div className="space-y-2">
                                         <label className="flex items-center gap-2 text-gray-700 font-medium">
-                                            <Calendar className="w-4 h-4" />
+                                            <Calendar className="w-4 h-4 text-red-500" />
                                             Date of Birth
                                         </label>
                                         <input
@@ -257,7 +250,7 @@ const PersonalInfo = () => {
                                             name="dob"
                                             value={formData.dob}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B8860B] focus:border-transparent transition-all"
                                             required
                                         />
                                     </div>
@@ -269,7 +262,7 @@ const PersonalInfo = () => {
                                             name="gender"
                                             value={formData.gender}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B8860B] focus:border-transparent"
                                             required
                                         >
                                             <option value="">Select Gender</option>
@@ -282,14 +275,14 @@ const PersonalInfo = () => {
                                     {/* State of Origin */}
                                     <div className="space-y-2">
                                         <label className="flex items-center gap-2 text-gray-700 font-medium">
-                                            <MapPin className="w-4 h-4" />
+                                            <MapPin className="w-4 h-4 text-red-500" />
                                             State of Origin
                                         </label>
                                         <select
                                             name="state"
                                             value={formData.state}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B8860B] focus:border-transparent"
                                             required
                                         >
                                             <option value="">Select State</option>
@@ -306,7 +299,7 @@ const PersonalInfo = () => {
                                             name="lga"
                                             value={formData.lga}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B8860B] focus:border-transparent"
                                             required
                                         >
                                             <option value="">Select LGA</option>
@@ -321,7 +314,7 @@ const PersonalInfo = () => {
                                     {/* Home Address (Full width) */}
                                     <div className="md:col-span-2 space-y-2">
                                         <label className="flex items-center gap-2 text-gray-700 font-medium">
-                                            <Home className="w-4 h-4" />
+                                            <Home className="w-4 h-4 text-red-500" />
                                             Home Address
                                         </label>
                                         <input
@@ -330,7 +323,7 @@ const PersonalInfo = () => {
                                             value={formData.address}
                                             onChange={handleChange}
                                             placeholder="Street, City, State"
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B8860B] focus:border-transparent transition-all"
                                             required
                                         />
                                     </div>
@@ -345,7 +338,7 @@ const PersonalInfo = () => {
                                         type="submit"
                                         disabled={isSaving}
                                         onClick={handleSaveAndContinue}
-                                        className="group w-full flex items-center cursor-pointer justify-center gap-3 px-8 py-4 bg-linear-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+                                        className="group w-full flex items-center cursor-pointer justify-center gap-3 px-8 py-4 bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white font-bold rounded-xl shadow-lg shadow-[#B8860B]/20 hover:shadow-xl hover:shadow-[#B8860B]/30 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                                     >
                                         {isSaving ? (
                                             <>
@@ -386,7 +379,7 @@ const PersonalInfo = () => {
                     >
                         <div className="sticky top-8 space-y-6">
                             {/* Scholarship Info Card */}
-                            <div className="bg-linear-to-br from-blue-600 to-cyan-500 rounded-3xl p-8 text-white shadow-2xl shadow-blue-200">
+                            <div className="bg-linear-to-br from-[#B8860B] to-[#B8860B]/80 rounded-3xl p-8 text-white shadow-2xl shadow-[#B8860B]/20">
                                 <div className="flex items-center gap-3 mb-6">
                                     <img
                                         src={AlertLogo}
@@ -394,8 +387,8 @@ const PersonalInfo = () => {
                                         className="w-20 h-20 rounded-xl bg-white/20 p-2"
                                     />
                                     <div>
-                                        <h3 className="text-2xl font-bold">AlertMFB Scholarship</h3>
-                                        <p className="text-blue-100">Empowering Future Leaders</p>
+                                        <h3 className="text-xl font-bold">Aler Group Scholarship</h3>
+                                        <p className="text-white text-sm">Empowering Future Leaders</p>
                                     </div>
                                 </div>
 
@@ -406,7 +399,7 @@ const PersonalInfo = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Eligibility</div>
-                                            <div className="text-sm text-blue-100">Open to all Nigerian students</div>
+                                            <div className="text-sm text-white text-sm">Open to all Nigerian students</div>
                                         </div>
                                     </div>
 
@@ -416,7 +409,7 @@ const PersonalInfo = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Benefits</div>
-                                            <div className="text-sm text-blue-100">Full tuition + living stipend</div>
+                                            <div className="text-sm text-white text-sm">Full tuition + living stipend</div>
                                         </div>
                                     </div>
 
@@ -426,7 +419,7 @@ const PersonalInfo = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Deadline</div>
-                                            <div className="text-sm text-blue-100">December 31, 2024</div>
+                                            <div className="text-sm text-white text-sm">December 31, 2024</div>
                                         </div>
                                     </div>
                                 </div>
@@ -435,32 +428,32 @@ const PersonalInfo = () => {
                             {/* Tips Card */}
                             <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-lg">
                                 <div className="flex items-center gap-2 mb-4">
-                                    <Sparkles className="w-5 h-5 text-amber-500" />
+                                    <Sparkles className="w-5 h-5 text-red-500" />
                                     <h4 className="font-bold text-gray-900">Application Tips</h4>
                                 </div>
                                 <ul className="space-y-3">
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">All data is saved as you progress</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">You can return to any page to edit</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">Final submission on the last page</span>
                                     </li>
                                 </ul>
                             </div>
 
                             {/* Help Card */}
-                            <div className="bg-linear-to-r from-emerald-50 to-teal-50 rounded-3xl p-6 border border-emerald-100">
+                            <div className="bg-linear-to-r from-[#B8860B]/10 to-[#B8860B]/5 rounded-3xl p-6 border border-[#B8860B]/20">
                                 <h4 className="font-bold text-gray-900 mb-2">Need Help?</h4>
                                 <p className="text-sm text-gray-600 mb-4">
                                     Contact our scholarship support team for assistance.
                                 </p>
-                                <button className="w-full px-4 py-2 bg-emerald-500 text-white text-sm font-semibold rounded-lg hover:bg-emerald-600 transition-colors">
+                                <button className="w-full px-4 py-2 bg-[#B8860B] text-white text-sm font-semibold rounded-lg hover:bg-[#B8860B]/80 transition-colors">
                                     Contact Support
                                 </button>
                             </div>

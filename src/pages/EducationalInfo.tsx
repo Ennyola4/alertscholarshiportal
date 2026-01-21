@@ -28,7 +28,6 @@ const EducationalInfo = () => {
         e.preventDefault();
         setIsSaving(true);
 
-        // Validate required fields
         const requiredFields = ['institutionType', 'institutionName', 'course', 'admissionYear', 'currentLevel', 'matricNo', 'cgpa'];
         const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
         
@@ -38,7 +37,6 @@ const EducationalInfo = () => {
             return;
         }
 
-        // Validate CGPA is within range
         const cgpa = parseFloat(formData.cgpa);
         if (isNaN(cgpa) || cgpa < 0 || cgpa > 5) {
             alert("Please enter a valid CGPA between 0 and 5.0");
@@ -46,7 +44,6 @@ const EducationalInfo = () => {
             return;
         }
 
-        // Validate admission year
         const currentYear = new Date().getFullYear();
         const admissionYear = parseInt(formData.admissionYear);
         if (admissionYear < 1990 || admissionYear > currentYear) {
@@ -55,19 +52,15 @@ const EducationalInfo = () => {
             return;
         }
 
-        // Save to global state
         updateEducationalInfo(formData);
 
-        // Simulate API call
         setTimeout(() => {
             console.log("Educational info saved:", formData);
             setIsSaving(false);
             setShowSuccess(true);
 
-            // Hide success message after 3 seconds
             setTimeout(() => setShowSuccess(false), 3000);
 
-            // Navigate to next page
             navigate('/assessment');
         }, 1000);
     };
@@ -76,7 +69,6 @@ const EducationalInfo = () => {
         handleSubmit(e);
     };
 
-    // Consistent steps array
     const steps = [
         { number: 1, label: "Personal Info", status: "completed" },
         { number: 2, label: "Parent Info", status: "completed" },
@@ -117,7 +109,7 @@ const EducationalInfo = () => {
     const currentYear = new Date().getFullYear()
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-cyan-50 font-sans">
+        <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 font-sans">
             {/* Success Toast */}
             <AnimatePresence>
                 {showSuccess && (
@@ -127,7 +119,7 @@ const EducationalInfo = () => {
                         exit={{ opacity: 0, y: -20 }}
                         className="fixed top-6 right-6 z-50"
                     >
-                        <div className="bg-linear-to-r from-emerald-500 to-green-500 text-white px-6 py-4 rounded-xl shadow-2xl shadow-emerald-200 flex items-center gap-3">
+                        <div className="bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white px-6 py-4 rounded-xl shadow-2xl shadow-[#B8860B]/20 flex items-center gap-3">
                             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -149,14 +141,14 @@ const EducationalInfo = () => {
                     animate={{ opacity: 1, y: 0 }}
                     className="text-center mb-12"
                 >
-                    <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-linear-to-r from-blue-100 to-cyan-100 rounded-full border border-blue-200">
-                        <GraduationCap className="w-4 h-4 text-blue-600" />
-                        <span className="text-sm font-semibold text-blue-600 uppercase tracking-wider">
+                    <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 bg-linear-to-r from-[#B8860B]/10 to-[#B8860B]/5 rounded-full border border-[#B8860B]/20">
+                        <GraduationCap className="w-4 h-4 text-red-500" />
+                        <span className="text-sm font-semibold text-[#B8860B] uppercase tracking-wider">
                             Educational Details
                         </span>
                     </div>
                     <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-                        Educational <span className="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Information</span>
+                        Educational <span className="bg-linear-to-r from-[#B8860B] to-[#B8860B]/70 bg-clip-text text-transparent">Information</span>
                     </h1>
                     <p className="text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
                         Tell us about your academic journey. This information helps us assess your eligibility and academic standing.
@@ -177,9 +169,9 @@ const EducationalInfo = () => {
                                     <div className="flex flex-col items-center">
                                         <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${
                                             step.status === "current"
-                                                ? "bg-linear-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-200"
+                                                ? "bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white shadow-lg shadow-[#B8860B]/20"
                                                 : step.number < 3
-                                                    ? "bg-linear-to-r from-emerald-500 to-green-400 text-white shadow-lg shadow-emerald-200"
+                                                    ? "bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white shadow-lg shadow-[#B8860B]/20"
                                                     : "bg-gray-100 text-gray-400"
                                             }`}>
                                             {step.number < 3 ? (
@@ -215,9 +207,9 @@ const EducationalInfo = () => {
                     >
                         <div className="bg-white rounded-3xl shadow-2xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
                             {/* Form Header */}
-                            <div className="p-8 border-b border-gray-100 bg-linear-to-r from-blue-50 to-cyan-50">
+                            <div className="p-8 border-b border-gray-100 bg-linear-to-r from-[#B8860B]/5 to-[#B8860B]/10">
                                 <div className="flex items-center gap-3">
-                                    <div className="p-3 bg-linear-to-r from-blue-500 to-cyan-400 rounded-xl">
+                                    <div className="p-3 bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 rounded-xl">
                                         <BookOpen className="w-6 h-6 text-white" />
                                     </div>
                                     <div>
@@ -233,14 +225,14 @@ const EducationalInfo = () => {
                                     {/* Institution Type */}
                                     <div className="space-y-2">
                                         <label className="flex items-center gap-2 text-gray-700 font-medium">
-                                            <School className="w-4 h-4" />
+                                            <School className="w-4 h-4 text-red-500" />
                                             Institution Type
                                         </label>
                                         <select
                                             name="institutionType"
                                             value={formData.institutionType}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B8860B] focus:border-transparent"
                                             required
                                         >
                                             <option value="">Select Institution Type</option>
@@ -253,7 +245,7 @@ const EducationalInfo = () => {
                                     {/* Institution Name */}
                                     <div className="space-y-2">
                                         <label className="flex items-center gap-2 text-gray-700 font-medium">
-                                            <School className="w-4 h-4" />
+                                            <School className="w-4 h-4 text-red-500" />
                                             Institution Name
                                         </label>
                                         <input
@@ -262,7 +254,7 @@ const EducationalInfo = () => {
                                             value={formData.institutionName}
                                             onChange={handleChange}
                                             placeholder="Enter institution name"
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B8860B] focus:border-transparent transition-all"
                                             required
                                         />
                                     </div>
@@ -270,7 +262,7 @@ const EducationalInfo = () => {
                                     {/* Course of Study */}
                                     <div className="space-y-2">
                                         <label className="flex items-center gap-2 text-gray-700 font-medium">
-                                            <BookOpen className="w-4 h-4" />
+                                            <BookOpen className="w-4 h-4 text-red-500" />
                                             Course of Study
                                         </label>
                                         <input
@@ -279,7 +271,7 @@ const EducationalInfo = () => {
                                             value={formData.course}
                                             onChange={handleChange}
                                             placeholder="Enter course of study"
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B8860B] focus:border-transparent transition-all"
                                             required
                                         />
                                     </div>
@@ -287,7 +279,7 @@ const EducationalInfo = () => {
                                     {/* Admission Year */}
                                     <div className="space-y-2">
                                         <label className="flex items-center gap-2 text-gray-700 font-medium">
-                                            <Calendar className="w-4 h-4" />
+                                            <Calendar className="w-4 h-4 text-red-500" />
                                             Admission Year
                                         </label>
                                         <input
@@ -298,7 +290,7 @@ const EducationalInfo = () => {
                                             placeholder="e.g. 2021"
                                             min="1990"
                                             max={currentYear}
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B8860B] focus:border-transparent transition-all"
                                             required
                                         />
                                     </div>
@@ -306,14 +298,14 @@ const EducationalInfo = () => {
                                     {/* Current Level */}
                                     <div className="space-y-2">
                                         <label className="flex items-center gap-2 text-gray-700 font-medium">
-                                            <Award className="w-4 h-4" />
+                                            <Award className="w-4 h-4 text-red-500" />
                                             Current Level
                                         </label>
                                         <select
                                             name="currentLevel"
                                             value={formData.currentLevel}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B8860B] focus:border-transparent"
                                             required
                                         >
                                             <option value="">Select Level</option>
@@ -326,7 +318,7 @@ const EducationalInfo = () => {
                                     {/* Matric Number */}
                                     <div className="md:col-span-2 space-y-2">
                                         <label className="flex items-center gap-2 text-gray-700 font-medium">
-                                            <GraduationCap className="w-4 h-4" />
+                                            <GraduationCap className="w-4 h-4 text-red-500" />
                                             Matriculation Number
                                         </label>
                                         <input
@@ -335,7 +327,7 @@ const EducationalInfo = () => {
                                             value={formData.matricNo}
                                             onChange={handleChange}
                                             placeholder="Enter matriculation number"
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B8860B] focus:border-transparent transition-all"
                                             required
                                         />
                                     </div>
@@ -343,7 +335,7 @@ const EducationalInfo = () => {
                                     {/* CGPA */}
                                     <div className="space-y-2">
                                         <label className="flex items-center gap-2 text-gray-700 font-medium">
-                                            <Award className="w-4 h-4" />
+                                            <Award className="w-4 h-4 text-red-500" />
                                             CGPA (as at last academic session)
                                         </label>
                                         <input
@@ -355,7 +347,7 @@ const EducationalInfo = () => {
                                             step="0.01"
                                             min="0"
                                             max="5"
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B8860B] focus:border-transparent transition-all"
                                             required
                                         />
                                         <p className="text-sm text-gray-500 mt-1">
@@ -373,7 +365,7 @@ const EducationalInfo = () => {
                                         type="submit"
                                         disabled={isSaving}
                                         onClick={handleSaveAndContinue}
-                                        className="group w-full cursor-pointer flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-blue-600 to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+                                        className="group w-full cursor-pointer flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-[#B8860B] to-[#B8860B]/80 text-white font-bold rounded-xl shadow-lg shadow-[#B8860B]/20 hover:shadow-xl hover:shadow-[#B8860B]/30 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                                     >
                                         {isSaving ? (
                                             <>
@@ -396,7 +388,7 @@ const EducationalInfo = () => {
                                 <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-100">
                                     <Link
                                         to="/parent-info"
-                                        className="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center gap-1"
+                                        className="text-red-500 hover:text-[#B8860B]/80 font-medium text-sm flex items-center gap-1"
                                     >
                                         ← Back to Parent Information
                                     </Link>
@@ -417,7 +409,7 @@ const EducationalInfo = () => {
                     >
                         <div className="sticky top-8 space-y-6">
                             {/* Scholarship Info Card */}
-                            <div className="bg-linear-to-br from-blue-600 to-cyan-500 rounded-3xl p-8 text-white shadow-2xl shadow-blue-200">
+                            <div className="bg-linear-to-br from-[#B8860B] to-[#B8860B]/80 rounded-3xl p-8 text-white shadow-2xl shadow-[#B8860B]/20">
                                 <div className="flex items-center gap-3 mb-6">
                                     <img
                                         src={AlertLogo}
@@ -426,7 +418,7 @@ const EducationalInfo = () => {
                                     />
                                     <div>
                                         <h3 className="text-2xl font-bold">Academic Excellence</h3>
-                                        <p className="text-blue-100">We value your academic journey</p>
+                                        <p className="text-white text-sm">We value your academic journey</p>
                                     </div>
                                 </div>
 
@@ -437,7 +429,7 @@ const EducationalInfo = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Academic Criteria</div>
-                                            <div className="text-sm text-blue-100">Minimum CGPA of 3.0 required</div>
+                                            <div className=" text-white text-sm">Minimum CGPA of 3.0 required</div>
                                         </div>
                                     </div>
 
@@ -447,7 +439,7 @@ const EducationalInfo = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Course Relevance</div>
-                                            <div className="text-sm text-blue-100">All accredited courses considered</div>
+                                            <div className="text-white text-sm">All accredited courses considered</div>
                                         </div>
                                     </div>
 
@@ -457,7 +449,7 @@ const EducationalInfo = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Verification</div>
-                                            <div className="text-sm text-blue-100">Information will be verified with institution</div>
+                                            <div className="text-white text-sm">Information will be verified with institution</div>
                                         </div>
                                     </div>
                                 </div>
@@ -466,32 +458,32 @@ const EducationalInfo = () => {
                             {/* Tips Card */}
                             <div className="bg-white rounded-3xl p-6 border border-gray-200 shadow-lg">
                                 <div className="flex items-center gap-2 mb-4">
-                                    <Sparkles className="w-5 h-5 text-amber-500" />
+                                    <Sparkles className="w-5 h-5 text-red-500" />
                                     <h4 className="font-bold text-gray-900">Important Notes</h4>
                                 </div>
                                 <ul className="space-y-3">
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">Ensure matric number matches institutional records</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">CGPA must be verifiable from last academic session</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
                                         <span className="text-sm text-gray-600">Provide full official name of institution</span>
                                     </li>
                                 </ul>
                             </div>
 
                             {/* Help Card */}
-                            <div className="bg-linear-to-r from-emerald-50 to-teal-50 rounded-3xl p-6 border border-emerald-100">
+                            <div className="bg-linear-to-r from-[#B8860B]/10 to-[#B8860B]/5 rounded-3xl p-6 border border-[#B8860B]/20">
                                 <h4 className="font-bold text-gray-900 mb-2">Need Assistance?</h4>
                                 <p className="text-sm text-gray-600 mb-4">
                                     Having trouble with your academic information? Our support team is here to help.
                                 </p>
-                                <button className="w-full px-4 py-2 bg-emerald-500 text-white text-sm font-semibold rounded-lg hover:bg-emerald-600 transition-colors">
+                                <button className="w-full px-4 py-2 bg-[#B8860B] text-white text-sm font-semibold rounded-lg hover:bg-[#B8860B]/80 transition-colors">
                                     Get Help Now
                                 </button>
                             </div>
