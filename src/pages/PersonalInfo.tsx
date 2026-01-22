@@ -419,7 +419,7 @@ const PersonalInfo = () => {
                                         </div>
                                         <div>
                                             <div className="font-semibold">Deadline</div>
-                                            <div className="text-sm text-white text-sm">December 31, 2024</div>
+                                            <div className="text-sm text-white text-sm">September 30, 2026</div>
                                         </div>
                                     </div>
                                 </div>
