@@ -38,12 +38,14 @@ const scholarships = [
 ];
 
 const carouselImages = [
-    "https://teentrust.ng/wp-content/uploads/2025/02/25-Scholarships-for-Nigerian-Students-to-Study-Abroad.jpg",
+    " https://godwinetimfoundation.com/wp-content/uploads/2023/03/38789-5-Musts-to-Apply-for-African-American-Scholarships.jpg",
     "https://africanarguments.org/wp-content/uploads/2023/06/nigeria-university-north-education-climate-change-e1686315345307.jpg",
     "https://edutimesafrica.com/wp-content/uploads/2024/10/istockphoto-1474378386-2048x2048-1.jpg",
     "https://alertgroup.com.ng/wp-content/uploads/2024/08/alertxmansard-1024x684.jpg",
-    "https://cdn.guardian.ng/wp-content/uploads/2020/09/University-Students-1062x598.jpg",
+    "https://teentrust.ng/wp-content/uploads/2025/02/25-Scholarships-for-Nigerian-Students-to-Study-Abroad.jpg",
     "https://dailytrust.com/wp-content/uploads/2025/06/zonahub-%E2%80%93-a-free-marketplace-for-nigerian-students.jpg",
+
+   
 ];
 
 const Home = () => {
